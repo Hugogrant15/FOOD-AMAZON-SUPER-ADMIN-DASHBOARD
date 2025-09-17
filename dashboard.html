@@ -232,14 +232,14 @@
       <div class="row g-3 mb-4">
         <div class="col-md-8">
           <div class="card p-3">
-            <!-- <img src="./images/Sales statistics.png" alt=""> -->
+            <img src="./images/Orders chart.png" alt="">
             <h6>Distribution Trends</h6> 
-             <canvas id="trendChart" height="100"></canvas>
+             <!-- <canvas id="trendChart" height="100"></canvas> -->
           </div>
         </div>
         <div class="col-md-4">
           <div class="card p-3">
-            <img src="./images/Daily Visit Insights.png" alt="">
+            <img src="./images/last 7 days.png" alt="">
             <!-- <h6>Daily Visit Insights</h6>
             <canvas id="visitChart" height="100"></canvas> -->
           </div>
@@ -248,55 +248,48 @@
 
       <!-- Best Selling Products + Doughnut -->
       <div class="row g-3 mb-4">
-        <div class="col-md-8" >
-          <div class="card p-3 " id="TableId">
+        <div class="col-md-6" >
+          <div class="card p-3 " id="">
             <div class="d-flex align-items-center justify-content-between">
-            <h6>Best-Selling Products</h6>
-            <a href="#" class="text-decoration-none" style="color: #00A859;">View All</a>
+            <h6>Recent Transactions</h6>
             </div>
-            <table class=" table big-table table-borderless">
+            <table class=" table  ">
               <thead class="tablePad">
                 <tr class="" style="color: #8D98AF; ">
+                  <th>Date</th>
                   <th>Name</th>
-                  <th>Sales</th>
-                  <th>Stock</th>
                   <th>Amount</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="mt-3">
-                  <td>Berry Bliss Bites</td>
-                  <td>3.453</td>
-                  <td>845</td>
-                  <td>$470.00</td>
-                  <td><span class="badge bg-success">In Stock</span></td>
+                  <td>Jagarnath S.</td>
+                  <td>24.05.2023</td>
+                  <td>$124.97</td>
+                  <td><span class="badge bg-success">paid</span></td>
                 </tr>
-                <tr>
+                <tr >
                   <td>Berry Bliss Bites</td>
                   <td>3.453</td>
-                  <td>845</td>
                   <td>$470.00</td>
                   <td><span class="badge bg-success">In Stock</span></td>
                 </tr>
                 <tr>
                   <td>Organic Almond Delight</td>
                   <td>3.453</td>
-                  <td>845</td>
                   <td>$470.00</td>
                   <td><span class="badge bg-success">In Stock</span></td>
                 </tr>
                 <tr>
                   <td>Organic Almond Delight</td>
                   <td>3.453</td>
-                  <td>845</td>
                   <td>$470.00</td>
                   <td><span class="badge bg-success">In Stock</span></td>
                 </tr>
                 <tr>
                   <td>Berry Bliss Bites</td>
                   <td>3.453</td>
-                  <td>845</td>
                   <td>$470.00</td>
                   <td><span class="badge bg-success">In Stock</span></td>
                 </tr>
@@ -305,120 +298,63 @@
             </table>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card p-3">
-            <img src="./images/Component 13.png" alt="">
-            <!-- <h6>Top Products Share</h6>
-            <canvas id="productChart" height="150"></canvas> -->
-          </div>
-        </div>
-      </div>
 
-      <!-- Customers & Orders -->
-      <div class="row g-3">
-       <div class="col-md-4">
-          <div class="card p-3">
-            <div class="d-flex align-items-center justify-content-between mb-2 ">
-                <h6>New Customers</h6>
-                <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-            </div>
-            <hr>
-            <!-- first customer -->
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    <img src="./images/New Customers List.png" alt="">
-                    <div class="ms-3">
-                        <small>Amarise Bilal</small><br>
-                        <small>Customer ID#00222</small>
-                    </div>
-                     
-                </div>
-                <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-            </div>
-            <!-- second customer -->
-            <div class="d-flex align-items-center justify-content-between mt-3">
-                <div class="d-flex align-items-center">
-                    <img src="./images/New Customers List.png" alt="">
-                    <div class="ms-3">
-                        <small>Amarise Bilal</small><br>
-                        <small>Customer ID#00222</small>
-                    </div>
-                     
-                </div>
-                <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
+        <div class="col-md-6" >
+          <div class="card p-2" id="">
+            <div class="">
+            <h6>Top Products by Units Sold</h6>
             </div>
 
-            <!-- third customer  -->
-            <div class="d-flex align-items-center justify-content-between mt-3">
-                <div class="d-flex align-items-center">
-                    <img src="./images/New Customers List.png" alt="">
-                    <div class="ms-3">
-                        <small>Amarise Bilal</small><br>
-                        <small>Customer ID#00222</small>
-                    </div>
-                     
-                </div>
-                <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-            </div>
-            <!-- fourth customer -->
-            <div class="d-flex align-items-center justify-content-between mt-3">
-                <div class="d-flex align-items-center">
-                    <img src="./images/New Customers List.png" alt="">
-                    <div class="ms-3">
-                        <small>Amarise Bilal</small><br>
-                        <small>Customer ID#00222</small>
-                    </div>
-                     
-                </div>
-                <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-            </div>
-
-          </div>
-        </div>
-        <div class="col-md-8">
-          <div class="card p-3">
-            <h6>Order List</h6>
-            <table class="table big-table table-borderless" >
+            <table class="table ">
               <thead class="tablePad">
-                <tr>
-                  <th>Payment Number</th>
-                  <th>Date & time</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                <tr class="" style="color: #8D98AF; ">
+                  <th>Name</th>
+                  <th></th>
+                  <th>Price</th>
+                  <th>Units Sold</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Payment from #10321</td>
-                  <td>Jul 19, 2024, 3:30pm</td>
-                  <td>$350.00</td>
-                  <td><span class="badge bg-success">Completed</span></td>
-                  </tr>
-                <tr>
-                  <td>Process refund to #00910</td>
-                  <td>Jul 01, 2024, 3:30pm</td>
-                  <td>$570.00</td>
-                  <td><span class="badge bg-danger ">declined</span></td></tr>
-                <tr>
-                  <td>Process delivery to #44333</td>
-                  <td>Jun 21, 2024, 3:30pm</td>
-                  <td>$840.00</td>
-                  <td><span class="badge bg-success">Completed</span></td>
+                <tr class="">
+                  <td><img src="./images/Image (7).png" alt=""> <span class=" ms-3">Berry Bliss Bites</span></td>
+                  <td></td>
+                  <td class="ms-3">$49.90</td>
+                  <td>204</td>
                 </tr>
-                <tr>
-                  <td>Process refund to #00910</td>
-                  <td>May 01, 2024, 3:30pm</td>
-                  <td>$570.00</td>
-                  <td><span class="badge bg-danger">declined</span></td>
+                <tr class="">
+                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
+                  <td></td>
+                  <td>$49.90</td>
+                  <td>204</td>
                 </tr>
+                <tr class="">
+                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
+                  <td></td>
+                  <td>$49.90</td>
+                  <td>204</td>
+                </tr>
+                <tr class="">
+                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
+                  <td></td>
+                  <td>$49.90</td>
+                  <td>204</td>
+                </tr>
+                <tr class="">
+                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
+                  <td></td>
+                  <td>$49.90</td>
+                  <td>204</td>
+                </tr>
+                
+                
               </tbody>
             </table>
-            <div class="text-center">
-                <button class="TableBUTon">view All transaction</button>
-              </div>
           </div>
         </div>
+        
       </div>
+
+     
 
     </div>
   </div>
