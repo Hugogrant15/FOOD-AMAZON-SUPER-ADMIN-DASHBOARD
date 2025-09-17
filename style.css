@@ -7,7 +7,7 @@ body {
     background: #f8f9fa;
 }
 
-/* distributor signup styling here  */
+/* super admin  signin styling here  */
 .signheAD {
     font-family: "Archivo", sans-serif;
     font-size: 37px;
@@ -32,8 +32,9 @@ body {
     color: #171725;
 }
 .dashboardInput {
-    border: 1px solid #F1F1F5;
-    width: 430px;
+    border: 1px solid #f1f1f555;
+    width: 350px;
+    border-radius: 10px;
     height: 45px;
     font-size: 16px;
     color: #8D98AF;
@@ -60,7 +61,17 @@ body {
 
 .bshadow {
     width: 480px;
-    height: 600px;
+    height: 550px;
+}
+
+.signupRelative {
+  position: relative;
+}
+
+.signupAbsolute {
+  position: absolute;
+  right: 65px;
+  top: 40px;
 }
 
 @media screen and (max-width: 600px) {
