@@ -9,3 +9,10 @@ function toggleNotification(event) {
         notificationPopUp.style.display = 'none';
     }
 }
+
+// Small screen toggle
+document.getElementById("searchBtn").addEventListener("click", function () {
+  const input = document.getElementById("searchInput");
+  input.classList.toggle("expanded");
+  input.focus();
+});

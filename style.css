@@ -85,10 +85,6 @@ body {
 }
 
 
-
-
-
-
 /* sidebar styling starts here  */
 
 .sidebar {
@@ -168,35 +164,13 @@ body {
     height: 40px;
 } */
 
-.TableBUTon {
-    border: none;
-    font-family: "Archivo", sans-serif;
-    color: #00A859;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 100%;
-    background: transparent;
-}
+
 
 .listItem, a{
     list-style: none;
 }
 
-#TableId {
-    height: 380px !important;
 
-}
-
-.big-table td {
-    padding-top: 15px !important;
-    padding-bottom: 20px !important;
-} 
-
-.tablePad th {
-    padding-top: 15px !important;
-    margin: 30px !important;
-    color: #8D98AF;
-}
 
 #notificationPopUp {
     height: 500px !important;
@@ -212,53 +186,23 @@ body {
     
     display: none;
 }
-/* #notificationPopUp01 {
-    height: 800px !important;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: #00A859 #f1f1f1;
-    position: absolute;
-    top: 70px;
-    right: 240px;
-    z-index: 1;
-    background: white;
-    
-} */
+
 
 .navrelative {
     position: relative;
 }   
 
 /* order.html styling here  */
-.OrderSecT h1 {
-    font-family: "Archivo", sans-serif;
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 100%;
-    color: #171725;
-    margin-bottom: 20px;
-}
+.selectINPUT {
+    border: 1px solid #D9E1EC;
+    border-radius: 4px;
+    width: 180px;
+    height: 40px;
 
-.OrderSecT a  {
-    font-family: "Archivo", sans-serif;
-    color: #8D98AF;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 100%;
-}
-
-.table th  {
-    font-family: "Archivo", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 100%;
-    color: #171725;
-    padding: 20px !important;
 }
 
 
-table td, .PaginaTION {
+ .PaginaTION {
     font-family: "Archivo", sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -267,13 +211,7 @@ table td, .PaginaTION {
     /* padding: 20px !important; */
 }
 
-#PendingorderTable, #deliveredgorderTable, #cancelorderTable {
-    display: none;
-}
 
-#AllorderTable {
-    max-width: 100% !important;
-}
 
 /* customer.html styling starts here  */
 .customerPtag small {
@@ -356,98 +294,61 @@ form label {
     color: #FFFFFF;
 }
 
-/* inventory.html starts here  */
+/* search toggle styling here  */
 
-.intentBtn1 {
-     font-family: "Archivo", sans-serif;
-    border: 1px solid #D0D3D9;
-    width: 90px;
-    height: 38px;
-    border-radius: 4px;
-    color: #8D98AF;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
+/* Base styles */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
-.intentBtn2 {
-     font-family: "Archivo", sans-serif;
+
+#searchInput {
+    border: 1px solid #D9E1EC;
+    width: 350px;
+    height: 40px;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* Large screen: input always visible */
+@media (min-width: 768px) {
+  #searchInput {
+    width: 250px;
+    display: inline-block;
+  }
+
+  #searchBtn {
+    position: absolute;
+    right: 10px;
+    background: none;
     border: none;
-    color: #48505E;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
+    cursor: pointer;
+  }
 }
 
-.intentBtn3, .intentBtn4, .intentBtn5, .intentBtn6 {
-     font-family: "Archivo", sans-serif;
-    border: 1px solid #D0D3D9;
-    width: 64px;
-    height: 38px;
-    border-radius: 4px;
-    color: #171725;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
+/* Small screen: input hidden until button clicked */
+@media (max-width: 767px) {
+  #searchInput {
+    width: 0;
+    opacity: 0;
+    padding: 0;
+    border: none;
+  }
+
+  #searchInput.expanded {
+    width: 200px;
+    opacity: 1;
+    padding: 8px 35px 8px 12px;
+    border: 1px solid #ccc;
+  }
+
+  #searchBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
 }
 
-.intentBtn4 {
-     width: 114px;
-    height: 40px;
-    color: #5D6679;
-}
-
-.intentBtn5 {
-     width: 100px;
-    height: 40px;
-    color: #5D6679;
-}
-
-.intentBtn6 {
-    width: 114px;
-    height: 40px;
-    background: #00A859;
-    color: #fff;
-}
-
-.inventoryTop h1, .inventoryh2 {
-    font-family: "Archivo", sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 30px;
-    color: #171725;
-}
-.inventoryTop h3, p {
-    font-family: "Archivo", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 24px;
-}
-.inventoryTop p {
-   color: #171725;
-}
-.inventoryTop small {
-     font-family: "Archivo", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 20px;
-   color: #8D98AF;
-}
-
-.h4top h4 {
-    font-family: "Archivo", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 24px;
-    color: #171725;
-}
-.h4top p {
-    font-family: "Archivo", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    color: #8D98AF;
-}
-.h4top small {
-    
-    color: #171725;
-}

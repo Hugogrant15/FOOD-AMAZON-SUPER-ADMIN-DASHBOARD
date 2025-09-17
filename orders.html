@@ -6,7 +6,7 @@
   <title>360 Organic Foodie - Super-Admin Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -203,164 +203,62 @@
 
     <!-- Main Content -->
     <div class="col-md-10 p-4">
-      <!-- Top Metrics -->
-      <div class="row g-3 mb-4" >
-        <div class="col-md-3">
-          <div class="metric-card">
-            <h5>Total Distribution (Yearly)</h5>
-            <h3>$84,573</h3><small class="text-success">+4.2%</small>
-            <small class="text-success">+4.2% </small><i class="fa-light fa-arrow-up" style="color: red;"></i>
-            <small>Compared to ($3400 last year)</small>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="metric-card">
-            <h5>Total Distribution (Daily)</h5>
-            <h3>$124,055</h3>
-            <small class="text-success">+3.2% vs last year</small>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="metric-card">
-            <h5>Total Distribution (Weekly)</h5>
-            <h3>$4,512</h3>
-            <small class="text-danger">-2.2% vs last year</small>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="metric-card">
-            <h5>Total Distribution (Monthly)</h5>
-            <h3>$17,856</h3>
-            <small class="text-success">+1.8% vs last year</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-8">
-          <div class="card p-3">
-            <img src="./images/Orders chart.png" alt="">
-            <h6>Distribution Trends</h6> 
-             <!-- <canvas id="trendChart" height="100"></canvas> -->
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card p-3">
-            <img src="./images/last 7 days.png" alt="">
-            <!-- <h6>Daily Visit Insights</h6>
-            <canvas id="visitChart" height="100"></canvas> -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Best Selling Products + Doughnut -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-6" >
-          <div class="card p-3 " id="">
-            <div class="d-flex align-items-center justify-content-between">
-            <h6>Recent Transactions</h6>
+      <div class="d-flex align-items-center justify-content-between">
+            <h3>Order</h3>
+            <div class="div">
+                <button class="btn btn-outline-success">Export</button>
+                <button class="btn btn-success">+ Add Order</button>
             </div>
-            <table class=" table  ">
-              <thead class="tablePad">
-                <tr class="" style="color: #8D98AF; ">
-                  <th>Date</th>
-                  <th>Name</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="mt-3">
-                  <td>Jagarnath S.</td>
-                  <td>24.05.2023</td>
-                  <td>$124.97</td>
-                  <td><span class="badge bg-success">paid</span></td>
-                </tr>
-                <tr >
-                  <td>Berry Bliss Bites</td>
-                  <td>3.453</td>
-                  <td>$470.00</td>
-                  <td><span class="badge bg-success">In Stock</span></td>
-                </tr>
-                <tr>
-                  <td>Organic Almond Delight</td>
-                  <td>3.453</td>
-                  <td>$470.00</td>
-                  <td><span class="badge bg-success">In Stock</span></td>
-                </tr>
-                <tr>
-                  <td>Organic Almond Delight</td>
-                  <td>3.453</td>
-                  <td>$470.00</td>
-                  <td><span class="badge bg-success">In Stock</span></td>
-                </tr>
-                <tr>
-                  <td>Berry Bliss Bites</td>
-                  <td>3.453</td>
-                  <td>$470.00</td>
-                  <td><span class="badge bg-success">In Stock</span></td>
-                </tr>
-                
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="col-md-6" >
-          <div class="card p-2" id="">
-            <div class="">
-            <h6>Top Products by Units Sold</h6>
-            </div>
-
-            <table class="table ">
-              <thead class="tablePad">
-                <tr class="" style="color: #8D98AF; ">
-                  <th>Name</th>
-                  <th></th>
-                  <th>Price</th>
-                  <th>Units Sold</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="">
-                  <td><img src="./images/Image (7).png" alt=""> <span class=" ms-3">Berry Bliss Bites</span></td>
-                  <td></td>
-                  <td class="ms-3">$49.90</td>
-                  <td>204</td>
-                </tr>
-                <tr class="">
-                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                  <td></td>
-                  <td>$49.90</td>
-                  <td>204</td>
-                </tr>
-                <tr class="">
-                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                  <td></td>
-                  <td>$49.90</td>
-                  <td>204</td>
-                </tr>
-                <tr class="">
-                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                  <td></td>
-                  <td>$49.90</td>
-                  <td>204</td>
-                </tr>
-                <tr class="">
-                  <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                  <td></td>
-                  <td>$49.90</td>
-                  <td>204</td>
-                </tr>
-                
-                
-              </tbody>
-            </table>
-          </div>
-        </div>
-        
       </div>
+
+       <div class="d-flex align-items-center justify-content-between">
+            <div class=" d-flex gap-3">
+                <select class="form-select selectINPUT" aria-label="Default select example">
+                <option selected>Filter</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+                </select>
+
+                <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search..." />
+                <button id="searchBtn"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <div class="div">
+                <i class="fas fa-search"></i> 
+                <i class="fa-solid fa-trash"></i>
+            </div>
+       </div>
+
+       <table class="table ta">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox">
+                    <span>Order</span>
+                </th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Payment Status</th>
+                <th>Order Status</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="checkbox">
+                    <span>#12512B</span>
+                </td>
+                <td>May 5, 4:20 PM</td>
+                <td>Tom Anderson</td>
+                <td>Paid</td>
+                <td>Ready</td>
+                <td>$49.90</td>
+            </tr>
+        </tbody>
+       </table>
 
      
 
