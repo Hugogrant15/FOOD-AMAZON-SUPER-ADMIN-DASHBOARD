@@ -103,6 +103,8 @@ body {
     border-radius: 20px;
 
 }
+
+
 .metric-card {
     background: #fff;
     border-radius: 8px;
@@ -296,59 +298,10 @@ form label {
 
 /* search toggle styling here  */
 
-/* Base styles */
-.search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
 
-#searchInput {
-    border: 1px solid #D9E1EC;
-    width: 350px;
-    height: 40px;
-  padding: 8px 35px 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: width 0.4s ease;
-}
 
-/* Large screen: input always visible */
-@media (min-width: 768px) {
-  #searchInput {
-    width: 250px;
-    display: inline-block;
-  }
 
-  #searchBtn {
-    position: absolute;
-    right: 10px;
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-}
 
-/* Small screen: input hidden until button clicked */
-@media (max-width: 767px) {
-  #searchInput {
-    width: 0;
-    opacity: 0;
-    padding: 0;
-    border: none;
-  }
 
-  #searchInput.expanded {
-    width: 200px;
-    opacity: 1;
-    padding: 8px 35px 8px 12px;
-    border: 1px solid #ccc;
-  }
 
-  #searchBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-}
 

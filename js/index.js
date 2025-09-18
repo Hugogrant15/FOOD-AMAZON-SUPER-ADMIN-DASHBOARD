@@ -1,4 +1,4 @@
-function toggleNotification(event) {
+ function toggleNotification(event) {
     event.preventDefault();
     const notificationPopUp = document.getElementById('notificationPopUp');
     // notificationPopUp.style.display = "block";
@@ -16,3 +16,5 @@ document.getElementById("searchBtn").addEventListener("click", function () {
   input.classList.toggle("expanded");
   input.focus();
 });
+
+
