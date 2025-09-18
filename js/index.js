@@ -10,11 +10,17 @@
     }
 }
 
-// Small screen toggle
-document.getElementById("searchBtn").addEventListener("click", function () {
-  const input = document.getElementById("searchInput");
-  input.classList.toggle("expanded");
-  input.focus();
+const searchInput = document.getElementById("searchInput");
+const searchIcon = document.querySelector(".search-icon");
+
+searchIcon.addEventListener("click", () => {
+  if (window.innerWidth < 768) { // only apply expand/collapse on small screens
+    searchInput.classList.toggle("show");
+    if (searchInput.classList.contains("show")) {
+      searchInput.focus();
+    }
+  }
 });
+
 
 

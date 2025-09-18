@@ -298,6 +298,54 @@ form label {
 
 /* search toggle styling here  */
 
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+}
+
+/* Search icon inside input */
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #6c757d;
+  pointer-events: none;
+  
+}
+
+#searchInput {
+    width: 350px;
+    height: 40px;
+    border: 1px solid #D9E1EC;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Input default (mobile = hidden) */
+.search-container input {
+  width: 0;
+  opacity: 0;
+  padding: 6px 12px 6px 35px; /* left padding so text doesn’t overlap icon */
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Expanded input on mobile */
+.search-container input.show {
+  width: 160px;
+  opacity: 1;
+}
+
+/* Desktop: always show input */
+@media (min-width: 768px) {
+  .search-container input {
+    width: 220px;
+    opacity: 1;
+  }
+}
 
 
 
