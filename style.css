@@ -347,7 +347,45 @@ form label {
   }
 }
 
+.witth {
+    width: 800px;
+}
 
+.products-scroll-x {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 1.5em;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 5em;
+  /* width: 100%; */
+  box-sizing: border-box;
+}
+.products-scroll-x > * {
+  flex: 0 0 20em; /* Adjust width as needed */
+  scroll-snap-align: start;
+}
+
+/* Optional: Hide scrollbar for Webkit browsers */
+.products-scroll-x::-webkit-scrollbar {
+  height: 8px;
+  background: #f1f1f1;
+}
+.products-scroll-x::-webkit-scrollbar-thumb {
+  background: #0F0B0B;
+  border-radius: 4px;
+}
+ /* #imgWidth {
+    width: 370px;
+    height: 440px; 
+}  */
+
+@media screen and (max-width: 600px) {
+   #imgWidth {
+    width: 390px;
+    height: 480px; 
+} 
+}
 
 
 
