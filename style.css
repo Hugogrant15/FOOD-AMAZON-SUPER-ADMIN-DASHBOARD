@@ -157,7 +157,7 @@ body {
     font-weight: 500;
     line-height: 100%;
     border: none;
-    
+    margin-top: 500px !important;
 }
 
 /* .Dashbutton:hover {
@@ -203,7 +203,6 @@ body {
 
 }
 
-
  .PaginaTION {
     font-family: "Archivo", sans-serif;
     font-size: 14px;
@@ -211,6 +210,29 @@ body {
     line-height: 100%;
     color: #171725;
     /* padding: 20px !important; */
+}
+
+.orderBtNN {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid #D9E1EC;
+    color: #00A859;
+}
+
+.DStable1 th {
+    font-family: "Archivo", sans-serif;
+    color: #5A607F;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+.DStable1 td {
+    font-family: "Inter", sans-serif;
+    color: #131523;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
 }
 
 
@@ -296,6 +318,35 @@ form label {
     color: #FFFFFF;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* search toggle styling here  */
 
 .search-container {
@@ -350,6 +401,8 @@ form label {
 .witth {
     width: 800px;
 }
+
+
 
 .products-scroll-x {
   display: flex;
