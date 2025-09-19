@@ -203,7 +203,7 @@
     <!-- Main Content -->
     <div class="col-md-10 p-4">
       <div class="d-flex align-items-center justify-content-between">
-            <h3>Order</h3>
+            <h3>Products</h3>
             <div class="div">
                 <button class="btn btn-outline-success">Export</button>
                 <button class="btn btn-success">+ Add Products</button>
@@ -235,8 +235,8 @@
         <thead>
             <tr>
                 <th>
-                    <input type="checkbox">
-                    <span>Product</span>
+                    <input type="checkbox" >
+                    <span class="ms-2">Product</span>
                 </th>
                 <th>Inventory</th>
                 <th>Color</th>
@@ -247,9 +247,9 @@
         <tbody>
             <tr>
                 <td>
-                    <input type="checkbox">
+                    <input type="checkbox" class="me-2">
                     <img src="./images/Bitmap.png" alt="">
-                    <span>Berry Bliss Bites Snacks</span>
+                    <span class="ms-2">Berry Bliss Bites Snacks</span>
                     
                 </td>
                 <td>96 in stock</td>
@@ -259,6 +259,166 @@
             </tr>
         </tbody>
        </table>
+       </div>
+
+       <div class="row mt-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <h3>Products</h3>
+                <div class="div">
+                    <button class="btn btn-outline-success">Cancel</button>
+                    <button class="btn btn-success">Save</button>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h4>Information</h4>
+                <form action="">
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="buyingPrice" class="form-label">Buying Price</label>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">Product description</label>
+                        </div>
+                    </div>
+                    <hr class="mt-4" >
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Images</label>
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                            <label for="floatingTextarea2">
+                                <div class="text-center">
+                                    <button>Add File</button>
+                                    <p>Or drag and drop files</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <hr class="mt-4" >
+
+                    <div class="row mt-4">
+                        <label for="threshold" class="form-label"> price</label>
+
+                        <div class="col-md-6 mt-3">
+                            <div class="mb-3">
+                                <label for="threshold" class="form-label"> Product price</label>
+                                <input type="number" class="form-control" id="threshold" required>
+                            </div>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                <label class="form-check-label" for="switchCheckChecked">Add tax for this product</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <div class="mb-3">
+                            <label for="threshold" class="form-label">Discount price</label>
+                            <input type="number" class="form-control" id="threshold" required>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-4">
+
+                    <div class="row mt-4">
+                        <p>Option 1</p>
+                        <label for="threshold" class="form-label"> Different Options</label>
+
+                            <div class="form-check form-switch ms-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
+                            </div>
+                        <div class="col-md-6 mt-3">
+                            <div class="mb-3">
+                                <label for="threshold" class="form-label "> Size</label>
+                                <select class="form-select" aria-label="Default select example">
+                                <option selected>Size</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                                </select>
+                            </div>
+
+                            <button class="btn" style="border: none; color:#00A859; font-size: 16px;" >Add more</button>
+                        </div>
+                        
+                        <div class="col-md-6 mt-3">
+                            <div class="mb-3">
+                            <label for="threshold" class="form-label">Value</label>
+                            <input type="number" class="form-control" id="threshold" required>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-4">
+
+                    <div class="row mt-4">
+                        <p>Shipping</p>
+                        <div class="col-md-6 mt-3">
+                            <div class="mb-3">
+                                <label for="threshold" class="form-label">Weight</label>
+                                <input type="number" class="form-control" id="threshold" required>
+                            </div>
+                            <div class="form-check form-switch ms-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            
+                            <div class="mb-3">
+                                <label for="threshold" class="form-label "> Country</label>
+                                <select class="form-select" aria-label="Default select example">
+                                <option selected>Size</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>                
+                </form>
+            </div>
+            <div class="col md-4">
+                <p>Catregories</p>
+                <form action="">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                        <label class="form-check-label" for="checkDefault">
+                            Ogganic
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                        <label class="form-check-label" for="checkDefault">
+                           Snacks
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                        <label class="form-check-label" for="checkDefault">
+                            Crunches
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                        <label class="form-check-label" for="checkDefault">
+                            Coconut
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                        <label class="form-check-label" for="checkDefault">
+                            natural
+                        </label>
+                    </div>
+                    <div class="div text-end">
+                        <button class="btn btn-outline-success">Cancel</button>
+                        <button class="btn btn-success">Save</button>
+                    </div>
+                </form>
+                <button style="color: #00A859; font-size: 16px; border: none; background: transparent;">create new</button>
+            </div>
        </div>
 
        
