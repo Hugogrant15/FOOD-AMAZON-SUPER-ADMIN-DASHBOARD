@@ -138,6 +138,9 @@ function addProducts(event) {
             text: `Created successfully`,
             confirmButtonColor: "#2D85DE"
         })
+        setTimeout(() => {
+          location.reload();
+        }, 4000)
       }
     })
     .catch(err => {
