@@ -86,14 +86,6 @@ function adminLogin(event) {
 }
 
 
-
-
-
-
-
-
-
-
 function addProducts(event) {
   event.preventDefault();
 
@@ -135,8 +127,9 @@ function addProducts(event) {
         localStorage.setItem("prodId", result._id)
         Swal.fire({
             icon: 'success',
-            text: `Created successfully`,
-            confirmButtonColor: "#2D85DE"
+            title: "Import Successful",
+            text: `Added new products to your store`,
+            confirmButtonColor: "#00A859"
         })
         setTimeout(() => {
           location.reload();
@@ -147,18 +140,6 @@ function addProducts(event) {
       console.error("❌ Error creating product:", err);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 function toggleNotification(event) {
     event.preventDefault();
@@ -185,4 +166,147 @@ searchIcon.addEventListener("click", () => {
 });
 
 
+function createCategory(event) {
+  event.preventDefault();
+
+  const spinItem = document.querySelector('.spin2');
+  spinItem.style.display = "inline-block";
+
+  const catName = document.getElementById('cat').value;
+
+  if (catName === '') {
+    Swal.fire({
+      icon: 'info',
+      text: 'All fields are required!',
+      confirmButtonColor: "#2D85DE"
+    });
+    return;
+  }
+  spinItem.style.display = "none";
+
+  const token = localStorage.getItem("key");
+
+  fetch("http://localhost:3001/amazon/document/api/categories", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-auth-token": token
+    },
+    body: JSON.stringify({
+      name: catName,
+    })
+  })
+    .then(res => res.json())
+    .then(result => {
+      console.log(result);
+      if (result._id) {
+        localStorage.setItem("catId", result._id)
+        Swal.fire({
+            icon: 'success',
+            title: "Created successfully",
+            text: `Added new Category to your store`,
+            confirmButtonColor: "#00A859"
+        })
+        setTimeout(() => {
+          location.reload();
+        }, 4000)
+      }
+    })
+    .catch(err => {
+      console.error("❌ Error creating product:", err);
+    });
+}
+
+// function createCategory(event) {
+//   event.preventDefault();
+
+//   const spinItem = document.querySelector('.spin2');
+//   if (spinItem) spinItem.style.display = "inline-block";
+
+//   const catName = document.getElementById('cat').value.trim();
+
+//   if (!catName) {
+//     Swal.fire({
+//       icon: 'info',
+//       text: 'All fields are required!',
+//       confirmButtonColor: "#2D85DE"
+//     });
+//     return;
+    
+//   }
+//   spinItem.style.display = "none";
+
+//   const token = localStorage.getItem("key");
+
+//   fetch("http://localhost:3001/amazon/document/api/categories", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//       "x-auth-token": token
+//     },
+//     body: JSON.stringify({ name: catName })
+//   })
+//     .then(res => res.json().then(data => ({ status: res.status, body: data })))
+//     .then(({ status, body }) => {
+//       console.log(body);
+
+//       if (status === 401 || status === 403) {
+//         Swal.fire({
+//           icon: 'error',
+//           title: "Unauthorized",
+//           text: body.message || "Only superadmins can create categories",
+//           confirmButtonColor: "#E63946"
+//         });
+//         return;
+//       }
+
+//       if (body._id) {
+//         localStorage.setItem("catId", body._id);
+//         Swal.fire({
+//           icon: 'success',
+//           title: "Created successfully",
+//           text: `Added new Category to your store`,
+//           confirmButtonColor: "#00A859"
+//         });
+//         setTimeout(() => location.reload(), 3000);
+//       }
+//     })
+//     .catch(err => {
+//       console.error("❌ Error creating category:", err);
+//       Swal.fire({
+//         icon: 'error',
+//         title: "Oops!",
+//         text: "Something went wrong while creating category.",
+//         confirmButtonColor: "#E63946"
+//       });
+//     })
+//     .finally(() => {
+//       if (spinItem) spinItem.style.display = "none";
+//     });
+// }
+
+
+
+async function loadCategories() {
+  try {
+    const response = await fetch("http://localhost:3001/amazon/document/api/categories"); 
+    if (!response.ok) throw new Error("Failed to fetch categories");
+
+    const categories = await response.json(); 
+    const select = document.getElementById("categorySelect");
+
+    // Clear old options (except first one)
+    select.innerHTML = `<option value="">-- Select a Category --</option>`;
+
+    categories.forEach(category => {
+      const option = document.createElement("option");
+      option.value = category._id;  // assuming your API returns MongoDB _id
+      option.textContent = category.name; // or category.title depending on schema
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error loading categories:", error);
+  }
+}
+document.addEventListener("DOMContentLoaded", loadCategories);
 

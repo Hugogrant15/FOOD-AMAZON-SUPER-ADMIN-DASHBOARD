@@ -8,6 +8,11 @@ body {
 }
 
 /* super admin  signin styling here  */
+.spin,
+.spin2 {
+  display: none;
+}
+
 .signheAD {
     font-family: "Archivo", sans-serif;
     font-size: 37px;
