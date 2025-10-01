@@ -99,62 +99,7 @@ function adminLogin(event) {
 }
 
 
-// function addProducts(event) {
-//   event.preventDefault();
 
-//   const productName = document.getElementById('prodName').value;
-//   const productImage = document.getElementById('productImage').value; // ✅ fixed typo
-//   const productDescription = document.getElementById('prodDecsription').value;
-//   const productPrice = document.getElementById('prodPrice').value;
-//   const productInStock = document.getElementById('prodStock').value;
-//   const productCategory = document.getElementById('categorySelect').value;
-
-//   if (!productName || !productImage || !productDescription || !productPrice || !productInStock || !productCategory) {
-//     Swal.fire({
-//       icon: 'info',
-//       text: 'All fields are required!',
-//       confirmButtonColor: "#2D85DE"
-//     });
-//     return;
-//   }
-
-//   const token = localStorage.getItem("key");
-
-//   fetch("http://localhost:3001/amazon/document/api/products", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       "Authorization": `Bearer ${token}`
-//     },
-//     body: JSON.stringify({
-//       name: productName,
-//       image: productImage,
-//       price: productPrice,
-//       description: productDescription,
-//       numberInStock: parseInt(productInStock, 10),
-//       categoryId: productCategory
-//     })
-//   })
-//     .then(res => res.json())
-//     .then(result => {
-//       console.log(result);
-//       if (result._id) {
-//         localStorage.setItem("prodId", result._id)
-//         Swal.fire({
-//             icon: 'success',
-//             title: "Import Successful",
-//             text: `Added new products to your store`,
-//             confirmButtonColor: "#00A859"
-//         })
-//         setTimeout(() => {
-//           location.reload();
-//         }, 4000)
-//       }
-//     })
-//     .catch(err => {
-//       console.error("❌ Error creating product:", err);
-//     });
-// }
 
 function addProducts(event) {
   event.preventDefault();
@@ -290,8 +235,9 @@ function createCategory(event) {
   spinItem.style.display = "inline-block";
 
   const catName = document.getElementById('cat').value;
+  const catImg = document.getElementById('catImg').value;
 
-  if (catName === '') {
+  if (catName === '' || catImg === '') {
     Swal.fire({
       icon: 'info',
       text: 'All fields are required!',
@@ -307,10 +253,11 @@ function createCategory(event) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-auth-token": token
+      "Authorization": `Bearer ${token}`
     },
     body: JSON.stringify({
       name: catName,
+      image: catImg
     })
   })
     .then(res => res.json())
@@ -359,79 +306,6 @@ function updateCategory(id, newName) {
       console.error("❌ Error updating category:", err);
     });
 }
-
-
-
-
-
-// function createCategory(event) {
-//   event.preventDefault();
-
-//   const spinItem = document.querySelector('.spin2');
-//   if (spinItem) spinItem.style.display = "inline-block";
-
-//   const catName = document.getElementById('cat').value.trim();
-
-//   if (!catName) {
-//     Swal.fire({
-//       icon: 'info',
-//       text: 'All fields are required!',
-//       confirmButtonColor: "#2D85DE"
-//     });
-//     return;
-    
-//   }
-//   spinItem.style.display = "none";
-
-//   const token = localStorage.getItem("key");
-
-//   fetch("http://localhost:3001/amazon/document/api/categories", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       "x-auth-token": token
-//     },
-//     body: JSON.stringify({ name: catName })
-//   })
-//     .then(res => res.json().then(data => ({ status: res.status, body: data })))
-//     .then(({ status, body }) => {
-//       console.log(body);
-
-//       if (status === 401 || status === 403) {
-//         Swal.fire({
-//           icon: 'error',
-//           title: "Unauthorized",
-//           text: body.message || "Only superadmins can create categories",
-//           confirmButtonColor: "#E63946"
-//         });
-//         return;
-//       }
-
-//       if (body._id) {
-//         localStorage.setItem("catId", body._id);
-//         Swal.fire({
-//           icon: 'success',
-//           title: "Created successfully",
-//           text: `Added new Category to your store`,
-//           confirmButtonColor: "#00A859"
-//         });
-//         setTimeout(() => location.reload(), 3000);
-//       }
-//     })
-//     .catch(err => {
-//       console.error("❌ Error creating category:", err);
-//       Swal.fire({
-//         icon: 'error',
-//         title: "Oops!",
-//         text: "Something went wrong while creating category.",
-//         confirmButtonColor: "#E63946"
-//       });
-//     })
-//     .finally(() => {
-//       if (spinItem) spinItem.style.display = "none";
-//     });
-// }
-
 
 
 async function loadCategories() {
@@ -496,113 +370,3 @@ function logOut() {
 
 
 
-  // Bootstrap modal instances
-  // const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
-  // const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
-
-  // // Handle Update button click
-  // document.addEventListener("click", (e) => {
-  //   if (e.target.classList.contains("update-btn")) {
-  //     const id = e.target.dataset.id;
-  //     const product = products.find(p => p._id === id);
-
-  //     if (!product) return;
-
-  //     // Prefill form
-  //     document.getElementById("updateProductId").value = product._id;
-  //     document.getElementById("updateName").value = product.name;
-  //     document.getElementById("updatePrice").value = product.price;
-  //     document.getElementById("updateStock").value = product.numberInStock;
-  //     document.getElementById("updateCategory").value = product.category?.name || "";
-  //     document.getElementById("updateDescription").value = product.description;
-  //     document.getElementById("updateImages").value = product.image?.join(", ") || "";
-  //     document.getElementById("updateVariety").value = product.variety?.join(", ") || "";
-  //     document.getElementById("updateBenefits").value = product.benefits || "";
-  //     document.getElementById("updateIngredients").value = product.ingredients?.join(", ") || "";
-
-  //     updateModal.show();
-  //   }
-  // });
-
-  // // Submit Update form
-  // document.getElementById("updateForm").addEventListener("submit", async (e) => {
-  //   e.preventDefault();
-  //   const id = document.getElementById("updateProductId").value;
-  //   const token = localStorage.getItem("key");
-
-  //   try {
-  //     const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": `Bearer ${token}`
-  //       },
-  //       body: JSON.stringify({
-  //         name: document.getElementById("updateName").value,
-  //         price: parseFloat(document.getElementById("updatePrice").value),
-  //         numberInStock: parseInt(document.getElementById("updateStock").value, 10),
-  //         description: document.getElementById("updateDescription").value,
-  //         category: document.getElementById("updateCategory").value,
-  //         image: document.getElementById("updateImages").value.split(",").map(i => i.trim()).filter(i => i),
-  //         variety: document.getElementById("updateVariety").value.split(",").map(v => v.trim()).filter(v => v),
-  //         benefits: document.getElementById("updateBenefits").value,
-  //         ingredients: document.getElementById("updateIngredients").value.split(",").map(i => i.trim()).filter(i => i)
-  //       })
-  //     });
-  //     const result = await res.json();
-
-  //     if (result._id) {
-  //       Swal.fire({ icon: "success", text: "Product updated successfully!" });
-  //       updateModal.hide();
-  //       fetchProducts(); // refresh table
-  //     } else {
-  //       Swal.fire({ icon: "error", text: result.message || "Failed to update product" });
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     Swal.fire({ icon: "error", text: "Server error during update" });
-  //   }
-  // });
-
-  // // Handle Delete button click
-  // document.addEventListener("click", (e) => {
-  //   if (e.target.classList.contains("delete-btn")) {
-  //     const id = e.target.dataset.id;
-  //     const product = products.find(p => p._id === id);
-
-  //     if (!product) return;
-
-  //     document.getElementById("deleteProductId").value = product._id;
-  //     document.getElementById("deleteMessage").innerText =
-  //       `Are you sure you want to delete "${product.name}"?`;
-
-  //     deleteModal.show();
-  //   }
-  // });
-
-  // // Confirm Delete
-  // document.getElementById("confirmDelete").addEventListener("click", async () => {
-  //   const id = document.getElementById("deleteProductId").value;
-  //   const token = localStorage.getItem("key");
-
-  //   try {
-  //     const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-  //       method: "DELETE",
-  //       headers: { "Authorization": `Bearer ${token}` }
-  //     });
-  //     const result = await res.json();
-
-  //     if (result.success) {
-  //       Swal.fire({ icon: "success", text: "Product deleted successfully!" });
-  //       deleteModal.hide();
-  //       products = products.filter(p => p._id !== id);
-  //       filteredProducts = filteredProducts.filter(p => p._id !== id);
-  //       renderTable();
-  //     } else {
-  //       Swal.fire({ icon: "error", text: result.message || "Failed to delete product" });
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     Swal.fire({ icon: "error", text: "Server error during deletion" });
-  //   }
-  // });

@@ -223,16 +223,12 @@
                             <label for="exampleFormControlInput1" class="form-label">Category Name</label>
                             <input type="email" class="form-control" id="cat" placeholder="">
                         </div>
-
                         <div class="mb-3">
-                            <label for="threshold" class="form-label "> Add Products</label>
-                            <select class="form-select" aria-label="Default select example">
-                            <option selected>Choose a Product</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                            </select>
+                            <label for="exampleFormControlInput1" class="form-label">image</label>
+                            <input type="email" class="form-control" id="catImg" placeholder="">
                         </div>
+
+                        
                     </div>
                     <div class="modal-footer">
                         <button type="button" class=" btn-success" style="border: none; color: #00A859; background: transparent;"  data-bs-dismiss="modal">Cancel</button>
@@ -247,43 +243,60 @@
                 </div>
                 </div>
 
-                <!-- Button UPDATE CATEGORY modal -->
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Update category
+                <!-- Manage Categories Button -->
+                
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#updateCategoryModal">
+                    Manage Categories
                 </button>
-
-                <!-- UPDATE CATEGORY Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                
+                <!-- Update Category Modal -->
+                <div class="modal fade" id="updateCategoryModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Update Category</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <form id="updateCategoryForm">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Update Category</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                        <div class="mb-3">
+                            <label>Select Category</label>
+                            <select id="updateCategorySelect" class="form-select"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Category Name</label>
+                            <input type="text" id="updateCategoryName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Category Image URL</label>
+                            <input type="text" id="updateCategoryImage" class="form-control" required>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Update</button>
+                        <button type="button" id="deleteCategoryBtn" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Delete Category</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput1" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="updateCat" placeholder="enter new category name">
-
-                            <div class="mb-3">
-                            <label for="threshold" class="form-label "> Add Products</label>
-                            <select class="form-select" aria-label="Default select example">
-                            <option selected>Choose a Product</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                            </select>
-                        </div>
-                        </div>
+                        <p id="deleteCategoryMessage"></p>
+                        <input type="hidden" id="deleteCategoryId">
                     </div>
                     <div class="modal-footer">
-                       <button type="button" class=" btn-success" style="border: none; color: #00A859; background: transparent;"  data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success" onclick="updateCategory(event)">
-                            <div class="spinner-border spinner-border-sm spin" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                            </div>
-                            update Category
-                        </button> 
+                        <button type="button" id="confirmDeleteCategory" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                     </div>
                 </div>
@@ -291,7 +304,7 @@
             </div>
       </div>
 
-        <div class="d-flex align-items-center justify-content-between mt-3">
+        <!-- <div class="d-flex align-items-center justify-content-between mt-3">
             <div class=" d-flex align-items-center ">
                 <select class="form-select selectINPUT" aria-label="Default select example">
                     <option selected>Filter</option>
@@ -309,41 +322,211 @@
                 <button class="orderBtNN"><i class="fa-solid fa-pen-to-square"></i></button>
                 <button class="orderBtNN ms-2"><i class="fa-solid fa-trash"></i></button>
             </div>      
+        </div> -->
+        <div class="row mt-5" id="categoriesContainer">
+            <!-- <div class="col-sm-12 col-md-6 col-lg-4">
+                <img src="./images/image (8).png" class="w-100" alt="">
+                <div class="ms-3">
+                    <p>Organic Almond Delight</p>
+                    <p>24 items</p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <img src="./images/Bitmap (1).png" class="w-100" alt="">
+                <div class="ms-3">
+                    <p>Organic Almond Delight</p>
+                    <p>24 items</p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <img src="./images/image (9).png" class="w-100" alt="">
+                <div class="ms-3">
+                    <p>Organic Almond Delight</p>
+                    <p>24 items</p>
+                </div>
+            </div> -->
         </div>
 
-       <div class="table-responsive mt-3">
-       <table class="table DStable1">
-        <thead>
-            <tr>
-                <th>
-                    <input type="checkbox">
-                    <span>Order</span>
-                </th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Payment Status</th>
-                <th>Order Status</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <input type="checkbox">
-                    <span>#12512B</span>
-                </td>
-                <td>May 5, 4:20 PM</td>
-                <td>Tom Anderson</td>
-                <td>Paid</td>
-                <td>Ready</td>
-                <td>$49.90</td>
-            </tr>
-        </tbody>
-       </table>
-       </div>
     </div>
   </div>
 </div>
+
+<script>
+async function loadCategories() {
+  try {
+    const categoriesRes = await fetch("http://localhost:3001/amazon/document/api/categories");
+    const categories = await categoriesRes.json();
+    const productsRes = await fetch("http://localhost:3001/amazon/document/api/products");
+    const products = await productsRes.json();
+    // Count products per category
+    const productCountMap = {};
+    products.forEach(p => {
+      let catId = null;
+      // case 1: categoryId field
+      if (p.categoryId) catId = String(p.categoryId);
+      // case 2: populated category object
+      if (p.category && p.category._id) catId = String(p.category._id);
+      if (catId) {
+        productCountMap[catId] = (productCountMap[catId] || 0) + 1;
+      }
+    });
+    // Render categories
+    const container = document.getElementById("categoriesContainer");
+    container.innerHTML = "";
+    categories.forEach(cat => {
+      const count = productCountMap[String(cat._id)] || 0;
+      const card = `
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="image-wrap ">
+            <img src="${cat.image}" class="card-img-top" alt="${cat.name}">
+          </div>
+          <div class="card-body mt-3">
+              <h5 class="card-title fw-bold">${cat.name}</h5>
+              <p class="text-muted mt-3">${count} Product${count !== 1 ? "s" : ""}</p>
+            </div>
+        </div>
+      `;
+      container.insertAdjacentHTML("beforeend", card);
+    });
+  } catch (err) {
+    console.error("Error loading categories:", err);
+  }
+}
+document.addEventListener("DOMContentLoaded", loadCategories);
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const categorySelect = document.getElementById("updateCategorySelect");
+  const nameInput = document.getElementById("updateCategoryName");
+  const imageInput = document.getElementById("updateCategoryImage");
+  const deleteCategoryBtn = document.getElementById("deleteCategoryBtn");
+  const deleteCategoryModal = new bootstrap.Modal(document.getElementById("deleteCategoryModal"));
+  let categories = [];
+
+  // Reuse loadCategories()
+  async function loadCategoriesDropdown() {
+    await loadCategories(); // your existing function
+    const token = localStorage.getItem("key");
+    try {
+      const res = await fetch("http://localhost:3001/amazon/document/api/categories", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      categories = await res.json();
+      categorySelect.innerHTML = categories.map(c => `<option value="${c._id}">${c.name}</option>`).join("");
+      if (categories.length) {
+        const first = categories[0];
+        nameInput.value = first.name;
+        imageInput.value = first.image || "";
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({ icon: "error", text: "Failed to load categories" });
+    }
+  }
+
+  // Change handler for dropdown
+  categorySelect.addEventListener("change", () => {
+    const selected = categories.find(c => c._id === categorySelect.value);
+    if (selected) {
+      nameInput.value = selected.name;
+      imageInput.value = selected.image || "";
+    }
+  });
+
+  // Update category
+  document.getElementById("updateCategoryForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = categorySelect.value;
+    const token = localStorage.getItem("key");
+    try {
+      const res = await fetch(`http://localhost:3001/amazon/document/api/categories/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: nameInput.value,
+          image: imageInput.value
+        })
+      });
+      const result = await res.json();
+      if (res.ok) {
+       if (res.ok) {
+  Swal.fire({ 
+    icon: "success", 
+    text: "Category updated!",
+    timer: 1500,
+    showConfirmButton: false 
+  });
+
+  // Option A: Live refresh without reloading page
+  // await loadCategoriesDropdown();
+  // if (typeof fetchProducts === "function") fetchProducts();
+  // bootstrap.Modal.getInstance(document.getElementById("updateCategoryModal")).hide();
+
+  // Option B: Full page reload
+  setTimeout(() => {
+    location.reload();
+  }, 1500);
+}
+
+        
+      } else {
+        Swal.fire({ icon: "error", text: result.message || "Update failed" });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({ icon: "error", text: "Server error" });
+    }
+  });
+
+  // Open delete confirmation modal
+  deleteCategoryBtn.addEventListener("click", () => {
+    const selected = categories.find(c => c._id === categorySelect.value);
+    if (!selected) return;
+    document.getElementById("deleteCategoryId").value = selected._id;
+    document.getElementById("deleteCategoryMessage").innerText = `Are you sure you want to delete "${selected.name}"?`;
+    deleteCategoryModal.show();
+  });
+
+  // Confirm delete
+  document.getElementById("confirmDeleteCategory").addEventListener("click", async () => {
+    const id = document.getElementById("deleteCategoryId").value;
+    const token = localStorage.getItem("key");
+    try {
+      const res = await fetch(`http://localhost:3001/amazon/document/api/categories/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (res.ok) {
+        Swal.fire({ icon: "success", text: "Category deleted!" });
+        deleteCategoryModal.hide();
+        await loadCategoriesDropdown();
+      } else {
+        Swal.fire({ icon: "error", text: result.message || "Delete failed" });
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire({ icon: "error", text: "Server error" });
+    }
+  });
+
+  // Load on open
+  document.getElementById("updateCategoryModal").addEventListener("show.bs.modal", loadCategoriesDropdown);
+});
+</script>
+
+
+
+
+
+
+
+
 
 
 
