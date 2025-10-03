@@ -15,1007 +15,888 @@
   </style>
 </head>
 <body>
-    <!-- Top Navbar -->
-  <nav class="navbar navbar-expand-lg bg-white navrelative ">
+     <!-- Desktop Navbar (visible on md and up) -->
+      <nav class="navbar navbar-expand-lg bg-white d-none d-md-flex fixed-top">
         <div class="container-fluid">
-            <img src="./images/Foodies logo without Banner 1.png" style="width: 50px; height: 50px" alt="">
-            <span class="Navlogo1">360 Organic Foodie</span>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
-            <ul class="navbar-nav me-auto ">
-                <div class="search-container ms-3">
-                    <i class="fa fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="Search..." />
+          <img src="./images/Foodies logo without Banner 1.png" style="width: 50px; height: 50px" alt="">
+          <span class="Navlogo1">360 Organic Foodie</span>
+
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <div class="input-group Navborder">
+                  <button class="btn btn-outline-secondary border-0" type="button">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <input type="text" class="form-control border-0" placeholder="Search here...">
                 </div>
-
-
-                </li>
+              </li>
             </ul>
+
             <form class="d-flex">
-                <div class="d-flex align-items-center">
-                    <button class="text-reset me-3 btnSharp" href="#">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    </button>
-
-                    <button class="text-reset me-4 btnSharp" href="#" onclick="toggleNotification(event)" >
-                    <i class="fas fa-bell" ></i>
-                    </button>
-                    <img class="me-3" src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png" alt="">
-                    <span class="CustomP-14-400 me-3 text-dark fw-semibold">Michael Owen</span>
-                    <select class="form" name="" id="" style="border: none;"></select>
-                </div>
-            </form>
-
-             <!-- notification pop-up  -->
-            <div class="col-md-4" id="notificationPopUp">
-                <div class="card p-3">
-                  <div class="d-flex align-items-center justify-content-between mb-2 ">
-                      <h6>New Customers</h6>
-                      <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-                  </div>
-                  <hr>
-                  <!-- first customer -->
-                  <div class="d-flex align-items-center justify-content-between">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List.png" alt="">
-                          <div class="ms-3">
-                              <small>Domenica @domenica</small><br>
-                              <small>Comment on Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>1h</small>
-                  </div>
-                  <!-- second customer -->
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List (1).png" alt="">
-                          <div class="ms-3">
-                              <small>Mahfuzul @mahfuzul</small><br>
-                              Repled to your comment on reforest..</small>
-                          </div>
-                          
-                      </div>
-                      <small>1d</small>
-                      <!-- <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i> -->
-                  </div>
-
-                  <!-- third customer  -->
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List (2).png" alt="">
-                          <div class="ms-3">
-                              <small>Laurel @laurel</small><br>
-                              <small>Purchased a Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>2d</small>
-                  </div>
-                  <!-- fourth customer -->
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/happy-smiling-handsome-man-against-blue-background.png" alt="">
-                          <div class="ms-3">
-                              <small>Rosina @rosina</small><br>
-                              <small>Just made a purchase of 5 Coconut<br> Crunches Bites.</small>
-                          </div>
-                      </div>
-                      <small>4h</small>
-                  </div>
-                  <!-- fifth customer -->
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List.png" alt="">
-                          <div class="ms-3">
-                              <small>Domenica @domenica</small><br>
-                              <small>Comment on Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>1h</small>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List.png" alt="">
-                          <div class="ms-3">
-                              <small>Domenica @domenica</small><br>
-                              <small>Comment on Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>1h</small>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List.png" alt="">
-                          <div class="ms-3">
-                              <small>Domenica @domenica</small><br>
-                              <small>Comment on Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>1h</small>
-                  </div>
-                  <div class="d-flex align-items-center justify-content-between mt-3">
-                      <div class="d-flex align-items-center">
-                          <img src="./images/New Customers List.png" alt="">
-                          <div class="ms-3">
-                              <small>Domenica @domenica</small><br>
-                              <small>Comment on Smiles Product</small>
-                          </div>
-                          
-                      </div>
-                      <small>1h</small>
-                  </div>
-                </div>
+              <div class="d-flex align-items-center">
+                <button class="text-reset me-3 btnSharp"><i class="fa-solid fa-cart-shopping"></i></button>
+                <button class="text-reset me-4 btnSharp" onclick="toggleNotification(event)">
+                  <i class="fas fa-bell"></i>
+                </button>
+                <img class="me-3 rounded-circle" src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png" alt="" width="40" height="40">
+                <span class="CustomP-14-400 me-3 text-dark fw-semibold">Michael Owen</span>
               </div>
+            </form>
+            <!-- notification pop-up  -->
+                  <div class="col-md-4" id="notificationPopUp">
+                      <div class="card p-3">
+                        <div class="d-flex align-items-center justify-content-between mb-2 ">
+                            <h6>New Customers</h6>
+                            <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
+                        </div>
+                        <hr>
+                        <!-- first customer -->
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List.png" alt="">
+                                <div class="ms-3">
+                                    <small>Domenica @domenica</small><br>
+                                    <small>Comment on Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>1h</small>
+                        </div>
+                        <!-- second customer -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List (1).png" alt="">
+                                <div class="ms-3">
+                                    <small>Mahfuzul @mahfuzul</small><br>
+                                    Repled to your comment on reforest..</small>
+                                </div>
+                                
+                            </div>
+                            <small>1d</small>
+                            <!-- <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i> -->
+                        </div>
+
+                        <!-- third customer  -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List (2).png" alt="">
+                                <div class="ms-3">
+                                    <small>Laurel @laurel</small><br>
+                                    <small>Purchased a Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>2d</small>
+                        </div>
+                        <!-- fourth customer -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/happy-smiling-handsome-man-against-blue-background.png" alt="">
+                                <div class="ms-3">
+                                    <small>Rosina @rosina</small><br>
+                                    <small>Just made a purchase of 5 Coconut<br> Crunches Bites.</small>
+                                </div>
+                            </div>
+                            <small>4h</small>
+                        </div>
+                        <!-- fifth customer -->
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List.png" alt="">
+                                <div class="ms-3">
+                                    <small>Domenica @domenica</small><br>
+                                    <small>Comment on Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>1h</small>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List.png" alt="">
+                                <div class="ms-3">
+                                    <small>Domenica @domenica</small><br>
+                                    <small>Comment on Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>1h</small>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List.png" alt="">
+                                <div class="ms-3">
+                                    <small>Domenica @domenica</small><br>
+                                    <small>Comment on Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>1h</small>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <div class="d-flex align-items-center">
+                                <img src="./images/New Customers List.png" alt="">
+                                <div class="ms-3">
+                                    <small>Domenica @domenica</small><br>
+                                    <small>Comment on Smiles Product</small>
+                                </div>
+                                
+                            </div>
+                            <small>1h</small>
+                        </div>
+                      </div>
+                    </div>
           </div>
         </div>
-  </nav>
+      </nav>
 
+      <!-- Mobile Navbar (visible only on sm) -->
+      <nav class="navbar bg-white px-3 d-flex justify-content-between align-items-center d-flex d-md-none">
+        <!-- Left side -->
+        <div class="d-flex align-items-center">
+          <!-- Hamburger -->
+          <button class="btn p-0 me-3" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+            <i class="fa-solid fa-bars fs-4"></i>
+          </button>
 
-<div class="container-fluid ">
-  <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-2 sidebar ">
-     <ul class="listItem ">
-            <li">
-             <a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i></span><span>Dashboard</span></a>
-            </li>
-            
-            <li>
-               <a href="./orders.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Order</span></a>
-              </li>
-            <li>
-            <li>
-               <a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a>
-              </li>
-            <li>
-            <li>
-               <a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a>
-              </li>
-            <li>
-             <a href="./customers.html" style="text-decoration: none; color:#8D98AF;"><i class="fa-solid fa-user me-3"></i></span><span>Customers</span></a>
-            </li>
-            <li>
-                <a href="./inventory.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a>
-            </li>
-            <li>
-                <a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a>
-            </li>
+          <!-- Search -->
+          <button class="btn p-0">
+            <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
+          </button>
+        </div>
+
+        <!-- Right side -->
+        <div class="d-flex align-items-center">
+          <!-- Bell -->
+          <button class="btn p-0 me-3 position-relative">
+            <i class="fa-regular fa-bell fs-4 text-muted"></i>
+            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle"></span>
+          </button>
+
+          <!-- Profile -->
+          <img src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png"
+              class="rounded-circle"
+              alt="Profile" width="40" height="40">
+        </div>
+      </nav>
+
+       <!-- Sidebar (offcanvas for mobile) -->
+      <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarMenu">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+          <ul class="listItem">
+            <li><a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i>Dashboard</a></li>
+            <li><a href="./orders.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-cart-shopping me-3"></i>Orders</a></li>
+            <li><a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a></li>
+            <li><a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a></li>
+            <li><a href="" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
+            <li><a href="./inventory.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a></li>
             <hr>
-            <li class="">
-                <a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a>
-            </li>
-            <li class="">
-                <a href="" style="text-decoration: none; color: #8D98AF;" ><i class="fa-solid fa-gear me-3"></i></span><span>settings</span></a>
-            </li>
+            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a></li>
+            <li><a href="#" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-gear me-3"></i>Settings</a></li>
+            <li><a  onclick="logOut()" style="cursor:pointer; text-decoration: none; color: #8D98AF"><i class="fa-solid fa-arrow-right-from-bracket me-3"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+
+
+    <div class="container-fluid ">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar d-lg-block d-none">
+            <ul class="listItem ">
+                    <li">
+                    <a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i></span><span>Dashboard</span></a>
+                    </li>
+                    
+                    <li>
+                    <a href="./orders.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Order</span></a>
+                    </li>
+                    <li>
+                    <li>
+                    <a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a>
+                    </li>
+                    <li>
+                    <li>
+                    <a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a>
+                    </li>
+                    <li>
+                    <a href="./customers.html" style="text-decoration: none; color:#8D98AF;"><i class="fa-solid fa-user me-3"></i></span><span>Customers</span></a>
+                    </li>
+                    <li>
+                        <a href="./inventory.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a>
+                    </li>
+                    <li>
+                        <a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a>
+                    </li>
+                    <hr>
+                    <li class="">
+                        <a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a>
+                    </li>
+                    <li class="">
+                        <a href="" style="text-decoration: none; color: #8D98AF;" ><i class="fa-solid fa-gear me-3"></i></span><span>settings</span></a>
+                    </li>
+                    
+
+                    <button class="Dashbutton mt-5 " style="cursor: pointer;" logOut()>
+                    <a  style="text-decoration: none; color:#8D98AF ; "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
+                    </li>
+            </ul>
+            </div>
+
+            <!-- Main Content -->
             
-
-            <button class="Dashbutton mt-5 " style="cursor: pointer;">
-             <a onclick="logout()" style="text-decoration: none; color:#8D98AF ; "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
-            </li>
-       </ul>
-    </div>
-
-    <!-- Main Content -->
-     
-    <div class="col-md-10 p-4 shadow">
-        <div class="d-flex align-items-center justify-content-between">
-            <h3>Products</h3>
-            <div class="div">
-                <button class="btn btn-outline-success">Export</button>
-                <!-- modal to add products starts here -->
-                <div class="modal modal-xl " id="exampleModalToggle" aria-hidden="" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="row mt-5 p-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h3>Products</h3>
-                                    <div class="div">
-                                        <button class="btn btn-outline-success">Cancel</button>
-                                         <button class="btn btn-success" onclick="addProducts(event)">Save</button>
-                                    </div>
-                                </div>
-                                <div class="col-md-8 mt-3">
-                                    <h4>Information</h4>
-                                    <form action="">
-                                        <div class="mb-3">
-                                            <label for="productName" class="form-label">Product Name</label>
-                                            <input type="text" class="form-control" id="prodName" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="buyingPrice" class="form-label">product Description</label>
-                                            <div class="form-floating">
-                                                <textarea class="form-control" placeholder="Leave a comment here" id="prodDecsription" style="height: 100px"></textarea>
-                                                <label for="floatingTextarea2">Product description</label>
-                                            </div>
-                                        </div>
-                                        <hr class="mt-4" >
-                                        <div class="mb-3">
-                                            <label for="productImage" class="form-label fw-bold">Images</label>
-                                            <div class="upload-box" onclick="document.getElementById('productImage').click()">
-                                            <input type="text" id="productImage" accept="image/*">
-                                            <div>
-                                                <button class="btn btn-outline-success mb-2">Add File</button>
-                                                <p class="mb-0">Or drag and drop files</p>
-                                            </div>
-                                            </div>
-                                        
-                                        </div>
-                                        <hr class="mt-4" >
-
-                                        <div class="row mt-4">
-                                            <label for="threshold" class="form-label"> price</label>
-
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3">
-                                                    <label for="threshold" class="form-label"> Product price</label>
-                                                    <input type="number" class="form-control" id="prodPrice" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="threshold" class="form-label"> Number in Stock</label>
-                                                    <input type="number" class="form-control" id="prodStock" required>
-                                                </div>
-
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
-                                                    <label class="form-check-label" for="switchCheckChecked">Add tax for this product</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-4">
-                                                <div class="">
-                                                    <select id="categorySelect" class="form-select ">
-                                                    <option value="" >-- Select a Category --</option>
-                                                    </select>
-                                                <!-- <label for="threshold" class="form-label">Discount price</label>
-                                                <input type="number" class="form-control" id="threshold" required> -->
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr class="mt-4">
-
-                                        <div class="row mt-4">
-                                            <p>Option 1</p>
-                                            <label for="threshold" class="form-label"> Different Options</label>
-
-                                                <div class="form-check form-switch ms-2">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
-                                                    <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
-                                                </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3">
-                                                    <label for="threshold" class="form-label "> Size</label>
-                                                    <select class="form-select" aria-label="Default select example">
-                                                    <option selected>Size</option>
-                                                    <option value="1">One</option>
-                                                    <option value="2">Two</option>
-                                                    <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-
-                                                <button class="btn" style="border: none; color:#00A859; font-size: 16px;" >Add more</button>
-                                            </div>
-                                            
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3">
-                                                <label for="threshold" class="form-label">Value</label>
-                                                <input type="number" class="form-control" id="threshold" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr class="mt-4">
-
-                                        <div class="row mt-4">
-                                            <p>Shipping</p>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3">
-                                                    <label for="threshold" class="form-label">Weight</label>
-                                                    <input type="number" class="form-control" id="threshold" required>
-                                                    <label for="threshold" class="form-label">ingredients</label>
-                                                    <input type="text" class="form-control" id="ingredients" required>
-                                                    <label for="threshold" class="form-label">variety</label>
-                                                    <input type="text" class="form-control" id="variety" required>
-                                                    <label for="threshold" class="form-label">benefits</label>
-                                                    <input type="tex" class="form-control" id="benefits" required>
-                                                </div>
-                                                <div class="form-check form-switch ms-2">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
-                                                    <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                
-                                                <div class="mb-3">
-                                                    <label for="threshold" class="form-label "> Country</label>
-                                                    <select class="form-select" aria-label="Default select example">
-                                                    <option selected>Size</option>
-                                                    <option value="1">One</option>
-                                                    <option value="2">Two</option>
-                                                    <option value="3">Three</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>                
-                                    </form>
-                                </div>
-
-                                <div class="col-md-4 mt-3 ">
-                                    <div class="div bg-white p-3">
-                                        <p>Catregories</p>
-                                        <form action="">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                                                <label class="form-check-label" for="checkDefault">
-                                                    Ogganic
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                                                <label class="form-check-label" for="checkDefault">
-                                                Snacks
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                                                <label class="form-check-label" for="checkDefault">
-                                                    Crunches
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                                                <label class="form-check-label" for="checkDefault">
-                                                    Coconut
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                                                <label class="form-check-label" for="checkDefault">
-                                                    natural
-                                                </label>
-                                            </div>
-                                            <div class="div text-end">
+            <div class="col-md-10 p-4 shadow">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3>Products</h3>
+                    <div class="div">
+                        <button class="btn btn-outline-success">Export</button>
+                        <!-- modal to add products starts here -->
+                        <div class="modal modal-xl " id="exampleModalToggle" aria-hidden="" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="row mt-5 p-3">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <h3>Products</h3>
+                                            <div class="div">
                                                 <button class="btn btn-outline-success">Cancel</button>
-                                                <button class="btn btn-success">Save</button>
-                                            </div>
-                                        </form>
-                                        <button style="color: #00A859; font-size: 16px; border: none; background: transparent;">create new</button>
-                                    </div>
-
-                                    <div class="mt-5 bg-white p-3">
-                                        <p>Tags</p>
-                                        <form action="">
-                                            <div class="mt-3">
-                                                <label for="productName" class="form-label">Add Tags</label>
-                                                <input type="text" class="form-control" placeholder="Leave a comment here" id="productName" required>
-                                            </div> 
-                                            <div class="mt-2">
-                                            <button class="PRODbTNn">Organic  <i class="fa-solid fa-x ms-2"></i></button>
-                                            <button class="PRODbTNn">Top Snacks <i class="fa-solid fa-x ms-2"></i></button>
-                                            </div> 
-                                            <button class="PRODbTNn mt-2">No preservatives <i class="fa-solid fa-x ms-2"></i></button>
-                                            
-                                        </form>
-                                    </div>
-
-                                    <div class="mt-5 bg-white p-3">
-                                        <p>SEO Settings</p>
-                                        <form action="">
-                                            <div class="">
-                                                <label for="productName" class="form-label">Title</label>
-                                                <input type="text" class="form-control" placeholder="Leave a comment here" id="productName" required>
-                                            </div> 
-                                        <div class="mb-3">
-                                            <label for="buyingPrice" class="form-label">Description</label>
-                                            <div class="form-floating">
-                                                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                                                <label for="floatingTextarea2">Product description</label>
+                                                <button class="btn btn-success" onclick="addProducts(event)">Save</button>
                                             </div>
                                         </div>
-                                            
-                                        </form>
+                                        <div class="col-md-8 mt-3">
+                                            <h4>Information</h4>
+                                            <form action="">
+                                                <div class="mb-3">
+                                                    <label for="productName" class="form-label">Product Name</label>
+                                                    <input type="text" class="form-control" id="prodName" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="buyingPrice" class="form-label">product Description</label>
+                                                    <div class="form-floating">
+                                                        <textarea class="form-control" placeholder="Leave a comment here" id="prodDecsription" style="height: 100px"></textarea>
+                                                        <label for="floatingTextarea2">Product description</label>
+                                                    </div>
+                                                </div>
+                                                <hr class="mt-4" >
+                                                <div class="mb-3">
+                                                    <label for="productImage" class="form-label fw-bold">Images</label>
+                                                    <div class="upload-box" onclick="document.getElementById('productImage').click()">
+                                                    <input type="text" id="productImage" accept="image/*">
+                                                    <div>
+                                                        <button class="btn btn-outline-success mb-2">Add File</button>
+                                                        <p class="mb-0">Or drag and drop files</p>
+                                                    </div>
+                                                    </div>
+                                                
+                                                </div>
+                                                <hr class="mt-4" >
+
+                                                <div class="row mt-4">
+                                                    <label for="threshold" class="form-label"> price</label>
+
+                                                    <div class="col-md-6 mt-3">
+                                                        <div class="mb-3">
+                                                            <label for="threshold" class="form-label"> Product price</label>
+                                                            <input type="number" class="form-control" id="prodPrice" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="threshold" class="form-label"> Number in Stock</label>
+                                                            <input type="number" class="form-control" id="prodStock" required>
+                                                        </div>
+
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                                            <label class="form-check-label" for="switchCheckChecked">Add tax for this product</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mt-4">
+                                                        <div class="">
+                                                            <select id="categorySelect" class="form-select ">
+                                                            <option value="" >-- Select a Category --</option>
+                                                            </select>
+                                                        <!-- <label for="threshold" class="form-label">Discount price</label>
+                                                        <input type="number" class="form-control" id="threshold" required> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="mt-4">
+
+                                                <div class="row mt-4">
+                                                    <p>Option 1</p>
+                                                    <label for="threshold" class="form-label"> Different Options</label>
+
+                                                        <div class="form-check form-switch ms-2">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                                            <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
+                                                        </div>
+                                                    <div class="col-md-6 mt-3">
+                                                        <div class="mb-3">
+                                                            <label for="threshold" class="form-label "> Size</label>
+                                                            <select class="form-select" aria-label="Default select example">
+                                                            <option selected>Size</option>
+                                                            <option value="1">One</option>
+                                                            <option value="2">Two</option>
+                                                            <option value="3">Three</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <button class="btn" style="border: none; color:#00A859; font-size: 16px;" >Add more</button>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6 mt-3">
+                                                        <div class="mb-3">
+                                                        <label for="threshold" class="form-label">Value</label>
+                                                        <input type="number" class="form-control" id="threshold" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="mt-4">
+
+                                                <div class="row mt-4">
+                                                    <p>Shipping</p>
+                                                    <div class="col-md-6 mt-3">
+                                                        <div class="mb-3">
+                                                            <label for="threshold" class="form-label">Weight</label>
+                                                            <input type="number" class="form-control" id="threshold" required>
+                                                            <label for="threshold" class="form-label">ingredients</label>
+                                                            <input type="text" class="form-control" id="ingredients" required>
+                                                            <label for="threshold" class="form-label">variety</label>
+                                                            <input type="text" class="form-control" id="variety" required>
+                                                            <label for="threshold" class="form-label">benefits</label>
+                                                            <input type="tex" class="form-control" id="benefits" required>
+                                                        </div>
+                                                        <div class="form-check form-switch ms-2">
+                                                            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                                            <label class="form-check-label" for="switchCheckChecked">This product has multiple options</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mt-3">
+                                                        
+                                                        <div class="mb-3">
+                                                            <label for="threshold" class="form-label "> Country</label>
+                                                            <select class="form-select" aria-label="Default select example">
+                                                            <option selected>Size</option>
+                                                            <option value="1">One</option>
+                                                            <option value="2">Two</option>
+                                                            <option value="3">Three</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>                
+                                            </form>
+                                        </div>
+
+                                        <div class="col-md-4 mt-3 ">
+                                            <div class="div bg-white p-3">
+                                                <p>Catregories</p>
+                                                <form action="">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                                                        <label class="form-check-label" for="checkDefault">
+                                                            Ogganic
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                                                        <label class="form-check-label" for="checkDefault">
+                                                        Snacks
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                                                        <label class="form-check-label" for="checkDefault">
+                                                            Crunches
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                                                        <label class="form-check-label" for="checkDefault">
+                                                            Coconut
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+                                                        <label class="form-check-label" for="checkDefault">
+                                                            natural
+                                                        </label>
+                                                    </div>
+                                                    <div class="div text-end">
+                                                        <button class="btn btn-outline-success">Cancel</button>
+                                                        <button class="btn btn-success">Save</button>
+                                                    </div>
+                                                </form>
+                                                <button style="color: #00A859; font-size: 16px; border: none; background: transparent;">create new</button>
+                                            </div>
+
+                                            <div class="mt-5 bg-white p-3">
+                                                <p>Tags</p>
+                                                <form action="">
+                                                    <div class="mt-3">
+                                                        <label for="productName" class="form-label">Add Tags</label>
+                                                        <input type="text" class="form-control" placeholder="Leave a comment here" id="productName" required>
+                                                    </div> 
+                                                    <div class="mt-2">
+                                                    <button class="PRODbTNn">Organic  <i class="fa-solid fa-x ms-2"></i></button>
+                                                    <button class="PRODbTNn">Top Snacks <i class="fa-solid fa-x ms-2"></i></button>
+                                                    </div> 
+                                                    <button class="PRODbTNn mt-2">No preservatives <i class="fa-solid fa-x ms-2"></i></button>
+                                                    
+                                                </form>
+                                            </div>
+
+                                            <div class="mt-5 bg-white p-3">
+                                                <p>SEO Settings</p>
+                                                <form action="">
+                                                    <div class="">
+                                                        <label for="productName" class="form-label">Title</label>
+                                                        <input type="text" class="form-control" placeholder="Leave a comment here" id="productName" required>
+                                                    </div> 
+                                                <div class="mb-3">
+                                                    <label for="buyingPrice" class="form-label">Description</label>
+                                                    <div class="form-floating">
+                                                        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                                                        <label for="floatingTextarea2">Product description</label>
+                                                    </div>
+                                                </div>
+                                                    
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <hr class="mt-4">
+                                        <div class="text-end">
+                                            <button class="btn btn-outline-success">Cancel</button>
+                                            <button class="btn btn-success" onclick="addProducts(event)">Save</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <hr class="mt-4">
-                                <div class="text-end">
-                                    <button class="btn btn-outline-success">Cancel</button>
-                                    <button class="btn btn-success" onclick="addProducts(event)">Save</button>
                                 </div>
                             </div>
                         </div>
+                        <button class="btn btn-success" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">+ Add Product</button>
+                        <!-- modal to add products ends here -->
                     </div>
                 </div>
-                <button class="btn btn-success" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">+ Add Product</button>
-                <!-- modal to add products ends here -->
+
+                <div class="d-flex align-items-center justify-content-between mt-3">
+                    <div class=" d-flex align-items-center ">
+                        <select class="form-select selectINPUT" aria-label="Default select example">
+                            <option selected>Filter</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>   
+                        
+                        <div class="search-container ms-3">
+                            <i class="fa fa-search search-icon"></i>
+                            <input type="text" id="searchInput" placeholder="Search..." />
+                        </div>
+                    </div> 
+                    <div class="div">
+                        <button class="orderBtNN"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="orderBtNN ms-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>      
+                </div>
+
+                <!-- product table section here  -->
+                <div class="table-responsive mt-3">
+            <table class="table table-striped align-middle DStable1 " style="width: 100%;" >
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Image</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Category</th>
+                        <th>Variety</th>
+                        <th>Benefits</th>
+                        <th>Ingredients</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <!-- <tbody id="productsTableBody" class="align-middle"></tbody> -->
+            </table>
+            </div> 
+            <!-- product table section here  -->
+
+            <div class=" mt-5">
+
+                    <!-- Search & Page Size -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <input type="text" id="searchInput" class="form-control w-50" placeholder="Search products...">
+                        <select id="pageSize" class="form-select w-auto ms-2">
+                        <option value="5">5 per page</option>
+                        <option value="10" selected>10 per page</option>
+                        <option value="20">20 per page</option>
+                        <option value="50">50 per page</option>
+                        </select>
+                    </div>
+
+                    <!-- Spinner -->
+                    <div id="loadingSpinner" class="text-center my-3" style="display:none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p>Loading products...</p>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle DStable1"  >
+                        <thead class="">
+                            <tr> 
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Category</th>
+                            <th>Variety</th>
+                            <th>Benefits</th>
+                            <th>Ingredients</th>
+                            <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody" class="">
+                            
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav>
+                        <ul id="pagination" class="pagination justify-content-center"></ul>
+                    </nav>
+                </div>
+
+                <!-- Update Modal -->
+                <!-- Update Modal -->
+                <div class="modal fade" id="updateModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                    <form id="updateForm">
+                        <div class="modal-header">
+                        <h5 class="modal-title">Update Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body row g-3">
+                        <input type="hidden" id="updateProductId">
+                        
+                        <div class="col-md-6">
+                            <label>Name</label>
+                            <input id="updateName" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Price</label>
+                            <input type="number" id="updatePrice" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Stock</label>
+                            <input type="number" id="updateStock" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Category</label>
+                            <select id="updateCategory" class="form-select" required>
+                            <option value="">Select category</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Description</label>
+                            <textarea id="updateDescription" class="form-control" rows="2" required></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Images (comma separated)</label>
+                            <input id="updateImages" class="form-control">
+                        </div>
+
+                        <div class="col-12">
+                            <label>Variety (comma separated)</label>
+                            <input id="updateVariety" class="form-control">
+                        </div>
+
+                        <div class="col-12">
+                            <label>Benefits</label>
+                            <textarea id="updateBenefits" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Ingredients (comma separated)</label>
+                            <input id="updateIngredients" class="form-control">
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                </div>
+
+
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Delete Product</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteMessage"></p>
+                        <input type="hidden" id="deleteProductId">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                    </div>
+                </div>
+                </div>
+
             </div>
         </div>
+    </div>
 
-        <div class="d-flex align-items-center justify-content-between mt-3">
-            <div class=" d-flex align-items-center ">
-                <select class="form-select selectINPUT" aria-label="Default select example">
-                    <option selected>Filter</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>   
-                
-                <div class="search-container ms-3">
-                    <i class="fa fa-search search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="Search..." />
-                </div>
-            </div> 
-            <div class="div">
-                <button class="orderBtNN"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button class="orderBtNN ms-2"><i class="fa-solid fa-trash"></i></button>
-            </div>      
-        </div>
 
-        <!-- product table section here  -->
-       <!-- <div class="table-responsive mt-3">
-       <table class="table DStable1 align-middle">
-        <thead>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const spinner = document.getElementById("loadingSpinner");
+    const tableBody = document.getElementById("productsTableBody");
+    const searchInput = document.getElementById("searchInput");
+    const pageSizeSelect = document.getElementById("pageSize");
+    const pagination = document.getElementById("pagination");
+
+    const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
+    const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+
+    let products = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    let pageSize = parseInt(pageSizeSelect.value);
+
+    // ------------------- Fetch Products -------------------
+    async function fetchProducts() {
+        spinner.style.display = "block";
+        const token = localStorage.getItem("key");
+        if (!token) {
+        Swal.fire({ icon: "error", text: "Unauthorized" });
+        spinner.style.display = "none";
+        return;
+        }
+        try {
+        const res = await fetch("http://localhost:3001/amazon/document/api/products", { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error("Invalid response");
+        products = data;
+        filteredProducts = [...products];
+        renderTable();
+        } catch (e) {
+        console.error(e);
+        Swal.fire({ icon: "error", text: "Failed to load products" });
+        } finally {
+        spinner.style.display = "none";
+        }
+    }
+
+    // ------------------- Render Table -------------------
+    function renderTable() {
+        tableBody.innerHTML = "";
+        const query = searchInput.value.toLowerCase();
+        filteredProducts = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+        const totalPages = Math.ceil(filteredProducts.length / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+        const start = (currentPage - 1) * pageSize;
+        const paginated = filteredProducts.slice(start, start + pageSize);
+
+        paginated.forEach(p => {
+        const firstImage = p.image?.[0] || "https://via.placeholder.com/50";
+        const varietyBadges = (p.variety || []).map(v => `<span class="badge bg-info me-1">${v}</span>`).join("");
+        const ingredientBadges = (p.ingredients || []).map(i => `<span class="badge bg-secondary me-1">${i}</span>`).join("");
+        const row = `
             <tr>
-                <th>
-                    <input type="checkbox" >
-                    <span class="ms-2">Product</span>
-                </th>
-                <th>Inventory</th>
-                <th>Color</th>
-                <th>Price</th>
-                <th>Rating</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <input type="checkbox" class="me-2">
-                    <img src="./images/Bitmap.png" alt="">
-                    <span class="ms-2">Berry Bliss Bites Snacks</span>
-                    
-                </td>
-                <td>96 in stock</td>
-                <td>Black</td>
-                <td>$49.90</td>
-                <td>5.0 (32 Votes)</td>
-            </tr>
-        </tbody>
-       </table>
-       </div> -->
-       <!-- product table section here  -->
-
-       <div class=" mt-5">
-  <h2 class="mb-4 text-center">📦 Super Admin - Product Management</h2>
-
-  <!-- Search & Page Size -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <input type="text" id="searchInput" class="form-control w-50" placeholder="Search products...">
-    <select id="pageSize" class="form-select w-auto ms-2">
-      <option value="5">5 per page</option>
-      <option value="10" selected>10 per page</option>
-      <option value="20">20 per page</option>
-      <option value="50">50 per page</option>
-    </select>
-  </div>
-
-  <!-- Spinner -->
-  <div id="loadingSpinner" class="text-center my-3" style="display:none;">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p>Loading products...</p>
-  </div>
-
-  <!-- Table -->
-  <div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Category</th>
-          <th>Variety</th>
-          <th>Benefits</th>
-          <th>Ingredients</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="productsTableBody"></tbody>
-    </table>
-  </div>
-
-  <!-- Pagination -->
-  <nav>
-    <ul id="pagination" class="pagination justify-content-center"></ul>
-  </nav>
-</div>
-
-<!-- Update Modal -->
- <!-- Update Modal -->
-<div class="modal fade" id="updateModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form id="updateForm">
-        <div class="modal-header">
-          <h5 class="modal-title">Update Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body row g-3">
-          <input type="hidden" id="updateProductId">
-          
-          <div class="col-md-6">
-            <label>Name</label>
-            <input id="updateName" class="form-control" required>
-          </div>
-
-          <div class="col-md-6">
-            <label>Price</label>
-            <input type="number" id="updatePrice" class="form-control" required>
-          </div>
-
-          <div class="col-md-6">
-            <label>Stock</label>
-            <input type="number" id="updateStock" class="form-control" required>
-          </div>
-
-          <div class="col-md-6">
-            <label>Category</label>
-            <select id="updateCategory" class="form-select" required>
-              <option value="">Select category</option>
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label>Description</label>
-            <textarea id="updateDescription" class="form-control" rows="2" required></textarea>
-          </div>
-
-          <div class="col-12">
-            <label>Images (comma separated)</label>
-            <input id="updateImages" class="form-control">
-          </div>
-
-          <div class="col-12">
-            <label>Variety (comma separated)</label>
-            <input id="updateVariety" class="form-control">
-          </div>
-
-          <div class="col-12">
-            <label>Benefits</label>
-            <textarea id="updateBenefits" class="form-control" rows="2"></textarea>
-          </div>
-
-          <div class="col-12">
-            <label>Ingredients (comma separated)</label>
-            <input id="updateIngredients" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save changes</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title">Delete Product</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p id="deleteMessage"></p>
-        <input type="hidden" id="deleteProductId">
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-     
-
-       
-
-
-    </div>
-  </div>
-</div>
-
-
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const spinner = document.getElementById("loadingSpinner");
-  const tableBody = document.getElementById("productsTableBody");
-  const searchInput = document.getElementById("searchInput");
-  const pageSizeSelect = document.getElementById("pageSize");
-  const pagination = document.getElementById("pagination");
-
-  const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
-  const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
-
-  let products = [];
-  let filteredProducts = [];
-  let currentPage = 1;
-  let pageSize = parseInt(pageSizeSelect.value);
-
-  // ------------------- Fetch Products -------------------
-  async function fetchProducts() {
-    spinner.style.display = "block";
-    const token = localStorage.getItem("key");
-    if (!token) {
-      Swal.fire({ icon: "error", text: "Unauthorized" });
-      spinner.style.display = "none";
-      return;
-    }
-    try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/products", { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error("Invalid response");
-      products = data;
-      filteredProducts = [...products];
-      renderTable();
-    } catch (e) {
-      console.error(e);
-      Swal.fire({ icon: "error", text: "Failed to load products" });
-    } finally {
-      spinner.style.display = "none";
-    }
-  }
-
-  // ------------------- Render Table -------------------
-  function renderTable() {
-    tableBody.innerHTML = "";
-    const query = searchInput.value.toLowerCase();
-    filteredProducts = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
-    const totalPages = Math.ceil(filteredProducts.length / pageSize);
-    if (currentPage > totalPages) currentPage = totalPages || 1;
-    const start = (currentPage - 1) * pageSize;
-    const paginated = filteredProducts.slice(start, start + pageSize);
-
-    paginated.forEach(p => {
-      const firstImage = p.image?.[0] || "https://via.placeholder.com/50";
-      const varietyBadges = (p.variety || []).map(v => `<span class="badge bg-info me-1">${v}</span>`).join("");
-      const ingredientBadges = (p.ingredients || []).map(i => `<span class="badge bg-secondary me-1">${i}</span>`).join("");
-      const row = `
-        <tr>
-          <td>${p.name}</td>
-          <td><img src="${firstImage}" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;"></td>
-          <td>${p.description}</td>
-          <td>₦${Number(p.price).toLocaleString("en-NG")}</td>
-          <td>${p.numberInStock}</td>
-          <td>${p.category?.name || "N/A"}</td>
-          <td>${varietyBadges}</td>
-          <td>${p.benefits || ""}</td>
-          <td>${ingredientBadges}</td>
-          <td>
-            <button class="btn btn-sm btn-warning me-1 update-btn" data-id="${p._id}">Update</button>
-            <button class="btn btn-sm btn-danger delete-btn" data-id="${p._id}">Delete</button>
-          </td>
-        </tr>`;
-      tableBody.insertAdjacentHTML("beforeend", row);
-    });
-
-    renderPagination(Math.ceil(filteredProducts.length / pageSize));
-  }
-
-  // ------------------- Pagination -------------------
-  function renderPagination(totalPages) {
-    pagination.innerHTML = "";
-    if (totalPages <= 1) return;
-    const prevDisabled = currentPage === 1 ? "disabled" : "";
-    const nextDisabled = currentPage === totalPages ? "disabled" : "";
-    pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage-1})">Previous</a></li>`);
-    for (let i = 1; i <= totalPages; i++) {
-      const active = i === currentPage ? "active" : "";
-      pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${active}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`);
-    }
-    pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage+1})">Next</a></li>`);
-  }
-  window.changePage = (page) => { if (page >= 1) { currentPage = page; renderTable(); } };
-  searchInput.addEventListener("input", () => { currentPage = 1; renderTable(); });
-  pageSizeSelect.addEventListener("change", () => { pageSize = parseInt(pageSizeSelect.value); currentPage = 1; renderTable(); });
-
-  // ------------------- Load Categories -------------------
-  async function loadCategories() {
-    const categorySelect = document.getElementById("updateCategory");
-    categorySelect.innerHTML = `<option value="">Select category</option>`;
-    try {
-      const token = localStorage.getItem("key");
-      const res = await fetch("http://localhost:3001/amazon/document/api/categories", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const categories = await res.json();
-      categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat._id;
-        option.textContent = cat.name;
-        categorySelect.appendChild(option);
-      });
-    } catch (err) {
-      console.error(err);
-      Swal.fire({ icon: "error", text: "Failed to load categories" });
-    }
-  }
-
-  // ------------------- Update & Delete Button Logic -------------------
-  document.addEventListener("click", async (e) => {
-    if (e.target.classList.contains("update-btn")) {
-      const id = e.target.dataset.id;
-      const p = products.find(x => x._id === id);
-      if (!p) return;
-
-      document.getElementById("updateProductId").value = p._id;
-      document.getElementById("updateName").value = p.name;
-      document.getElementById("updatePrice").value = p.price;
-      document.getElementById("updateStock").value = p.numberInStock;
-      document.getElementById("updateDescription").value = p.description;
-      document.getElementById("updateImages").value = p.image?.join(", ") || "";
-      document.getElementById("updateVariety").value = p.variety?.join(", ") || "";
-      document.getElementById("updateBenefits").value = p.benefits || "";
-      document.getElementById("updateIngredients").value = p.ingredients?.join(",") || "";
-
-      await loadCategories();
-      document.getElementById("updateCategory").value = p.category?._id || "";
-
-      updateModal.show();
-    }
-
-    if (e.target.classList.contains("delete-btn")) {
-      const id = e.target.dataset.id;
-      const p = products.find(x => x._id === id);
-      if (!p) return;
-      document.getElementById("deleteProductId").value = p._id;
-      document.getElementById("deleteMessage").innerText = `Are you sure you want to delete "${p.name}"?`;
-      deleteModal.show();
-    }
-  });
-
-  // ------------------- Submit Update -------------------
-  // ------------------- Submit Update Form -------------------
-document.getElementById("updateForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    const id = document.getElementById("updateProductId").value;
-    const token = localStorage.getItem("key");
-
-    try {
-        const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                name: document.getElementById("updateName").value,
-                price: document.getElementById("updatePrice").value.trim(),
-                numberInStock: parseInt(document.getElementById("updateStock").value, 10),
-                description: document.getElementById("updateDescription").value,
-                categoryId: document.getElementById("updateCategory").value.trim(),  // ✅ send _id as categoryId
-                image: document.getElementById("updateImages").value
-                        .split(",")
-                        .map(i => i.trim())
-                        .filter(i => i),
-                variety: document.getElementById("updateVariety").value
-                        .split(",")
-                        .map(i => i.trim())
-                        .filter(i => i),
-                benefits: document.getElementById("updateBenefits").value,
-                ingredients: document.getElementById("updateIngredients").value
-                        .split(",")
-                        .map(i => i.trim())
-                        .filter(i => i)
-            })
+            <td>${p.name}</td>
+            <td><img src="${firstImage}" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;"></td>
+            <td>${p.description}</td>
+            <td class="text-center">₦${Number(p.price).toLocaleString("en-NG")}</td>
+            <td>${p.numberInStock}</td>
+            <td>${p.category?.name || "N/A"}</td>
+            <td>${varietyBadges}</td>
+            <td>${p.benefits || ""}</td>
+            <td>${ingredientBadges}</td>
+            <td>
+                <button class="btn btn-sm btn-warning me-1 update-btn" data-id="${p._id}">Update</button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${p._id}">Delete</button>
+            </td>
+            </tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
         });
 
-        const result = await res.json();
+        renderPagination(Math.ceil(filteredProducts.length / pageSize));
+    }
 
-        if (result._id) {
-            Swal.fire({ icon: "success", text: "Product updated!" });
-            updateModal.hide();
-            fetchProducts(); // refresh table
-        } else {
-            Swal.fire({ icon: "error", text: result.message || "Failed to update" });
+    // ------------------- Pagination -------------------
+    function renderPagination(totalPages) {
+        pagination.innerHTML = "";
+        if (totalPages <= 1) return;
+        const prevDisabled = currentPage === 1 ? "disabled" : "";
+        const nextDisabled = currentPage === totalPages ? "disabled" : "";
+        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage-1})">Previous</a></li>`);
+        for (let i = 1; i <= totalPages; i++) {
+        const active = i === currentPage ? "active" : "";
+        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${active}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`);
         }
-    } catch (err) {
+        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage+1})">Next</a></li>`);
+    }
+    window.changePage = (page) => { if (page >= 1) { currentPage = page; renderTable(); } };
+    searchInput.addEventListener("input", () => { currentPage = 1; renderTable(); });
+    pageSizeSelect.addEventListener("change", () => { pageSize = parseInt(pageSizeSelect.value); currentPage = 1; renderTable(); });
+
+    // ------------------- Load Categories -------------------
+    async function loadCategories() {
+        const categorySelect = document.getElementById("updateCategory");
+        categorySelect.innerHTML = `<option value="">Select category</option>`;
+        try {
+        const token = localStorage.getItem("key");
+        const res = await fetch("http://localhost:3001/amazon/document/api/categories", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const categories = await res.json();
+        categories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat._id;
+            option.textContent = cat.name;
+            categorySelect.appendChild(option);
+        });
+        } catch (err) {
+        console.error(err);
+        Swal.fire({ icon: "error", text: "Failed to load categories" });
+        }
+    }
+
+    // ------------------- Update & Delete Button Logic -------------------
+    document.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("update-btn")) {
+        const id = e.target.dataset.id;
+        const p = products.find(x => x._id === id);
+        if (!p) return;
+
+        document.getElementById("updateProductId").value = p._id;
+        document.getElementById("updateName").value = p.name;
+        document.getElementById("updatePrice").value = p.price;
+        document.getElementById("updateStock").value = p.numberInStock;
+        document.getElementById("updateDescription").value = p.description;
+        document.getElementById("updateImages").value = p.image?.join(", ") || "";
+        document.getElementById("updateVariety").value = p.variety?.join(", ") || "";
+        document.getElementById("updateBenefits").value = p.benefits || "";
+        document.getElementById("updateIngredients").value = p.ingredients?.join(",") || "";
+
+        await loadCategories();
+        document.getElementById("updateCategory").value = p.category?._id || "";
+
+        updateModal.show();
+        }
+
+        if (e.target.classList.contains("delete-btn")) {
+        const id = e.target.dataset.id;
+        const p = products.find(x => x._id === id);
+        if (!p) return;
+        document.getElementById("deleteProductId").value = p._id;
+        document.getElementById("deleteMessage").innerText = `Are you sure you want to delete "${p.name}"?`;
+        deleteModal.show();
+        }
+    });
+
+    // ------------------- Submit Update -------------------
+    // ------------------- Submit Update Form -------------------
+    document.getElementById("updateForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const id = document.getElementById("updateProductId").value;
+        const token = localStorage.getItem("key");
+
+        try {
+            const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: document.getElementById("updateName").value,
+                    price: document.getElementById("updatePrice").value.trim(),
+                    numberInStock: parseInt(document.getElementById("updateStock").value, 10),
+                    description: document.getElementById("updateDescription").value,
+                    categoryId: document.getElementById("updateCategory").value.trim(),  // ✅ send _id as categoryId
+                    image: document.getElementById("updateImages").value
+                            .split(",")
+                            .map(i => i.trim())
+                            .filter(i => i),
+                    variety: document.getElementById("updateVariety").value
+                            .split(",")
+                            .map(i => i.trim())
+                            .filter(i => i),
+                    benefits: document.getElementById("updateBenefits").value,
+                    ingredients: document.getElementById("updateIngredients").value
+                            .split(",")
+                            .map(i => i.trim())
+                            .filter(i => i)
+                })
+            });
+
+            const result = await res.json();
+
+            if (result._id) {
+                Swal.fire({ icon: "success", text: "Product updated!" });
+                updateModal.hide();
+                fetchProducts(); // refresh table
+            } else {
+                Swal.fire({ icon: "error", text: result.message || "Failed to update" });
+            }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({ icon: "error", text: "Server error" });
+        }
+    });
+
+
+    // ------------------- Confirm Delete -------------------
+    document.getElementById("confirmDelete").addEventListener("click", async () => {
+        const id = document.getElementById("deleteProductId").value;
+        const token = localStorage.getItem("key");
+        try {
+        const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const result = await res.json();
+        if (res.ok) {
+        Swal.fire({ icon: "success", text: "Deleted!" });
+        deleteModal.hide();
+        products = products.filter(p => p._id !== id);
+        renderTable();
+    } else {
+        const data = await res.json();
+        Swal.fire({ icon: "error", text: data.message || "Failed to delete" });
+    }
+
+        } catch (err) {
         console.error(err);
         Swal.fire({ icon: "error", text: "Server error" });
-    }
-});
-
-
-  // ------------------- Confirm Delete -------------------
-  document.getElementById("confirmDelete").addEventListener("click", async () => {
-    const id = document.getElementById("deleteProductId").value;
-    const token = localStorage.getItem("key");
-    try {
-      const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const result = await res.json();
-      if (res.ok) {
-    Swal.fire({ icon: "success", text: "Deleted!" });
-    deleteModal.hide();
-    products = products.filter(p => p._id !== id);
-    renderTable();
-} else {
-    const data = await res.json();
-    Swal.fire({ icon: "error", text: data.message || "Failed to delete" });
-}
-
-    } catch (err) {
-      console.error(err);
-      Swal.fire({ icon: "error", text: "Server error" });
-    }
-  });
-
-  fetchProducts();
-});
-</script>
-
-
-<!-- <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const spinner = document.getElementById("loadingSpinner");
-  const tableBody = document.getElementById("productsTableBody");
-  const searchInput = document.getElementById("searchInput");
-  const pageSizeSelect = document.getElementById("pageSize");
-  const pagination = document.getElementById("pagination");
-
-  const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
-  const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
-
-  let products = [];
-  let filteredProducts = [];
-  let currentPage = 1;
-  let pageSize = parseInt(pageSizeSelect.value);
-
-  async function fetchProducts() {
-    spinner.style.display = "block";
-    const token = localStorage.getItem("key");
-    if (!token) { Swal.fire({icon:"error",text:"Unauthorized"}); spinner.style.display="none"; return; }
-
-    try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/products", { headers:{Authorization:`Bearer ${token}`} });
-      const data = await res.json();
-      if (!Array.isArray(data)) throw new Error("Invalid response");
-      products = data;
-      filteredProducts = [...products];
-      renderTable();
-    } catch(e){ console.error(e); Swal.fire({icon:"error",text:"Failed to load products"}); }
-    finally{ spinner.style.display="none"; }
-  }
-
-  function renderTable(){
-    tableBody.innerHTML = "";
-    const query = searchInput.value.toLowerCase();
-    filteredProducts = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
-    const totalPages = Math.ceil(filteredProducts.length/pageSize);
-    if(currentPage>totalPages) currentPage = totalPages||1;
-    const start = (currentPage-1)*pageSize;
-    const paginated = filteredProducts.slice(start,start+pageSize);
-
-    paginated.forEach(p=>{
-      const firstImage = p.image?.[0] || "https://via.placeholder.com/50";
-      const varietyBadges = (p.variety||[]).map(v=>`<span class="badge bg-info me-1">${v}</span>`).join("");
-      const ingredientBadges = (p.ingredients||[]).map(i=>`<span class="badge bg-secondary me-1">${i}</span>`).join("");
-      const row = `
-        <tr>
-          <td>${p.name}</td>
-          <td><img src="${firstImage}" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;"></td>
-          <td>${p.description}</td>
-          <td>₦${Number(p.price).toLocaleString("en-NG")}</td>
-          <td>${p.numberInStock}</td>
-          <td>${p.category?.name||"N/A"}</td>
-          <td>${varietyBadges}</td>
-          <td>${p.benefits||""}</td>
-          <td>${ingredientBadges}</td>
-          <td>
-            <button class="btn btn-sm btn-warning me-1 update-btn" data-id="${p._id}">Update</button>
-            <button class="btn btn-sm btn-danger delete-btn" data-id="${p._id}">Delete</button>
-          </td>
-        </tr>`;
-      tableBody.insertAdjacentHTML("beforeend", row);
+        }
     });
-    renderPagination(Math.ceil(filteredProducts.length/pageSize));
-  }
 
-  function renderPagination(totalPages){
-    pagination.innerHTML = "";
-    if(totalPages<=1) return;
-    const prevDisabled = currentPage===1?"disabled":"";
-    const nextDisabled = currentPage===totalPages?"disabled":"";
-    pagination.insertAdjacentHTML("beforeend",`<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage-1})">Previous</a></li>`);
-    for(let i=1;i<=totalPages;i++){const active=i===currentPage?"active":"";pagination.insertAdjacentHTML("beforeend",`<li class="page-item ${active}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`);}
-    pagination.insertAdjacentHTML("beforeend",`<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage+1})">Next</a></li>`);
-  }
-
-  window.changePage=(page)=>{if(page>=1){currentPage=page;renderTable();}};
-  searchInput.addEventListener("input",()=>{currentPage=1;renderTable();});
-  pageSizeSelect.addEventListener("change",()=>{pageSize=parseInt(pageSizeSelect.value);currentPage=1;renderTable();});
-
-  // Update modal
-  document.addEventListener("click",(e)=>{
-    if(e.target.classList.contains("update-btn")){
-      const id = e.target.dataset.id;
-      const p = products.find(x=>x._id===id);
-      if(!p) return;
-      document.getElementById("updateProductId").value = p._id;
-      document.getElementById("updateName").value = p.name;
-      document.getElementById("updatePrice").value = p.price;
-      document.getElementById("updateStock").value = p.numberInStock;
-      document.getElementById("updateCategory").value = p.category?.name||"";
-      document.getElementById("updateDescription").value = p.description;
-      document.getElementById("updateImages").value = p.image?.join(", ")||"";
-      document.getElementById("updateVariety").value = p.variety?.join(", ")||"";
-      document.getElementById("updateBenefits").value = p.benefits||"";
-      document.getElementById("updateIngredients").value = p.ingredients?.join(",")||"";
-      updateModal.show();
-    }
-    if(e.target.classList.contains("delete-btn")){
-      const id = e.target.dataset.id;
-      const p = products.find(x=>x._id===id);
-      if(!p) return;
-      document.getElementById("deleteProductId").value=p._id;
-      document.getElementById("deleteMessage").innerText=`Are you sure you want to delete "${p.name}"?`;
-      deleteModal.show();
-    }
-  });
-
-  // Submit update
-  document.getElementById("updateForm").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const id=document.getElementById("updateProductId").value;
-    const token=localStorage.getItem("key");
-    try{
-      const res=await fetch(`http://localhost:3001/amazon/document/api/products/${id}`,{
-        method:"PUT",
-        headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
-        body:JSON.stringify({
-          name: document.getElementById("updateName").value,
-          price: parseFloat(document.getElementById("updatePrice").value),
-          numberInStock: parseInt(document.getElementById("updateStock").value,10),
-          description: document.getElementById("updateDescription").value,
-          category: document.getElementById("updateCategory").value,
-          image: document.getElementById("updateImages").value.split(",").map(i=>i.trim()).filter(i=>i),
-          variety: document.getElementById("updateVariety").value.split(",").map(i=>i.trim()).filter(i=>i),
-          benefits: document.getElementById("updateBenefits").value,
-          ingredients: document.getElementById("updateIngredients").value.split(",").map(i=>i.trim()).filter(i=>i)
-        })
-      });
-      const result=await res.json();
-      if(result._id){Swal.fire({icon:"success",text:"Product updated!"});updateModal.hide();fetchProducts();}
-      else Swal.fire({icon:"error",text:result.message||"Failed to update"});
-    }catch(err){console.error(err);Swal.fire({icon:"error",text:"Server error"});}
-  });
-
-  // Confirm delete
-  document.getElementById("confirmDelete").addEventListener("click",async ()=>{
-    const id=document.getElementById("deleteProductId").value;
-    const token=localStorage.getItem("key");
-    try{
-      const res=await fetch(`http://localhost:3001/amazon/document/api/products/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${token}`}});
-      const result=await res.json();
-      if(result.success){Swal.fire({icon:"success",text:"Deleted!"});deleteModal.hide();products=products.filter(p=>p._id!==id);renderTable();}
-      else Swal.fire({icon:"error",text:result.message||"Failed to delete"});
-    }catch(err){console.error(err);Swal.fire({icon:"error",text:"Server error"});}
-  });
-
-  fetchProducts();
-});
-</script> -->
+    fetchProducts();
+    });
+    </script>
 
 
 
@@ -1030,9 +911,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="./js/index.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="./js/index.js"></script>
 </body>
 </html>

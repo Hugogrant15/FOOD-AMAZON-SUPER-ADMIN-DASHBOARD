@@ -98,9 +98,6 @@ function adminLogin(event) {
 
 }
 
-
-
-
 function addProducts(event) {
   event.preventDefault();
 
@@ -202,7 +199,6 @@ function addProducts(event) {
     });
 }
 
-
 function toggleNotification(event) {
     event.preventDefault();
     const notificationPopUp = document.getElementById('notificationPopUp');
@@ -226,7 +222,6 @@ searchIcon.addEventListener("click", () => {
     }
   }
 });
-
 
 function createCategory(event) {
   event.preventDefault();
@@ -307,6 +302,7 @@ function updateCategory(id, newName) {
     });
 }
 
+// load order API
 
 async function loadCategories() {
   try {
@@ -330,6 +326,88 @@ async function loadCategories() {
   }
 }
 document.addEventListener("DOMContentLoaded", loadCategories);
+
+
+async function loadOrders() {
+  try {
+    const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+    const orders = await res.json();
+    const tbody = document.getElementById("ordersTableBody");
+    tbody.innerHTML = "";
+    if (!orders.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found</td></tr>`;
+      return;
+    }
+    orders.forEach(order => {
+      const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
+      const row = `
+        <tr style="cursor:pointer" onclick="showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
+          <td>${order.transactionId || "N/A"}</td>
+          <td>${new Date(order.createdAt).toLocaleString()}</td>
+          <td>${fullName || "Unknown"}</td>
+          <td>
+            <span class="badge ${order.paymentStatus === "paid" ? "bg-success" : "bg-danger"}">
+              ${order.paymentStatus}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${order.deliveryStatus === "deliverd" ? "bg-success" : "bg-warning"}">
+              ${order.deliveryStatus}
+            </span>
+          </td>
+          <td>₦${order.totalAmount.toLocaleString()}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML("beforeend", row);
+    });
+  } catch (err) {
+    console.error("Error loading orders:", err);
+  }
+}
+function showOrderDetails(order) {
+  const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
+  // Order items
+  const itemsHtml = order.items.map(item => `
+    <div class="col-md-6 mb-3">
+      <div class="card card-one p-2">
+        <img src="${item.image || 'https://via.placeholder.com/150'}" class="card-img-top rounded" alt="${item.name}">
+        <div class="card-body">
+          <h6 class="card-title">${item.name}</h6>
+         <div class= "d-flex  justify-content-between">
+          <p>Quantity: ${item.quantity}</p>
+          <p class="text-success fw-bold">₦${(item.price * item.quantity).toLocaleString()}</p>
+         </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+  const customer = order.customerSnapshot || {};
+  const content = `
+    <h5> #${order.transactionId}</h5>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="row">${itemsHtml}</div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3">
+          <h6>Customer Information</h6>
+          <img src="https://ui-avatars.com/api/?name=${fullName}" class="rounded-circle mb-2" width="100" height="100">
+          <p><strong>${fullName}</strong></p>
+          <p>${customer.email || ""}</p>
+          <p>${customer.phone || ""}</p>
+          <hr>
+          <h6>Shipping Address</h6>
+          <p>${customer.address || ""}, ${customer.city || ""}, ${customer.state || ""}</p>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById("orderDetailsContent").innerHTML = content;
+  new bootstrap.Modal(document.getElementById("orderDetailsModal")).show();
+}
+// Call function when page loads
+document.addEventListener("DOMContentLoaded", loadOrders);
+
 
 
 
