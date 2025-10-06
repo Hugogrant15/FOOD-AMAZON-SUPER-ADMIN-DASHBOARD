@@ -1,269 +1,1192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super Admin - Products</title>
-  
-  <!-- Bootstrap 5.3.6 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body class="bg-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Super Admin - Products</title>
 
-<div class="container mt-5">
-  <h2 class="mb-4 text-center">📦 Product Management (Super Admin)</h2>
+    <!-- Bootstrap 5.3.6 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Spinner -->
-  <div id="loadingSpinner" class="text-center my-3" style="display:none;">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p>Loading products...</p>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body class="bg-light">
+    <!-- <button class="btn btn-outline-success" id="distributor" data-bs-toggle="modal" data-bs-target="#distributorModal">
+  Add distributor
+</button>
+<div class="modal fade" id="distributorModal" tabindex="-1" aria-labelledby="distributorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="distributorModalLabel">Add Distributor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addDistributorForm">
+          <div class="mb-3">
+            <label for="distributorName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="distributorName" required>
+          </div>
+          <div class="mb-3">
+            <label for="distributorPhone" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="distributorPhone" required>
+          </div>
+          <div class="mb-3">
+            <label for="distributorEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="distributorEmail" required>
+          </div>
+          <div class="mb-3">
+            <label for="distributorPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="distributorPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="distributorRole" class="form-label">Role</label>
+            <input type="text" class="form-control" id="distributorRole" value="Distributor" readonly>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="country" class="form-label">Country</label>
+              <select class="form-select" id="country" required>
+                <option value="">Select Country</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="state" class="form-label">State</label>
+              <select class="form-select" id="state" disabled required>
+                <option value="">Select State</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="city" class="form-label">City</label>
+              <select class="form-select" id="city" disabled required>
+                <option value="">Select City</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="addDistributorForm" class="btn btn-success">Add Distributor</button>
+      </div>
+    </div>
   </div>
+</div>
 
-  <!-- Search + Page Size -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <input type="text" id="searchInput" class="form-control w-50" placeholder="Search products...">
-    <select id="pageSize" class="form-select w-auto ms-2">
-      <option value="5">5 per page</option>
-      <option value="10" selected>10 per page</option>
-      <option value="20">20 per page</option>
-      <option value="50">50 per page</option>
+
+  <script>
+    const countrySelect = document.getElementById("country");
+  const stateSelect = document.getElementById("state");
+  const citySelect = document.getElementById("city");
+  // Load countries
+  async function loadCountries() {
+    try {
+      const res = await fetch("https://restcountries.com/v3.1/all?fields=name");
+      const data = await res.json();
+      const countries = Array.isArray(data) ? data : [];
+      countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+      countries.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.name.common;
+        opt.textContent = c.name.common;
+        countrySelect.appendChild(opt);
+      });
+      // :white_tick: Auto-select Nigeria if available
+      const defaultCountry = "Nigeria";
+      const nigeriaOption = [...countrySelect.options].find(
+        opt => opt.value === defaultCountry
+      );
+      if (nigeriaOption) {
+        countrySelect.value = defaultCountry;
+        await loadStates(defaultCountry); // load states immediately
+      }
+    } catch (err) {
+      console.error("Error loading countries:", err);
+    }
+  }
+  // Load states when country is selected
+  async function loadStates(country) {
+    try {
+      stateSelect.innerHTML = `<option value="">Loading...</option>`;
+      stateSelect.disabled = true;
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      citySelect.disabled = true;
+      const res = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ country })
+      });
+      const data = await res.json();
+      stateSelect.innerHTML = `<option value="">Select State</option>`;
+      if (data.data && data.data.states) {
+        data.data.states.forEach(s => {
+          const opt = document.createElement("option");
+          opt.value = s.name;
+          opt.textContent = s.name;
+          stateSelect.appendChild(opt);
+        });
+      }
+      stateSelect.disabled = false;
+    } catch (err) {
+      console.error("Error loading states:", err);
+      stateSelect.innerHTML = `<option value="">No states found</option>`;
+    }
+  }
+  // Load cities when state is selected
+async function loadCities(country, state) {
+  try {
+    citySelect.innerHTML = `<option value="">Loading...</option>`;
+    citySelect.disabled = true;
+    const res = await fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ country, state })
+    });
+    const data = await res.json();
+    // :white_tick: log AFTER defining "data"
+    console.log("Fetching cities for:", country, state, data);
+    citySelect.innerHTML = `<option value="">Select City</option>`;
+    if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+      data.data.forEach(city => {
+        const opt = document.createElement("option");
+        opt.value = city;
+        opt.textContent = city;
+        citySelect.appendChild(opt);
+      });
+      citySelect.disabled = false;
+    } else {
+      citySelect.innerHTML = `<option value="">No cities found</option>`;
+    }
+  } catch (err) {
+    console.error("Error loading cities:", err);
+    citySelect.innerHTML = `<option value="">No cities found</option>`;
+  }
+}
+  // Event listeners
+  countrySelect.addEventListener("change", e => {
+    const country = e.target.value;
+    if (country) {
+      loadStates(country);
+    } else {
+      stateSelect.innerHTML = `<option value="">Select State</option>`;
+      stateSelect.disabled = true;
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      citySelect.disabled = true;
+    }
+  });
+  stateSelect.addEventListener("change", e => {
+    const state = e.target.value;
+    const country = countrySelect.value;
+    if (state && country) {
+      loadCities(country, state);
+    } else {
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      citySelect.disabled = true;
+    }
+  });
+  // Initial load
+  loadCountries();
+
+// Utility function to decode JWT payload
+  function parseJwt(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(base64));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const form = document.getElementById("addDistributorForm");
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("distributorName").value.trim();
+    const phoneNumber = document.getElementById("distributorPhone").value.trim();
+    const email = document.getElementById("distributorEmail").value.trim();
+    const password = document.getElementById("distributorPassword").value.trim();
+    const role = document.getElementById("distributorRole").value;
+    const country = document.getElementById("country").value;
+    const state = document.getElementById("state").value;
+    const city = document.getElementById("city").value;
+
+    if (!name || !phoneNumber || !email || !password || !country || !state || !city) {
+      Swal.fire({ icon: "warning", title: "Missing Information", text: "Please fill in all fields." });
+      return;
+    }
+
+    if (!/^\d{11}$/.test(phoneNumber)) {
+      Swal.fire({ icon: "warning", title: "Invalid Phone Number", text: "Phone number must contain exactly 11 digits." });
+      return;
+    }
+
+    // Get token from localStorage
+    const token = localStorage.getItem("key");
+    // Build the location string
+    const locationString = `${city}, ${state}, ${country}`;
+    if (!token) {
+      Swal.fire({ icon: "error", title: "Not Logged In", text: "You must be logged in." });
+      return;
+    }
+
+    // Decode token to check role
+    const decoded = parseJwt(token);
+    if (!decoded || decoded.role.toLowerCase() !== "super_admin") {
+      Swal.fire({ icon: "error", title: "Access Denied", text: "Only a Super Admin can create a distributor." });
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:3001/amazon/document/api/register/create-distributor", {
+        method: "POST",
+        headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`   // <--- change here
+  },
+        body: JSON.stringify({
+          name,
+          phoneNumber,
+          email,
+          password,
+          role: role.toLowerCase(),
+          location: { location: locationString }
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to add distributor");
+      const data = await res.json();
+      console.log("Distributor added:", data);
+
+      // Success
+      const modal = bootstrap.Modal.getInstance(document.getElementById("distributorModal"));
+      modal.hide();
+      form.reset();
+      Swal.fire({ icon: "success", title: "Success!", text: "Distributor added successfully", timer: 2000, showConfirmButton: false });
+
+    } catch (error) {
+      console.error(error);
+      Swal.fire({ icon: "error", title: "Oops...", text: "Error adding distributor" });
+    }
+  });
+// Load countries when modal opens
+document.getElementById("distributorModal").addEventListener("shown.bs.modal", () => {
+  if (countrySelect.options.length <= 1) {
+    loadCountries();
+  }
+});
+  </script> -->
+
+    <!-- Add Distributor Modal -->
+    <!-- <button
+      class="btn btn-success mb-3"
+      data-bs-toggle="modal"
+      data-bs-target="#addDistributorModal"
+    >
+      + NEW Distributor
+    </button> -->
+
+    <!-- <div
+      class="modal fade"
+      id="addDistributorModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content p-3">
+          <div class="modal-header">
+            <h5 class="modal-title">NEW Distributor</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addDistributorForm">
+              <div class="mb-3">
+                <label>Name</label>
+                <input
+                  type="text"
+                  id="distName"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Email</label>
+                <input
+                  type="email"
+                  id="distEmail"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Phone</label>
+                <input
+                  type="text"
+                  id="distPhone"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Password</label>
+                <input
+                  type="password"
+                  id="distPassword"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Confirm Password</label>
+                <input
+                  type="password"
+                  id="distConfirmPassword"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Select Location Source</label><br />
+                <input type="radio" name="locationSource" value="db" checked />
+                Database Location
+                <input
+                  type="radio"
+                  name="locationSource"
+                  value="csc"
+                  class="ms-3"
+                />
+                Country / State / City
+              </div>
+
+              <div id="dbLocationWrapper" class="mb-3">
+                <label>Location (DB)</label>
+                <select id="locationDropdown" class="form-select"></select>
+              </div>
+
+              <div id="cscWrapper" class="mb-3 d-none">
+                <label>Country</label>
+                <select id="countryDropdown" class="form-select mb-2"></select>
+                <label>State</label>
+                <select id="stateDropdown" class="form-select mb-2"></select>
+                <label>City</label>
+                <select id="cityDropdown" class="form-select"></select>
+              </div>
+
+              <div class="mb-3">
+                <label>Role</label>
+                <select id="distRole" class="form-select">
+                  <option value="distributor">Distributor</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                Save Distributor
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <script>
+      // Toggle between DB Location and Country/State/City
+      document
+        .querySelectorAll('input[name="locationSource"]')
+        .forEach((radio) => {
+          radio.addEventListener("change", () => {
+            const source = document.querySelector(
+              'input[name="locationSource"]:checked'
+            ).value;
+            document
+              .getElementById("dbLocationWrapper")
+              .classList.toggle("d-none", source !== "db");
+            document
+              .getElementById("cscWrapper")
+              .classList.toggle("d-none", source !== "csc");
+          });
+        });
+
+      // Load DB Locations
+      async function loadDBLocations() {
+        try {
+          const res = await fetch(
+            "http://localhost:3001/amazon/document/api/locations"
+          );
+          const locations = await res.json();
+          const dropdown = document.getElementById("locationDropdown");
+          dropdown.innerHTML = '<option value="">Select a location</option>';
+          locations.forEach((loc) => {
+            const opt = document.createElement("option");
+            opt.value = loc._id;
+            opt.textContent = loc.location;
+            dropdown.appendChild(opt);
+          });
+        } catch (err) {
+          console.error("Error loading DB locations:", err);
+        }
+      }
+
+      // Load Countries
+      async function loadCountries() {
+        try {
+          const res = await fetch(
+            "https://countriesnow.space/api/v0.1/countries/positions"
+          );
+          const data = await res.json();
+          const countries = data.data.map((c) => c.name).sort();
+          const countryDropdown = document.getElementById("countryDropdown");
+          countryDropdown.innerHTML =
+            '<option value="">Select Country</option>';
+          countries.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            countryDropdown.appendChild(opt);
+          });
+        } catch (err) {
+          console.error("Error loading countries:", err);
+        }
+      }
+
+      // Load States
+      document
+        .getElementById("countryDropdown")
+        .addEventListener("change", async function () {
+          const country = this.value;
+          if (!country) return;
+
+          try {
+            const res = await fetch(
+              "https://countriesnow.space/api/v0.1/countries/states",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country }),
+              }
+            );
+            const data = await res.json();
+            const states = data.data.states || [];
+            const stateDropdown = document.getElementById("stateDropdown");
+            stateDropdown.innerHTML = '<option value="">Select State</option>';
+            states.forEach((s) => {
+              const opt = document.createElement("option");
+              opt.value = s.name;
+              opt.textContent = s.name;
+              stateDropdown.appendChild(opt);
+            });
+          } catch (err) {
+            console.error("Error loading states:", err);
+          }
+        });
+
+      // Load Cities
+      document
+        .getElementById("stateDropdown")
+        .addEventListener("change", async function () {
+          const state = this.value;
+          const country = document.getElementById("countryDropdown").value;
+          if (!country || !state) return;
+
+          try {
+            const res = await fetch(
+              "https://countriesnow.space/api/v0.1/countries/state/cities",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country, state }),
+              }
+            );
+            const data = await res.json();
+            const cities = data.data || [];
+            const cityDropdown = document.getElementById("cityDropdown");
+            cityDropdown.innerHTML = '<option value="">Select City</option>';
+            cities.forEach((c) => {
+              const opt = document.createElement("option");
+              opt.value = c;
+              opt.textContent = c;
+              cityDropdown.appendChild(opt);
+            });
+          } catch (err) {
+            console.error("Error loading cities:", err);
+          }
+        });
+
+      // Submit Distributor
+      document
+        .getElementById("addDistributorForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const token = localStorage.getItem("key");
+          const source = document.querySelector(
+            'input[name="locationSource"]:checked'
+          ).value;
+
+          const password = document.getElementById("distPassword").value;
+          const confirmPassword = document.getElementById(
+            "distConfirmPassword"
+          ).value;
+
+          // client-side checks
+          if (!password || !confirmPassword) {
+            return Swal.fire(
+              "Error",
+              "Please enter password and confirm password",
+              "error"
+            );
+          }
+          if (password !== confirmPassword) {
+            return Swal.fire("Error", "Passwords do not match!", "error");
+          }
+
+          const distributor = {
+            name: document.getElementById("distName").value,
+            email: document.getElementById("distEmail").value,
+            phoneNumber: document.getElementById("distPhone").value,
+            password: password,
+            confirmPassword: confirmPassword, // <-- ensure this is sent
+            role: document.getElementById("distRole").value,
+          };
+
+          if (source === "db") {
+            distributor.locationId =
+              document.getElementById("locationDropdown").value;
+          } else {
+            distributor.location = {
+              country: document.getElementById("countryDropdown").value,
+              state: document.getElementById("stateDropdown").value,
+              city: document.getElementById("cityDropdown").value,
+            };
+          }
+
+          try {
+            const res = await fetch(
+              "http://localhost:3001/amazon/document/api/register/create-distributor",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(distributor),
+              }
+            );
+
+            if (!res.ok) throw new Error(await res.text());
+
+            Swal.fire(
+              "Success",
+              "Distributor added successfully",
+              "success"
+            ).then(() => location.reload());
+          } catch (err) {
+            console.error("Error adding distributor:", err);
+            Swal.fire("Error", err.message, "error");
+          }
+        });
+
+      // Initialize
+      loadDBLocations();
+      loadCountries();
+    </script> -->
+
+    <!-- new get all distributors -->
+
+    <!-- <div class="table-responsive mt-4">
+      <table class="table table-striped" id="distributorsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Role</th>
+            <th>Location</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div> -->
+
+    <!-- Update Distributor Modal -->
+
+    <!-- <div
+      class="modal fade"
+      id="updateDistributorModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content p-3">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Distributor</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="updateDistributorForm">
+              <input type="hidden" id="updateDistributorId" />
+              <div class="mb-3">
+                <label>Name</label>
+                <input
+                  type="text"
+                  id="updateDistName"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Email</label>
+                <input
+                  type="email"
+                  id="updateDistEmail"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Phone Number</label>
+                <input
+                  type="text"
+                  id="updateDistPhone"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label>Role</label>
+                <select id="updateDistRole" class="form-select">
+                  <option value="distributor">Distributor</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label>Location</label>
+                <input
+                  type="text"
+                  id="updateDistLocation"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">
+                Update Distributor
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Delete Distributor Modal -->
+    <!-- <div
+      class="modal fade"
+      id="deleteDistributorModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content p-3">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Distributor</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this distributor?</p>
+            <input type="hidden" id="deleteDistributorId" />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button id="confirmDeleteDistributor" class="btn btn-danger">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <script>
+      const distributorsTableBody = document.querySelector(
+        "#distributorsTable tbody"
+      );
+      const token = localStorage.getItem("key");
+
+      // Fetch and populate distributors
+      async function loadDistributors() {
+        try {
+          const res = await fetch(
+            "http://localhost:3001/amazon/document/api/register/distributors",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (!res.ok) throw new Error("Failed to fetch distributors");
+          const distributors = await res.json();
+
+          distributorsTableBody.innerHTML = "";
+          distributors.forEach((d) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+        <td>${d.name}</td>
+        <td>${d.email}</td>
+        <td>${d.phoneNumber}</td>
+        <td>${d.role}</td>
+        <td>${d.location?.location || ""}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" onclick="openUpdateModal('${
+            d._id
+          }')">Update</button>
+          <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${
+            d._id
+          }')">Delete</button>
+        </td>
+      `;
+            distributorsTableBody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Update Modal
+      function openUpdateModal(id) {
+        const distributor = Array.from(distributorsTableBody.rows)
+          .map((r) => ({
+            id: r
+              .querySelector("button.btn-primary")
+              .getAttribute("onclick")
+              .match(/'(.+?)'/)[1],
+            name: r.cells[0].textContent,
+            email: r.cells[1].textContent,
+            phoneNumber: r.cells[2].textContent,
+            role: r.cells[3].textContent,
+            location: r.cells[4].textContent,
+          }))
+          .find((d) => d.id === id);
+
+        document.getElementById("updateDistributorId").value = distributor.id;
+        document.getElementById("updateDistName").value = distributor.name;
+        document.getElementById("updateDistEmail").value = distributor.email;
+        document.getElementById("updateDistPhone").value =
+          distributor.phoneNumber;
+        document.getElementById("updateDistRole").value = distributor.role;
+        document.getElementById("updateDistLocation").value =
+          distributor.location;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("updateDistributorModal")
+        );
+        modal.show();
+      }
+
+      // Handle Update Form Submission
+      document
+        .getElementById("updateDistributorForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const id = document.getElementById("updateDistributorId").value;
+          const data = {
+            name: document.getElementById("updateDistName").value,
+            email: document.getElementById("updateDistEmail").value,
+            phoneNumber: document.getElementById("updateDistPhone").value,
+            role: document.getElementById("updateDistRole").value,
+            location: {
+              location: document.getElementById("updateDistLocation").value,
+            },
+          };
+          try {
+            const res = await fetch(
+              `http://localhost:3001/amazon/document/api/register/${id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+              }
+            );
+            if (!res.ok) throw new Error("Failed to update distributor");
+            loadDistributors();
+            bootstrap.Modal.getInstance(
+              document.getElementById("updateDistributorModal")
+            ).hide();
+            Swal.fire("Success", "Distributor updated successfully", "success");
+          } catch (err) {
+            console.error(err);
+            Swal.fire("Error", "Failed to update distributor", "error");
+          }
+        });
+
+      // Delete Modal
+      function openDeleteModal(id) {
+        document.getElementById("deleteDistributorId").value = id;
+        const modal = new bootstrap.Modal(
+          document.getElementById("deleteDistributorModal")
+        );
+        modal.show();
+      }
+
+      // Confirm Delete
+      document
+        .getElementById("confirmDeleteDistributor")
+        .addEventListener("click", async () => {
+          const id = document.getElementById("deleteDistributorId").value;
+          try {
+            const res = await fetch(
+              `http://localhost:3001/amazon/document/api/register/${id}`,
+              {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            if (!res.ok) throw new Error("Failed to delete distributor");
+            loadDistributors();
+            bootstrap.Modal.getInstance(
+              document.getElementById("deleteDistributorModal")
+            ).hide();
+            Swal.fire("Deleted!", "Distributor has been deleted.", "success");
+          } catch (err) {
+            console.error(err);
+            Swal.fire("Error", "Failed to delete distributor", "error");
+          }
+        });
+
+      // Initial load
+      loadDistributors();
+    </script> -->
+
+
+
+    <!-- another get all dust with pagunation -->
+
+    <div class="d-flex justify-content-between mt-3">
+  <!-- Role Filter -->
+  <div class="mb-3">
+    <label for="roleFilter" class="form-label">Filter by Role:</label>
+    <select id="roleFilter" class="form-select">
+      <option value="">All</option>
+      <option value="distributor">Distributor</option>
+      <option value="customer">Customer</option>
     </select>
   </div>
 
-  <!-- Table -->
-  <div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Category</th>
-          <th>Variety</th>
-          <th>Benefits</th>
-          <th>Ingredients</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="productsTableBody">
-        <!-- Rows dynamically inserted -->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Update Modal -->
-<div class="modal fade" id="updateModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <form id="updateForm">
-        <div class="modal-header">
-          <h5 class="modal-title">Update Product</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body row g-3">
-          <input type="hidden" id="updateProductId">
-
-          <div class="col-md-6">
-            <label class="form-label">Name</label>
-            <input type="text" id="updateName" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Price</label>
-            <input type="number" id="updatePrice" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Stock</label>
-            <input type="number" id="updateStock" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Category</label>
-            <input type="text" id="updateCategory" class="form-control" required>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Description</label>
-            <textarea id="updateDescription" class="form-control" rows="2" required></textarea>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Images (comma separated)</label>
-            <input type="text" id="updateImages" class="form-control">
-          </div>
-          <div class="col-12">
-            <label class="form-label">Variety (comma separated)</label>
-            <input type="text" id="updateVariety" class="form-control">
-          </div>
-          <div class="col-12">
-            <label class="form-label">Benefits</label>
-            <textarea id="updateBenefits" class="form-control" rows="2"></textarea>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Ingredients (comma separated)</label>
-            <input type="text" id="updateIngredients" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save changes</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </form>
-    </div>
+  <!-- Search Input -->
+  <div class="mb-3">
+    <label for="searchInput" class="form-label">Search:</label>
+    <input type="text" id="searchInput" class="form-control" placeholder="Search distributors/customers..." />
   </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title">Delete Product</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div class="table-responsive mt-4">
+  <table class="table table-striped" id="distributorsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Role</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <nav>
+    <ul class="pagination" id="pagination"></ul>
+  </nav>
+</div>
+
+<!-- Update Distributor Modal -->
+<div class="modal fade" id="updateDistributorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title">Update Distributor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <p id="deleteMessage">Are you sure you want to delete this product?</p>
-        <input type="hidden" id="deleteProductId">
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="updateDistributorForm">
+          <input type="hidden" id="updateDistributorId" />
+          <div class="mb-3">
+            <label>Name</label>
+            <input type="text" id="updateDistName" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" id="updateDistEmail" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label>Phone Number</label>
+            <input type="text" id="updateDistPhone" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label>Role</label>
+            <select id="updateDistRole" class="form-select">
+              <option value="distributor">Distributor</option>
+              <option value="customer">Customer</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Location</label>
+            <select id="updateDistLocation" class="form-select" required></select>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Distributor</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-  <!-- Pagination -->
-  <nav>
-    <ul class="pagination justify-content-center" id="paginationControls"></ul>
-  </nav>
+<!-- Delete Distributor Modal -->
+<div class="modal fade" id="deleteDistributorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Distributor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this distributor?</p>
+        <input type="hidden" id="deleteDistributorId" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="confirmDeleteDistributor" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const spinner = document.getElementById("loadingSpinner");
-  const tableBody = document.getElementById("productsTableBody");
-  const paginationControls = document.getElementById("paginationControls");
-  const searchInput = document.getElementById("searchInput");
-  const pageSizeSelect = document.getElementById("pageSize");
+  const distributorsTableBody = document.querySelector("#distributorsTable tbody");
+  const token = localStorage.getItem("key");
 
-  let products = [];
-  let filteredProducts = [];
+  let distributors = [];
   let currentPage = 1;
-  let pageSize = parseInt(pageSizeSelect.value, 10);
+  const rowsPerPage = 10;
 
-  // Fetch products from backend
-  async function fetchProducts() {
-    const token = localStorage.getItem("key");
-    if (!token) {
-      Swal.fire({ icon: "error", text: "Unauthorized: No token found" });
-      return;
-    }
+  const searchInput = document.getElementById("searchInput");
+  const roleFilter = document.getElementById("roleFilter");
 
-    spinner.style.display = "block";
+  // Fetch distributors
+  async function loadDistributors() {
     try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/products", {
-        headers: { "Authorization": `Bearer ${token}` }
+      const res = await fetch("http://localhost:3001/amazon/document/api/register/distributors", {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-
-      if (!Array.isArray(data)) throw new Error("Invalid response format");
-
-      products = data;
-      filteredProducts = [...products];
+      if (!res.ok) throw new Error("Failed to fetch distributors");
+      distributors = await res.json();
+      currentPage = 1;
       renderTable();
+      renderPagination();
     } catch (err) {
-      console.error("Error fetching products:", err);
-      Swal.fire({ icon: "error", text: "Failed to load products" });
-    } finally {
-      spinner.style.display = "none";
+      console.error(err);
     }
   }
 
-  // Render table rows with pagination
+  // Render table
   function renderTable() {
-    tableBody.innerHTML = "";
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedRole = roleFilter.value;
 
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    const paginatedProducts = filteredProducts.slice(start, end);
-
-    paginatedProducts.forEach(prod => {
-      const row = document.createElement("tr");
-
-      row.innerHTML = `
-        <td>${prod.name}</td>
-        <td><img src="${prod.image?.[0] || ''}" alt="Product" class="img-thumbnail" style="width:50px;height:50px;"></td>
-        <td>${prod.description}</td>
-        <td>$${prod.price}</td>
-        <td>${prod.numberInStock}</td>
-        <td>${prod.category?.name || ''}</td>
-        <td>${prod.variety.map(v => `<span class="badge bg-info me-1">${v}</span>`).join("")}</td>
-        <td>${prod.benefits}</td>
-        <td>${prod.ingredients.map(i => `<span class="badge bg-secondary me-1">${i}</span>`).join("")}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-1 update-btn" data-id="${prod._id}">Update</button>
-          <button class="btn btn-sm btn-danger delete-btn" data-id="${prod._id}">Delete</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
+    const filtered = distributors.filter(d => {
+      const matchesRole = selectedRole ? d.role === selectedRole : true;
+      const matchesSearch =
+        d.name.toLowerCase().includes(searchTerm) ||
+        d.email.toLowerCase().includes(searchTerm) ||
+        d.phoneNumber.includes(searchTerm);
+      return matchesRole && matchesSearch;
     });
 
-    renderPagination();
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginated = filtered.slice(start, start + rowsPerPage);
+
+    distributorsTableBody.innerHTML = "";
+    paginated.forEach(d => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${d.name}</td>
+        <td>${d.email}</td>
+        <td>${d.phoneNumber}</td>
+        <td>${d.role}</td>
+        <td>${d.location?.location || ""}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" onclick="openUpdateModal('${d._id}')">Update</button>
+          <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${d._id}')">Delete</button>
+        </td>
+      `;
+      distributorsTableBody.appendChild(tr);
+    });
   }
 
-  // Render pagination controls
+  // Pagination
   function renderPagination() {
-    paginationControls.innerHTML = "";
-    const totalPages = Math.ceil(filteredProducts.length / pageSize);
+    const paginationContainer = document.getElementById("pagination");
+    if (!paginationContainer) return;
 
-    for (let i = 1; i <= totalPages; i++) {
-      const li = document.createElement("li");
-      li.className = `page-item ${i === currentPage ? "active" : ""}`;
-      li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-      li.addEventListener("click", (e) => {
-        e.preventDefault();
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedRole = roleFilter.value;
+
+    const filtered = distributors.filter(d => {
+      const matchesRole = selectedRole ? d.role === selectedRole : true;
+      const matchesSearch =
+        d.name.toLowerCase().includes(searchTerm) ||
+        d.email.toLowerCase().includes(searchTerm) ||
+        d.phoneNumber.includes(searchTerm);
+      return matchesRole && matchesSearch;
+    });
+
+    const pageCount = Math.ceil(filtered.length / rowsPerPage);
+    paginationContainer.innerHTML = "";
+
+    for (let i = 1; i <= pageCount; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.classList.add("btn", "btn-sm", "me-1");
+      btn.classList.add(i === currentPage ? "btn-primary" : "btn-outline-primary");
+      btn.addEventListener("click", () => {
         currentPage = i;
         renderTable();
+        renderPagination();
       });
-      paginationControls.appendChild(li);
+      paginationContainer.appendChild(btn);
     }
   }
 
-  // Search filter
+  // Event listeners
   searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    filteredProducts = products.filter(p =>
-      p.name.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query)
-    );
     currentPage = 1;
     renderTable();
+    renderPagination();
   });
 
-  // Page size change
-  pageSizeSelect.addEventListener("change", () => {
-    pageSize = parseInt(pageSizeSelect.value, 10);
+  roleFilter.addEventListener("change", () => {
     currentPage = 1;
     renderTable();
+    renderPagination();
+  });
+
+  // Open Update Modal
+  window.openUpdateModal = function(id) {
+    const distributor = distributors.find(d => d._id === id);
+    if (!distributor) return;
+
+    document.getElementById("updateDistributorId").value = distributor._id;
+    document.getElementById("updateDistName").value = distributor.name;
+    document.getElementById("updateDistEmail").value = distributor.email;
+    document.getElementById("updateDistPhone").value = distributor.phoneNumber;
+    document.getElementById("updateDistRole").value = distributor.role;
+
+    // Populate location dropdown with DB locations
+    const locSelect = document.getElementById("updateDistLocation");
+    locSelect.innerHTML = '<option value="">Select Location</option>';
+    fetch("http://localhost:3001/amazon/document/api/locations", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(locations => {
+        locations.forEach(loc => {
+          const opt = document.createElement("option");
+          opt.value = loc._id;
+          opt.textContent = loc.location;
+          if (distributor.location?.location === loc.location) opt.selected = true;
+          locSelect.appendChild(opt);
+        });
+      });
+
+    const modal = new bootstrap.Modal(document.getElementById("updateDistributorModal"));
+    modal.show();
+  };
+
+  // Update Distributor
+  document.getElementById("updateDistributorForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = document.getElementById("updateDistributorId").value;
+    const data = {
+      name: document.getElementById("updateDistName").value,
+      email: document.getElementById("updateDistEmail").value,
+      phoneNumber: document.getElementById("updateDistPhone").value,
+      role: document.getElementById("updateDistRole").value,
+      locationId: document.getElementById("updateDistLocation").value
+    };
+    try {
+      const res = await fetch(`http://localhost:3001/amazon/document/api/register/update-distributor/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to update distributor");
+      loadDistributors();
+      bootstrap.Modal.getInstance(document.getElementById("updateDistributorModal")).hide();
+      Swal.fire("Success", "Distributor updated successfully", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to update distributor", "error");
+    }
+  });
+
+  // Open Delete Modal
+  window.openDeleteModal = function(id) {
+    document.getElementById("deleteDistributorId").value = id;
+    const modal = new bootstrap.Modal(document.getElementById("deleteDistributorModal"));
+    modal.show();
+  };
+
+  // Confirm Delete
+  document.getElementById("confirmDeleteDistributor").addEventListener("click", async () => {
+    const id = document.getElementById("deleteDistributorId").value;
+    try {
+      const res = await fetch(`http://localhost:3001/amazon/document/api/register/delete-distributor/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Failed to delete distributor");
+      loadDistributors();
+      bootstrap.Modal.getInstance(document.getElementById("deleteDistributorModal")).hide();
+      Swal.fire("Deleted!", "Distributor has been deleted.", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to delete distributor", "error");
+    }
   });
 
   // Initial load
-  fetchProducts();
+  loadDistributors();
 });
 </script>
 
+<!-- Pagination container -->
+<div id="pagination" class="mt-3"></div>
 
 
+    
 
-
-
-
-
- 
-
-<script src="js/index.js"></script>
-</body>
+    <script src="js/index.js"></script>
+  </body>
 </html>

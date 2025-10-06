@@ -479,6 +479,7 @@
                         <button class="btn btn-success" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">+ Add Product</button>
                         <!-- modal to add products ends here -->
                     </div>
+                    
                 </div>
 
                 <div class="d-flex align-items-center justify-content-between mt-3">
@@ -503,7 +504,7 @@
 
                 <!-- product table section here  -->
                 <div class="table-responsive mt-3">
-            <table class="table table-striped align-middle DStable1 " style="width: 100%;" >
+            <table class="table table-striped align-middle  " style="width: 100%;" >
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -544,7 +545,7 @@
 
                     <!-- Table -->
                     <div class="table-responsive">
-                        <table class="table table-striped align-middle DStable1"  >
+                        <table class="table table-striped align-middle "  >
                         <thead class="">
                             <tr> 
                             <th>Name</th>
@@ -665,251 +666,7 @@
         </div>
     </div>
 
-
-
-
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-    const spinner = document.getElementById("loadingSpinner");
-    const tableBody = document.getElementById("productsTableBody");
-    const searchInput = document.getElementById("searchInput");
-    const pageSizeSelect = document.getElementById("pageSize");
-    const pagination = document.getElementById("pagination");
-
-    const updateModal = new bootstrap.Modal(document.getElementById("updateModal"));
-    const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
-
-    let products = [];
-    let filteredProducts = [];
-    let currentPage = 1;
-    let pageSize = parseInt(pageSizeSelect.value);
-
-    // ------------------- Fetch Products -------------------
-    async function fetchProducts() {
-        spinner.style.display = "block";
-        const token = localStorage.getItem("key");
-        if (!token) {
-        Swal.fire({ icon: "error", text: "Unauthorized" });
-        spinner.style.display = "none";
-        return;
-        }
-        try {
-        const res = await fetch("http://localhost:3001/amazon/document/api/products", { headers: { Authorization: `Bearer ${token}` } });
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error("Invalid response");
-        products = data;
-        filteredProducts = [...products];
-        renderTable();
-        } catch (e) {
-        console.error(e);
-        Swal.fire({ icon: "error", text: "Failed to load products" });
-        } finally {
-        spinner.style.display = "none";
-        }
-    }
-
-    // ------------------- Render Table -------------------
-    function renderTable() {
-        tableBody.innerHTML = "";
-        const query = searchInput.value.toLowerCase();
-        filteredProducts = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
-        const totalPages = Math.ceil(filteredProducts.length / pageSize);
-        if (currentPage > totalPages) currentPage = totalPages || 1;
-        const start = (currentPage - 1) * pageSize;
-        const paginated = filteredProducts.slice(start, start + pageSize);
-
-        paginated.forEach(p => {
-        const firstImage = p.image?.[0] || "https://via.placeholder.com/50";
-        const varietyBadges = (p.variety || []).map(v => `<span class="badge bg-info me-1">${v}</span>`).join("");
-        const ingredientBadges = (p.ingredients || []).map(i => `<span class="badge bg-secondary me-1">${i}</span>`).join("");
-        const row = `
-            <tr>
-            <td>${p.name}</td>
-            <td><img src="${firstImage}" class="img-thumbnail" style="width:50px;height:50px;object-fit:cover;"></td>
-            <td>${p.description}</td>
-            <td class="text-center">₦${Number(p.price).toLocaleString("en-NG")}</td>
-            <td>${p.numberInStock}</td>
-            <td>${p.category?.name || "N/A"}</td>
-            <td>${varietyBadges}</td>
-            <td>${p.benefits || ""}</td>
-            <td>${ingredientBadges}</td>
-            <td>
-                <button class="btn btn-sm btn-warning me-1 update-btn" data-id="${p._id}">Update</button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${p._id}">Delete</button>
-            </td>
-            </tr>`;
-        tableBody.insertAdjacentHTML("beforeend", row);
-        });
-
-        renderPagination(Math.ceil(filteredProducts.length / pageSize));
-    }
-
-    // ------------------- Pagination -------------------
-    function renderPagination(totalPages) {
-        pagination.innerHTML = "";
-        if (totalPages <= 1) return;
-        const prevDisabled = currentPage === 1 ? "disabled" : "";
-        const nextDisabled = currentPage === totalPages ? "disabled" : "";
-        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${prevDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage-1})">Previous</a></li>`);
-        for (let i = 1; i <= totalPages; i++) {
-        const active = i === currentPage ? "active" : "";
-        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${active}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`);
-        }
-        pagination.insertAdjacentHTML("beforeend", `<li class="page-item ${nextDisabled}"><a class="page-link" href="#" onclick="changePage(${currentPage+1})">Next</a></li>`);
-    }
-    window.changePage = (page) => { if (page >= 1) { currentPage = page; renderTable(); } };
-    searchInput.addEventListener("input", () => { currentPage = 1; renderTable(); });
-    pageSizeSelect.addEventListener("change", () => { pageSize = parseInt(pageSizeSelect.value); currentPage = 1; renderTable(); });
-
-    // ------------------- Load Categories -------------------
-    async function loadCategories() {
-        const categorySelect = document.getElementById("updateCategory");
-        categorySelect.innerHTML = `<option value="">Select category</option>`;
-        try {
-        const token = localStorage.getItem("key");
-        const res = await fetch("http://localhost:3001/amazon/document/api/categories", {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const categories = await res.json();
-        categories.forEach(cat => {
-            const option = document.createElement("option");
-            option.value = cat._id;
-            option.textContent = cat.name;
-            categorySelect.appendChild(option);
-        });
-        } catch (err) {
-        console.error(err);
-        Swal.fire({ icon: "error", text: "Failed to load categories" });
-        }
-    }
-
-    // ------------------- Update & Delete Button Logic -------------------
-    document.addEventListener("click", async (e) => {
-        if (e.target.classList.contains("update-btn")) {
-        const id = e.target.dataset.id;
-        const p = products.find(x => x._id === id);
-        if (!p) return;
-
-        document.getElementById("updateProductId").value = p._id;
-        document.getElementById("updateName").value = p.name;
-        document.getElementById("updatePrice").value = p.price;
-        document.getElementById("updateStock").value = p.numberInStock;
-        document.getElementById("updateDescription").value = p.description;
-        document.getElementById("updateImages").value = p.image?.join(", ") || "";
-        document.getElementById("updateVariety").value = p.variety?.join(", ") || "";
-        document.getElementById("updateBenefits").value = p.benefits || "";
-        document.getElementById("updateIngredients").value = p.ingredients?.join(",") || "";
-
-        await loadCategories();
-        document.getElementById("updateCategory").value = p.category?._id || "";
-
-        updateModal.show();
-        }
-
-        if (e.target.classList.contains("delete-btn")) {
-        const id = e.target.dataset.id;
-        const p = products.find(x => x._id === id);
-        if (!p) return;
-        document.getElementById("deleteProductId").value = p._id;
-        document.getElementById("deleteMessage").innerText = `Are you sure you want to delete "${p.name}"?`;
-        deleteModal.show();
-        }
-    });
-
-    // ------------------- Submit Update -------------------
-    // ------------------- Submit Update Form -------------------
-    document.getElementById("updateForm").addEventListener("submit", async e => {
-        e.preventDefault();
-        const id = document.getElementById("updateProductId").value;
-        const token = localStorage.getItem("key");
-
-        try {
-            const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    name: document.getElementById("updateName").value,
-                    price: document.getElementById("updatePrice").value.trim(),
-                    numberInStock: parseInt(document.getElementById("updateStock").value, 10),
-                    description: document.getElementById("updateDescription").value,
-                    categoryId: document.getElementById("updateCategory").value.trim(),  // ✅ send _id as categoryId
-                    image: document.getElementById("updateImages").value
-                            .split(",")
-                            .map(i => i.trim())
-                            .filter(i => i),
-                    variety: document.getElementById("updateVariety").value
-                            .split(",")
-                            .map(i => i.trim())
-                            .filter(i => i),
-                    benefits: document.getElementById("updateBenefits").value,
-                    ingredients: document.getElementById("updateIngredients").value
-                            .split(",")
-                            .map(i => i.trim())
-                            .filter(i => i)
-                })
-            });
-
-            const result = await res.json();
-
-            if (result._id) {
-                Swal.fire({ icon: "success", text: "Product updated!" });
-                updateModal.hide();
-                fetchProducts(); // refresh table
-            } else {
-                Swal.fire({ icon: "error", text: result.message || "Failed to update" });
-            }
-        } catch (err) {
-            console.error(err);
-            Swal.fire({ icon: "error", text: "Server error" });
-        }
-    });
-
-
-    // ------------------- Confirm Delete -------------------
-    document.getElementById("confirmDelete").addEventListener("click", async () => {
-        const id = document.getElementById("deleteProductId").value;
-        const token = localStorage.getItem("key");
-        try {
-        const res = await fetch(`http://localhost:3001/amazon/document/api/products/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const result = await res.json();
-        if (res.ok) {
-        Swal.fire({ icon: "success", text: "Deleted!" });
-        deleteModal.hide();
-        products = products.filter(p => p._id !== id);
-        renderTable();
-    } else {
-        const data = await res.json();
-        Swal.fire({ icon: "error", text: data.message || "Failed to delete" });
-    }
-
-        } catch (err) {
-        console.error(err);
-        Swal.fire({ icon: "error", text: "Server error" });
-        }
-    });
-
-    fetchProducts();
-    });
-    </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
