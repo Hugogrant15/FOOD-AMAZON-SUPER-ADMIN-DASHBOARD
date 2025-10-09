@@ -49,6 +49,7 @@ function adminLogin(event) {
             // save token + ids in localStorage
             localStorage.setItem("key", result.token);
             localStorage.setItem("customerloginid", result._id);
+            localStorage.setItem("role", payload.role);
 
             const currentId = localStorage.getItem('customerloginid');
             const previousId = localStorage.getItem('customerid');
@@ -444,14 +445,14 @@ function toggleNotification(event) {
 const searchInput = document.getElementById("searchInput");
 const searchIcon = document.querySelector(".search-icon");
 
-searchIcon.addEventListener("click", () => {
-  if (window.innerWidth < 768) { // only apply expand/collapse on small screens
-    searchInput.classList.toggle("show");
-    if (searchInput.classList.contains("show")) {
-      searchInput.focus();
-    }
-  }
-});
+// searchIcon.addEventListener("click", () => {
+//   if (window.innerWidth < 768) { // only apply expand/collapse on small screens
+//     searchInput.classList.toggle("show");
+//     if (searchInput.classList.contains("show")) {
+//       searchInput.focus();
+//     }
+//   }
+// });
 
 function createCategory(event) {
   event.preventDefault();
@@ -556,43 +557,79 @@ async function loadCategories() {
 }
 document.addEventListener("DOMContentLoaded", loadCategories);
 
+// async function loadCategories() {
+//   try {
+//     const response = await fetch("http://localhost:3001/amazon/document/api/categories"); 
+//     if (!response.ok) throw new Error("Failed to fetch categories");
+
+//     const categories = await response.json(); 
+//     const select = document.getElementById("categorySelect");
+
+//     if (!select) return; // 🔹 Prevent error if element not found
+
+//     // Clear old options (except first one)
+//     select.innerHTML = `<option value="">-- Select a Category --</option>`;
+
+//     categories.forEach(category => {
+//       const option = document.createElement("option");
+//       option.value = category._id;  
+//       option.textContent = category.name; 
+//       select.appendChild(option);
+//     });
+//   } catch (error) {
+//     console.error("Error loading categories:", error);
+//   }
+// }
+// document.addEventListener("DOMContentLoaded", loadCategories);
+
 // Fuction get all orders API(to Table)
-async function loadOrders() {
-  try {
-    const res = await fetch("http://localhost:3001/amazon/document/api/orders");
-    const orders = await res.json();
-    const tbody = document.getElementById("ordersTableBody");
-    tbody.innerHTML = "";
-    if (!orders.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found</td></tr>`;
-      return;
+
+document.addEventListener("DOMContentLoaded", async function () {
+  async function loadOrders() {
+    try {
+      const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+      const orders = await res.json();
+      const tbody = document.getElementById("ordersTableBody");
+      if (!tbody) return; // guard if table not present
+
+      tbody.innerHTML = "";
+      if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found</td></tr>`;
+        return;
+      }
+
+      orders.forEach(order => {
+        const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
+        const row = `
+          <tr style="cursor:pointer" onclick="showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
+            <td>${order.transactionId || "N/A"}</td>
+            <td>${new Date(order.createdAt).toLocaleString()}</td>
+            <td>${fullName || "Unknown"}</td>
+            <td>
+              <span class="badge ${order.paymentStatus === "paid" ? "bg-success" : "bg-danger"}">
+                ${order.paymentStatus}
+              </span>
+            </td>
+            <td>
+              <span class="badge ${order.deliveryStatus === "deliverd" ? "bg-success" : "bg-warning"}">
+                ${order.deliveryStatus}
+              </span>
+            </td>
+            <td>₦${order.totalAmount.toLocaleString()}</td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+    } catch (err) {
+      console.error("Error loading orders:", err);
     }
-    orders.forEach(order => {
-      const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
-      const row = `
-        <tr style="cursor:pointer" onclick="showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
-          <td>${order.transactionId || "N/A"}</td>
-          <td>${new Date(order.createdAt).toLocaleString()}</td>
-          <td>${fullName || "Unknown"}</td>
-          <td>
-            <span class="badge ${order.paymentStatus === "paid" ? "bg-success" : "bg-danger"}">
-              ${order.paymentStatus}
-            </span>
-          </td>
-          <td>
-            <span class="badge ${order.deliveryStatus === "deliverd" ? "bg-success" : "bg-warning"}">
-              ${order.deliveryStatus}
-            </span>
-          </td>
-          <td>₦${order.totalAmount.toLocaleString()}</td>
-        </tr>
-      `;
-      tbody.insertAdjacentHTML("beforeend", row);
-    });
-  } catch (err) {
-    console.error("Error loading orders:", err);
   }
-}
+
+  // ✅ Run after DOM is ready
+  loadOrders();
+});
+
+
 
 function showOrderDetails(order) {
   const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
@@ -635,8 +672,68 @@ function showOrderDetails(order) {
   document.getElementById("orderDetailsContent").innerHTML = content;
   new bootstrap.Modal(document.getElementById("orderDetailsModal")).show();
 }
-// Call function when page loads
-document.addEventListener("DOMContentLoaded", loadOrders);
+
+// LOAD TOP SELLING PRODUCTS BY UNIT SOLD API
+document.addEventListener("DOMContentLoaded", () => {
+  async function loadTopProducts() {
+    try {
+      const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const orders = await res.json();
+
+      // Aggregate products
+      const productMap = {};
+
+      orders.forEach(order => {
+        order.items?.forEach(item => {
+          if (!productMap[item.name]) {
+            productMap[item.name] = {
+              name: item.name,
+              price: item.price,
+              image: item.image || "https://via.placeholder.com/50",
+              units: 0
+            };
+          }
+          productMap[item.name].units += item.quantity;
+        });
+      });
+
+      // Sort by units sold (descending) & limit to top 5
+      const topProducts = Object.values(productMap)
+        .sort((a, b) => b.units - a.units)
+        .slice(0, 5);
+
+      // Render table
+      const tbody = document.getElementById("topProductsBody");
+      tbody.innerHTML = "";
+
+      topProducts.forEach(p => {
+        const row = `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <img src="${p.image}" alt="${p.name}" 
+                     class="rounded me-2" 
+                     style="width:40px; height:40px; object-fit:cover;">
+                ${p.name}
+              </div>
+            </td>
+            <td>₦${p.price.toLocaleString()}</td>
+            <td>${p.units}</td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML("beforeend", row);
+      });
+
+    } catch (err) {
+      console.error("Error loading top products:", err);
+    }
+  }
+
+  // Call function when DOM ready
+  loadTopProducts();
+});
+
 
 
 
@@ -660,6 +757,9 @@ function logOut() {
       localStorage.removeItem("role");
       localStorage.removeItem("customerid");
       localStorage.removeItem("customerloginid");
+      localStorage.removeItem("catId");
+      localStorage.removeItem("prodId");
+      localStorage.removeItem("products");
       Swal.fire({
         icon: 'success',
         title: 'Logged out',

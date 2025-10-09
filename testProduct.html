@@ -16,866 +16,367 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body class="bg-light">
-    <!-- <button class="btn btn-outline-success" id="distributor" data-bs-toggle="modal" data-bs-target="#distributorModal">
-  Add distributor
-</button>
-<div class="modal fade" id="distributorModal" tabindex="-1" aria-labelledby="distributorModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="distributorModalLabel">Add Distributor</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="addDistributorForm">
-          <div class="mb-3">
-            <label for="distributorName" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="distributorName" required>
-          </div>
-          <div class="mb-3">
-            <label for="distributorPhone" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="distributorPhone" required>
-          </div>
-          <div class="mb-3">
-            <label for="distributorEmail" class="form-label">Email</label>
-            <input type="email" class="form-control" id="distributorEmail" required>
-          </div>
-          <div class="mb-3">
-            <label for="distributorPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="distributorPassword" required>
-          </div>
-          <div class="mb-3">
-            <label for="distributorRole" class="form-label">Role</label>
-            <input type="text" class="form-control" id="distributorRole" value="Distributor" readonly>
-          </div>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label for="country" class="form-label">Country</label>
-              <select class="form-select" id="country" required>
-                <option value="">Select Country</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label for="state" class="form-label">State</label>
-              <select class="form-select" id="state" disabled required>
-                <option value="">Select State</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label for="city" class="form-label">City</label>
-              <select class="form-select" id="city" disabled required>
-                <option value="">Select City</option>
-              </select>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="addDistributorForm" class="btn btn-success">Add Distributor</button>
-      </div>
-    </div>
-  </div>
+
+    <!-- Add to <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="" crossorigin="anonymous" />
+<style>
+  .metrics-row { display:flex; gap:16px; flex-wrap:wrap; }
+  .metric-card { background:#fff; border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(13,38,59,0.06); flex:1; min-width:200px; position:relative; }
+  .metric-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .metric-value { font-size:18px; font-weight:700; }
+  .metric-title { font-size:13px; color:#6b7280; margin:0; }
+  .metric-amount { font-size:20px; font-weight:800; margin:6px 0; }
+  .metric-change { font-size:12px; margin-right:8px; display:inline-block; }
+  .metric-chart { width:100%; height:36px; }
+  .small-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#f1f5f9; }
+  .text-up { color: #16a34a; } /* green */
+  .text-down { color: #ef4444; } /* red */
+</style>
+
+<!-- Place where you want the metrics -->
+<div class="metrics-row" id="realtimeMetricsRow">
+  <!-- Cards will be injected here -->
 </div>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script>
-    const countrySelect = document.getElementById("country");
-  const stateSelect = document.getElementById("state");
-  const citySelect = document.getElementById("city");
-  // Load countries
-  async function loadCountries() {
-    try {
-      const res = await fetch("https://restcountries.com/v3.1/all?fields=name");
-      const data = await res.json();
-      const countries = Array.isArray(data) ? data : [];
-      countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
-      countries.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.name.common;
-        opt.textContent = c.name.common;
-        countrySelect.appendChild(opt);
-      });
-      // :white_tick: Auto-select Nigeria if available
-      const defaultCountry = "Nigeria";
-      const nigeriaOption = [...countrySelect.options].find(
-        opt => opt.value === defaultCountry
-      );
-      if (nigeriaOption) {
-        countrySelect.value = defaultCountry;
-        await loadStates(defaultCountry); // load states immediately
-      }
-    } catch (err) {
-      console.error("Error loading countries:", err);
+<script>
+/*
+  Real-time Metrics Row
+  - Fetches:
+    * Orders: GET /amazon/document/api/orders
+    * Users:  GET /amazon/document/api/users
+    * Visits (optional): GET /amazon/document/api/analytics/visits  (expected shape: [{date: "YYYY-MM-DD", visits: N}, ...])
+  - If visits endpoint is missing, visits trend is derived (fallback) from orders timestamps (unique IP/visitor not required).
+  - Refreshes every 30s by default.
+*/
+
+const CONFIG = {
+  ordersEndpoint: "/amazon/document/api/orders",
+  usersEndpoint: "/amazon/document/api/users",
+  visitsEndpoint: "/amazon/document/api/analytics/visits", // optional
+  refreshIntervalMs: 30000, // 30s
+  sparklineOptions: {
+    type: "line",
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      elements: { point: { radius: 0 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+      tension: 0.35
     }
   }
-  // Load states when country is selected
-  async function loadStates(country) {
-    try {
-      stateSelect.innerHTML = `<option value="">Loading...</option>`;
-      stateSelect.disabled = true;
-      citySelect.innerHTML = `<option value="">Select City</option>`;
-      citySelect.disabled = true;
-      const res = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ country })
-      });
-      const data = await res.json();
-      stateSelect.innerHTML = `<option value="">Select State</option>`;
-      if (data.data && data.data.states) {
-        data.data.states.forEach(s => {
-          const opt = document.createElement("option");
-          opt.value = s.name;
-          opt.textContent = s.name;
-          stateSelect.appendChild(opt);
-        });
-      }
-      stateSelect.disabled = false;
-    } catch (err) {
-      console.error("Error loading states:", err);
-      stateSelect.innerHTML = `<option value="">No states found</option>`;
-    }
+};
+
+let sparklineCharts = {}; // keep Chart.js instances to update
+
+// Create card HTML helper
+function createMetricCard(id, title, iconHtml, subLabel) {
+  return `
+    <div class="metric-card" id="${id}-card">
+      <div class="metric-top">
+        <div>
+          <p class="metric-title">${title}</p>
+          <div class="metric-amount" id="${id}-amount">-</div>
+        </div>
+        <div class="small-icon">${iconHtml}</div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div>
+          <span id="${id}-change" class="metric-change">-</span>
+          <small class="text-muted">${subLabel || ""}</small>
+        </div>
+        <div style="width:120px; height:36px;">
+          <canvas id="${id}-chart" class="metric-chart"></canvas>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Insert five cards (matches screenshot layout)
+function renderCardsContainer() {
+  const container = document.getElementById("realtimeMetricsRow");
+  container.innerHTML = [
+    createMetricCard("revenue", "Total Revenue", '<i class="fa-regular fa-dollar-sign"></i>', "Total Revenue"),
+    createMetricCard("orders", "Orders", '<i class="fa-regular fa-cart-shopping"></i>', "Orders placed"),
+    createMetricCard("visits", "Unique Visits", '<i class="fa-regular fa-chart-line"></i>', "Website visits"),
+    createMetricCard("newUsers", "New Users", '<i class="fa-regular fa-user-plus"></i>', "Users joined"),
+    createMetricCard("existingUsers", "Existing Users", '<i class="fa-regular fa-user"></i>', "Active users")
+  ].join("");
+}
+
+// Utility: get last N days array of date-strings "YYYY-MM-DD", oldest → newest
+function lastNDates(n) {
+  const res = [];
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  for (let i = n-1; i >= 0; i--) {
+    const day = new Date(d);
+    day.setDate(d.getDate() - i);
+    res.push(day.toISOString().split("T")[0]);
   }
-  // Load cities when state is selected
-async function loadCities(country, state) {
+  return res;
+}
+
+// Format currency (Naira)
+function formatCurrency(n) {
+  if (typeof n !== "number") n = Number(n) || 0;
+  return "₦" + n.toLocaleString("en-NG");
+}
+
+// Percent change helper (current vs previous period)
+function percentChange(current, previous) {
+  if (previous === 0) return current === 0 ? 0 : 100;
+  return ((current - previous) / previous) * 100;
+}
+
+// Build 7-day revenue & order counts from orders array
+function buildTrendsFromOrders(orders, days = 7) {
+  const dates = lastNDates(days);
+  const revenueMap = Object.fromEntries(dates.map(d => [d, 0]));
+  const ordersMap = Object.fromEntries(dates.map(d => [d, 0]));
+  const visitsMap = Object.fromEntries(dates.map(d => [d, 0])); // fallback: visits ~ orders
+
+  orders.forEach(o => {
+    const date = new Date(o.createdAt);
+    const key = date.toISOString().split("T")[0];
+    if (key in revenueMap) {
+      if (o.paymentStatus === "paid") revenueMap[key] += Number(o.totalAmount || 0);
+      ordersMap[key] += 1;
+      // For fallback visits, increment here (approx)
+      visitsMap[key] += 1;
+    }
+  });
+
+  return {
+    dates,
+    revenue: dates.map(d => revenueMap[d]),
+    orders: dates.map(d => ordersMap[d]),
+    visitsFallback: dates.map(d => visitsMap[d])
+  };
+}
+
+async function safeFetchJson(url) {
   try {
-    citySelect.innerHTML = `<option value="">Loading...</option>`;
-    citySelect.disabled = true;
-    const res = await fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ country, state })
-    });
-    const data = await res.json();
-    // :white_tick: log AFTER defining "data"
-    console.log("Fetching cities for:", country, state, data);
-    citySelect.innerHTML = `<option value="">Select City</option>`;
-    if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-      data.data.forEach(city => {
-        const opt = document.createElement("option");
-        opt.value = city;
-        opt.textContent = city;
-        citySelect.appendChild(opt);
-      });
-      citySelect.disabled = false;
-    } else {
-      citySelect.innerHTML = `<option value="">No cities found</option>`;
-    }
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("not ok: " + r.status);
+    return await r.json();
   } catch (err) {
-    console.error("Error loading cities:", err);
-    citySelect.innerHTML = `<option value="">No cities found</option>`;
+    console.warn("Fetch failed:", url, err.message);
+    return null;
   }
 }
-  // Event listeners
-  countrySelect.addEventListener("change", e => {
-    const country = e.target.value;
-    if (country) {
-      loadStates(country);
-    } else {
-      stateSelect.innerHTML = `<option value="">Select State</option>`;
-      stateSelect.disabled = true;
-      citySelect.innerHTML = `<option value="">Select City</option>`;
-      citySelect.disabled = true;
-    }
-  });
-  stateSelect.addEventListener("change", e => {
-    const state = e.target.value;
-    const country = countrySelect.value;
-    if (state && country) {
-      loadCities(country, state);
-    } else {
-      citySelect.innerHTML = `<option value="">Select City</option>`;
-      citySelect.disabled = true;
-    }
-  });
-  // Initial load
-  loadCountries();
 
-// Utility function to decode JWT payload
-  function parseJwt(token) {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(base64));
-    } catch (e) {
-      return null;
+// Main update routine
+async function updateMetrics() {
+  try {
+    // Parallel fetches
+    const [ordersData, usersData, visitsData] = await Promise.all([
+      safeFetchJson(CONFIG.ordersEndpoint),
+      safeFetchJson(CONFIG.usersEndpoint),
+      safeFetchJson(CONFIG.visitsEndpoint)
+    ]);
+
+    const orders = Array.isArray(ordersData) ? ordersData : (ordersData?.data || []) || [];
+    const users = Array.isArray(usersData) ? usersData : (usersData?.data || []) || [];
+    // visitsData expected [{date: 'YYYY-MM-DD', visits: N}, ...] or null
+
+    // Trends from orders
+    const { dates, revenue, orders: ordersTrend, visitsFallback } = buildTrendsFromOrders(orders, 7);
+
+    // Revenue: current (sum of last 1 day - latest index), previous period = sum of previous same-length period (we'll sum day 0 vs day -1)
+    // For clearer comparison we'll do: currentPeriod = last 1 day (today), previousPeriod = yesterday
+    const currentRevenue = revenue[revenue.length - 1] || 0;
+    const previousRevenue = revenue[revenue.length - 2] || 0;
+    const totalRevenue = revenue.reduce((s, v) => s + v, 0); // 7-day total
+
+    // Orders
+    const currentOrdersCount = ordersTrend[ordersTrend.length - 1] || 0;
+    const previousOrdersCount = ordersTrend[ordersTrend.length - 2] || 0;
+    const totalOrders = ordersTrend.reduce((s, v) => s + v, 0);
+
+    // Visits: prefer visitsData; fallback to visitsFallback
+    let visitsTrend = visitsFallback;
+    if (Array.isArray(visitsData)) {
+      // visitsData may have objects with date + visits
+      const visitsMap = {};
+      visitsData.forEach(v => { visitsMap[v.date] = Number(v.visits || 0); });
+      visitsTrend = dates.map(d => visitsMap[d] || 0);
     }
+    const currentVisits = visitsTrend[visitsTrend.length - 1] || 0;
+    const previousVisits = visitsTrend[visitsTrend.length - 2] || 0;
+
+    // Users: compute new users per day over last 7 days and totals
+    const userDates = lastNDates(7);
+    const newUsersPerDayMap = Object.fromEntries(userDates.map(d => [d, 0]));
+    users.forEach(u => {
+      const created = new Date(u.createdAt || u.created || u.created_at || u.joinedAt || u.joined || 0);
+      if (isNaN(created)) return;
+      const key = created.toISOString().split("T")[0];
+      if (key in newUsersPerDayMap) newUsersPerDayMap[key] += 1;
+    });
+    const newUsersTrend = userDates.map(d => newUsersPerDayMap[d]);
+    const currentNewUsers = newUsersTrend[newUsersTrend.length - 1] || 0;
+    const previousNewUsers = newUsersTrend[newUsersTrend.length - 2] || 0;
+    const totalExistingUsers = users.length;
+
+    // Update DOM values & charts
+    setMetric("revenue", totalRevenue, percentChange(totalRevenue, 0), currentRevenue, previousRevenue, revenue, dates);
+    setMetric("orders", totalOrders, percentChange(totalOrders, 0), currentOrdersCount, previousOrdersCount, ordersTrend, dates);
+    setMetric("visits", visitsTrend.reduce((s,v)=>s+v,0), percentChange(currentVisits, previousVisits), currentVisits, previousVisits, visitsTrend, dates);
+    setMetric("newUsers", newUsersTrend.reduce((s,v)=>s+v,0), percentChange(currentNewUsers, previousNewUsers), currentNewUsers, previousNewUsers, newUsersTrend, dates);
+    setMetric("existingUsers", totalExistingUsers, 0, totalExistingUsers, totalExistingUsers, newUsersTrend, dates);
+
+  } catch (err) {
+    console.error("updateMetrics error:", err);
   }
+}
 
-  const form = document.getElementById("addDistributorForm");
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+// Helper to set card content and update (or create) a sparkline chart
+function setMetric(id, totalValue, overallPct, currentValue, previousValue, trendArray, labels) {
+  const amountEl = document.getElementById(id + "-amount");
+  const changeEl = document.getElementById(id + "-change");
+  const chartCanvas = document.getElementById(id + "-chart");
 
-    const name = document.getElementById("distributorName").value.trim();
-    const phoneNumber = document.getElementById("distributorPhone").value.trim();
-    const email = document.getElementById("distributorEmail").value.trim();
-    const password = document.getElementById("distributorPassword").value.trim();
-    const role = document.getElementById("distributorRole").value;
-    const country = document.getElementById("country").value;
-    const state = document.getElementById("state").value;
-    const city = document.getElementById("city").value;
+  if (!amountEl || !changeEl || !chartCanvas) return;
 
-    if (!name || !phoneNumber || !email || !password || !country || !state || !city) {
-      Swal.fire({ icon: "warning", title: "Missing Information", text: "Please fill in all fields." });
-      return;
-    }
+  // Display total in a friendly format (Revenue uses currency)
+  if (id === "revenue") amountEl.innerText = formatCurrency(totalValue);
+  else amountEl.innerText = (typeof totalValue === "number") ? totalValue.toLocaleString() : totalValue;
 
-    if (!/^\d{11}$/.test(phoneNumber)) {
-      Swal.fire({ icon: "warning", title: "Invalid Phone Number", text: "Phone number must contain exactly 11 digits." });
-      return;
-    }
+  // Percent change: compute between currentValue and previousValue
+  const pct = percentChange(currentValue, previousValue);
+  const sign = pct >= 0 ? "+" : "";
+  changeEl.innerText = (isFinite(pct) ? `${sign}${pct.toFixed(1)}%` : "-");
 
-    // Get token from localStorage
-    const token = localStorage.getItem("key");
-    // Build the location string
-    const locationString = `${city}, ${state}, ${country}`;
-    if (!token) {
-      Swal.fire({ icon: "error", title: "Not Logged In", text: "You must be logged in." });
-      return;
-    }
+  // color class based on sign
+  changeEl.classList.toggle("text-up", pct >= 0);
+  changeEl.classList.toggle("text-down", pct < 0);
 
-    // Decode token to check role
-    const decoded = parseJwt(token);
-    if (!decoded || decoded.role.toLowerCase() !== "super_admin") {
-      Swal.fire({ icon: "error", title: "Access Denied", text: "Only a Super Admin can create a distributor." });
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/register/create-distributor", {
-        method: "POST",
-        headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`   // <--- change here
-  },
-        body: JSON.stringify({
-          name,
-          phoneNumber,
-          email,
-          password,
-          role: role.toLowerCase(),
-          location: { location: locationString }
-        })
-      });
-
-      if (!res.ok) throw new Error("Failed to add distributor");
-      const data = await res.json();
-      console.log("Distributor added:", data);
-
-      // Success
-      const modal = bootstrap.Modal.getInstance(document.getElementById("distributorModal"));
-      modal.hide();
-      form.reset();
-      Swal.fire({ icon: "success", title: "Success!", text: "Distributor added successfully", timer: 2000, showConfirmButton: false });
-
-    } catch (error) {
-      console.error(error);
-      Swal.fire({ icon: "error", title: "Oops...", text: "Error adding distributor" });
-    }
-  });
-// Load countries when modal opens
-document.getElementById("distributorModal").addEventListener("shown.bs.modal", () => {
-  if (countrySelect.options.length <= 1) {
-    loadCountries();
+  // Sparkline via Chart.js - create or update
+  if (sparklineCharts[id]) {
+    const chart = sparklineCharts[id];
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = trendArray;
+    chart.update();
+  } else {
+    const ctx = chartCanvas.getContext("2d");
+    const cfg = {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: trendArray,
+          fill: false,
+          borderWidth: 2,
+          borderColor: pct >= 0 ? '#10b981' : '#ef4444', // green/red line
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { tension: 0.4 } }
+      }
+    };
+    sparklineCharts[id] = new Chart(ctx, cfg);
   }
-});
-  </script> -->
+}
 
-    <!-- Add Distributor Modal -->
-    <!-- <button
-      class="btn btn-success mb-3"
-      data-bs-toggle="modal"
-      data-bs-target="#addDistributorModal"
-    >
-      + NEW Distributor
-    </button> -->
+// Initialize UI & start polling
+(function init() {
+  renderCardsContainer();
+  updateMetrics();
+  setInterval(updateMetrics, CONFIG.refreshIntervalMs);
+})();
+</script>
 
-    <!-- <div
-      class="modal fade"
-      id="addDistributorModal"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content p-3">
-          <div class="modal-header">
-            <h5 class="modal-title">NEW Distributor</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="addDistributorForm">
-              <div class="mb-3">
-                <label>Name</label>
-                <input
-                  type="text"
-                  id="distName"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Email</label>
-                <input
-                  type="email"
-                  id="distEmail"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Phone</label>
-                <input
-                  type="text"
-                  id="distPhone"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Password</label>
-                <input
-                  type="password"
-                  id="distPassword"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Confirm Password</label>
-                <input
-                  type="password"
-                  id="distConfirmPassword"
-                  class="form-control"
-                  required
-                />
-              </div>
 
-              <div class="mb-3">
-                <label class="form-label">Select Location Source</label><br />
-                <input type="radio" name="locationSource" value="db" checked />
-                Database Location
-                <input
-                  type="radio"
-                  name="locationSource"
-                  value="csc"
-                  class="ms-3"
-                />
-                Country / State / City
-              </div>
 
-              <div id="dbLocationWrapper" class="mb-3">
-                <label>Location (DB)</label>
-                <select id="locationDropdown" class="form-select"></select>
-              </div>
 
-              <div id="cscWrapper" class="mb-3 d-none">
-                <label>Country</label>
-                <select id="countryDropdown" class="form-select mb-2"></select>
-                <label>State</label>
-                <select id="stateDropdown" class="form-select mb-2"></select>
-                <label>City</label>
-                <select id="cityDropdown" class="form-select"></select>
-              </div>
 
-              <div class="mb-3">
-                <label>Role</label>
-                <select id="distRole" class="form-select">
-                  <option value="distributor">Distributor</option>
-                </select>
-              </div>
 
-              <button type="submit" class="btn btn-primary">
-                Save Distributor
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- <script>
-      // Toggle between DB Location and Country/State/City
-      document
-        .querySelectorAll('input[name="locationSource"]')
-        .forEach((radio) => {
-          radio.addEventListener("change", () => {
-            const source = document.querySelector(
-              'input[name="locationSource"]:checked'
-            ).value;
-            document
-              .getElementById("dbLocationWrapper")
-              .classList.toggle("d-none", source !== "db");
-            document
-              .getElementById("cscWrapper")
-              .classList.toggle("d-none", source !== "csc");
-          });
-        });
 
-      // Load DB Locations
-      async function loadDBLocations() {
-        try {
-          const res = await fetch(
-            "http://localhost:3001/amazon/document/api/locations"
-          );
-          const locations = await res.json();
-          const dropdown = document.getElementById("locationDropdown");
-          dropdown.innerHTML = '<option value="">Select a location</option>';
-          locations.forEach((loc) => {
-            const opt = document.createElement("option");
-            opt.value = loc._id;
-            opt.textContent = loc.location;
-            dropdown.appendChild(opt);
-          });
-        } catch (err) {
-          console.error("Error loading DB locations:", err);
-        }
-      }
 
-      // Load Countries
-      async function loadCountries() {
-        try {
-          const res = await fetch(
-            "https://countriesnow.space/api/v0.1/countries/positions"
-          );
-          const data = await res.json();
-          const countries = data.data.map((c) => c.name).sort();
-          const countryDropdown = document.getElementById("countryDropdown");
-          countryDropdown.innerHTML =
-            '<option value="">Select Country</option>';
-          countries.forEach((c) => {
-            const opt = document.createElement("option");
-            opt.value = c;
-            opt.textContent = c;
-            countryDropdown.appendChild(opt);
-          });
-        } catch (err) {
-          console.error("Error loading countries:", err);
-        }
-      }
 
-      // Load States
-      document
-        .getElementById("countryDropdown")
-        .addEventListener("change", async function () {
-          const country = this.value;
-          if (!country) return;
 
-          try {
-            const res = await fetch(
-              "https://countriesnow.space/api/v0.1/countries/states",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country }),
-              }
-            );
-            const data = await res.json();
-            const states = data.data.states || [];
-            const stateDropdown = document.getElementById("stateDropdown");
-            stateDropdown.innerHTML = '<option value="">Select State</option>';
-            states.forEach((s) => {
-              const opt = document.createElement("option");
-              opt.value = s.name;
-              opt.textContent = s.name;
-              stateDropdown.appendChild(opt);
-            });
-          } catch (err) {
-            console.error("Error loading states:", err);
-          }
-        });
 
-      // Load Cities
-      document
-        .getElementById("stateDropdown")
-        .addEventListener("change", async function () {
-          const state = this.value;
-          const country = document.getElementById("countryDropdown").value;
-          if (!country || !state) return;
 
-          try {
-            const res = await fetch(
-              "https://countriesnow.space/api/v0.1/countries/state/cities",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ country, state }),
-              }
-            );
-            const data = await res.json();
-            const cities = data.data || [];
-            const cityDropdown = document.getElementById("cityDropdown");
-            cityDropdown.innerHTML = '<option value="">Select City</option>';
-            cities.forEach((c) => {
-              const opt = document.createElement("option");
-              opt.value = c;
-              opt.textContent = c;
-              cityDropdown.appendChild(opt);
-            });
-          } catch (err) {
-            console.error("Error loading cities:", err);
-          }
-        });
 
-      // Submit Distributor
-      document
-        .getElementById("addDistributorForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          const token = localStorage.getItem("key");
-          const source = document.querySelector(
-            'input[name="locationSource"]:checked'
-          ).value;
 
-          const password = document.getElementById("distPassword").value;
-          const confirmPassword = document.getElementById(
-            "distConfirmPassword"
-          ).value;
 
-          // client-side checks
-          if (!password || !confirmPassword) {
-            return Swal.fire(
-              "Error",
-              "Please enter password and confirm password",
-              "error"
-            );
-          }
-          if (password !== confirmPassword) {
-            return Swal.fire("Error", "Passwords do not match!", "error");
-          }
 
-          const distributor = {
-            name: document.getElementById("distName").value,
-            email: document.getElementById("distEmail").value,
-            phoneNumber: document.getElementById("distPhone").value,
-            password: password,
-            confirmPassword: confirmPassword, // <-- ensure this is sent
-            role: document.getElementById("distRole").value,
-          };
 
-          if (source === "db") {
-            distributor.locationId =
-              document.getElementById("locationDropdown").value;
-          } else {
-            distributor.location = {
-              country: document.getElementById("countryDropdown").value,
-              state: document.getElementById("stateDropdown").value,
-              city: document.getElementById("cityDropdown").value,
-            };
-          }
 
-          try {
-            const res = await fetch(
-              "http://localhost:3001/amazon/document/api/register/create-distributor",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(distributor),
-              }
-            );
 
-            if (!res.ok) throw new Error(await res.text());
 
-            Swal.fire(
-              "Success",
-              "Distributor added successfully",
-              "success"
-            ).then(() => location.reload());
-          } catch (err) {
-            console.error("Error adding distributor:", err);
-            Swal.fire("Error", err.message, "error");
-          }
-        });
 
-      // Initialize
-      loadDBLocations();
-      loadCountries();
-    </script> -->
 
-    <!-- new get all distributors -->
 
-    <!-- <div class="table-responsive mt-4">
-      <table class="table table-striped" id="distributorsTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Role</th>
-            <th>Location</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div> -->
 
-    <!-- Update Distributor Modal -->
 
-    <!-- <div
-      class="modal fade"
-      id="updateDistributorModal"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content p-3">
-          <div class="modal-header">
-            <h5 class="modal-title">Update Distributor</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="updateDistributorForm">
-              <input type="hidden" id="updateDistributorId" />
-              <div class="mb-3">
-                <label>Name</label>
-                <input
-                  type="text"
-                  id="updateDistName"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Email</label>
-                <input
-                  type="email"
-                  id="updateDistEmail"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Phone Number</label>
-                <input
-                  type="text"
-                  id="updateDistPhone"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label>Role</label>
-                <select id="updateDistRole" class="form-select">
-                  <option value="distributor">Distributor</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label>Location</label>
-                <input
-                  type="text"
-                  id="updateDistLocation"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <button type="submit" class="btn btn-primary">
-                Update Distributor
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- Delete Distributor Modal -->
-    <!-- <div
-      class="modal fade"
-      id="deleteDistributorModal"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content p-3">
-          <div class="modal-header">
-            <h5 class="modal-title">Delete Distributor</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p>Are you sure you want to delete this distributor?</p>
-            <input type="hidden" id="deleteDistributorId" />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
-            <button id="confirmDeleteDistributor" class="btn btn-danger">
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- <script>
-      const distributorsTableBody = document.querySelector(
-        "#distributorsTable tbody"
-      );
-      const token = localStorage.getItem("key");
 
-      // Fetch and populate distributors
-      async function loadDistributors() {
-        try {
-          const res = await fetch(
-            "http://localhost:3001/amazon/document/api/register/distributors",
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          if (!res.ok) throw new Error("Failed to fetch distributors");
-          const distributors = await res.json();
 
-          distributorsTableBody.innerHTML = "";
-          distributors.forEach((d) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-        <td>${d.name}</td>
-        <td>${d.email}</td>
-        <td>${d.phoneNumber}</td>
-        <td>${d.role}</td>
-        <td>${d.location?.location || ""}</td>
-        <td>
-          <button class="btn btn-sm btn-primary me-1" onclick="openUpdateModal('${
-            d._id
-          }')">Update</button>
-          <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${
-            d._id
-          }')">Delete</button>
-        </td>
-      `;
-            distributorsTableBody.appendChild(tr);
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      }
 
-      // Update Modal
-      function openUpdateModal(id) {
-        const distributor = Array.from(distributorsTableBody.rows)
-          .map((r) => ({
-            id: r
-              .querySelector("button.btn-primary")
-              .getAttribute("onclick")
-              .match(/'(.+?)'/)[1],
-            name: r.cells[0].textContent,
-            email: r.cells[1].textContent,
-            phoneNumber: r.cells[2].textContent,
-            role: r.cells[3].textContent,
-            location: r.cells[4].textContent,
-          }))
-          .find((d) => d.id === id);
 
-        document.getElementById("updateDistributorId").value = distributor.id;
-        document.getElementById("updateDistName").value = distributor.name;
-        document.getElementById("updateDistEmail").value = distributor.email;
-        document.getElementById("updateDistPhone").value =
-          distributor.phoneNumber;
-        document.getElementById("updateDistRole").value = distributor.role;
-        document.getElementById("updateDistLocation").value =
-          distributor.location;
 
-        const modal = new bootstrap.Modal(
-          document.getElementById("updateDistributorModal")
-        );
-        modal.show();
-      }
 
-      // Handle Update Form Submission
-      document
-        .getElementById("updateDistributorForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const id = document.getElementById("updateDistributorId").value;
-          const data = {
-            name: document.getElementById("updateDistName").value,
-            email: document.getElementById("updateDistEmail").value,
-            phoneNumber: document.getElementById("updateDistPhone").value,
-            role: document.getElementById("updateDistRole").value,
-            location: {
-              location: document.getElementById("updateDistLocation").value,
-            },
-          };
-          try {
-            const res = await fetch(
-              `http://localhost:3001/amazon/document/api/register/${id}`,
-              {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(data),
-              }
-            );
-            if (!res.ok) throw new Error("Failed to update distributor");
-            loadDistributors();
-            bootstrap.Modal.getInstance(
-              document.getElementById("updateDistributorModal")
-            ).hide();
-            Swal.fire("Success", "Distributor updated successfully", "success");
-          } catch (err) {
-            console.error(err);
-            Swal.fire("Error", "Failed to update distributor", "error");
-          }
-        });
 
-      // Delete Modal
-      function openDeleteModal(id) {
-        document.getElementById("deleteDistributorId").value = id;
-        const modal = new bootstrap.Modal(
-          document.getElementById("deleteDistributorModal")
-        );
-        modal.show();
-      }
 
-      // Confirm Delete
-      document
-        .getElementById("confirmDeleteDistributor")
-        .addEventListener("click", async () => {
-          const id = document.getElementById("deleteDistributorId").value;
-          try {
-            const res = await fetch(
-              `http://localhost:3001/amazon/document/api/register/${id}`,
-              {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-              }
-            );
-            if (!res.ok) throw new Error("Failed to delete distributor");
-            loadDistributors();
-            bootstrap.Modal.getInstance(
-              document.getElementById("deleteDistributorModal")
-            ).hide();
-            Swal.fire("Deleted!", "Distributor has been deleted.", "success");
-          } catch (err) {
-            console.error(err);
-            Swal.fire("Error", "Failed to delete distributor", "error");
-          }
-        });
 
-      // Initial load
-      loadDistributors();
-    </script> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -918,271 +419,6 @@ document.getElementById("distributorModal").addEventListener("shown.bs.modal", (
   </nav>
 </div>
 
-<!-- Update Distributor Modal -->
-<div class="modal fade" id="updateDistributorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content p-3">
-      <div class="modal-header">
-        <h5 class="modal-title">Update Distributor</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form id="updateDistributorForm">
-          <input type="hidden" id="updateDistributorId" />
-          <div class="mb-3">
-            <label>Name</label>
-            <input type="text" id="updateDistName" class="form-control" required />
-          </div>
-          <div class="mb-3">
-            <label>Email</label>
-            <input type="email" id="updateDistEmail" class="form-control" required />
-          </div>
-          <div class="mb-3">
-            <label>Phone Number</label>
-            <input type="text" id="updateDistPhone" class="form-control" required />
-          </div>
-          <div class="mb-3">
-            <label>Role</label>
-            <select id="updateDistRole" class="form-select">
-              <option value="distributor">Distributor</option>
-              <option value="customer">Customer</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Location</label>
-            <select id="updateDistLocation" class="form-select" required></select>
-          </div>
-          <button type="submit" class="btn btn-primary">Update Distributor</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Delete Distributor Modal -->
-<div class="modal fade" id="deleteDistributorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content p-3">
-      <div class="modal-header">
-        <h5 class="modal-title">Delete Distributor</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete this distributor?</p>
-        <input type="hidden" id="deleteDistributorId" />
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button id="confirmDeleteDistributor" class="btn btn-danger">Delete</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const distributorsTableBody = document.querySelector("#distributorsTable tbody");
-  const token = localStorage.getItem("key");
-
-  let distributors = [];
-  let currentPage = 1;
-  const rowsPerPage = 10;
-
-  const searchInput = document.getElementById("searchInput");
-  const roleFilter = document.getElementById("roleFilter");
-
-  // Fetch distributors
-  async function loadDistributors() {
-    try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/register/distributors", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch distributors");
-      distributors = await res.json();
-      currentPage = 1;
-      renderTable();
-      renderPagination();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  // Render table
-  function renderTable() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedRole = roleFilter.value;
-
-    const filtered = distributors.filter(d => {
-      const matchesRole = selectedRole ? d.role === selectedRole : true;
-      const matchesSearch =
-        d.name.toLowerCase().includes(searchTerm) ||
-        d.email.toLowerCase().includes(searchTerm) ||
-        d.phoneNumber.includes(searchTerm);
-      return matchesRole && matchesSearch;
-    });
-
-    const start = (currentPage - 1) * rowsPerPage;
-    const paginated = filtered.slice(start, start + rowsPerPage);
-
-    distributorsTableBody.innerHTML = "";
-    paginated.forEach(d => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${d.name}</td>
-        <td>${d.email}</td>
-        <td>${d.phoneNumber}</td>
-        <td>${d.role}</td>
-        <td>${d.location?.location || ""}</td>
-        <td>
-          <button class="btn btn-sm btn-primary me-1" onclick="openUpdateModal('${d._id}')">Update</button>
-          <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${d._id}')">Delete</button>
-        </td>
-      `;
-      distributorsTableBody.appendChild(tr);
-    });
-  }
-
-  // Pagination
-  function renderPagination() {
-    const paginationContainer = document.getElementById("pagination");
-    if (!paginationContainer) return;
-
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedRole = roleFilter.value;
-
-    const filtered = distributors.filter(d => {
-      const matchesRole = selectedRole ? d.role === selectedRole : true;
-      const matchesSearch =
-        d.name.toLowerCase().includes(searchTerm) ||
-        d.email.toLowerCase().includes(searchTerm) ||
-        d.phoneNumber.includes(searchTerm);
-      return matchesRole && matchesSearch;
-    });
-
-    const pageCount = Math.ceil(filtered.length / rowsPerPage);
-    paginationContainer.innerHTML = "";
-
-    for (let i = 1; i <= pageCount; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      btn.classList.add("btn", "btn-sm", "me-1");
-      btn.classList.add(i === currentPage ? "btn-primary" : "btn-outline-primary");
-      btn.addEventListener("click", () => {
-        currentPage = i;
-        renderTable();
-        renderPagination();
-      });
-      paginationContainer.appendChild(btn);
-    }
-  }
-
-  // Event listeners
-  searchInput.addEventListener("input", () => {
-    currentPage = 1;
-    renderTable();
-    renderPagination();
-  });
-
-  roleFilter.addEventListener("change", () => {
-    currentPage = 1;
-    renderTable();
-    renderPagination();
-  });
-
-  // Open Update Modal
-  window.openUpdateModal = function(id) {
-    const distributor = distributors.find(d => d._id === id);
-    if (!distributor) return;
-
-    document.getElementById("updateDistributorId").value = distributor._id;
-    document.getElementById("updateDistName").value = distributor.name;
-    document.getElementById("updateDistEmail").value = distributor.email;
-    document.getElementById("updateDistPhone").value = distributor.phoneNumber;
-    document.getElementById("updateDistRole").value = distributor.role;
-
-    // Populate location dropdown with DB locations
-    const locSelect = document.getElementById("updateDistLocation");
-    locSelect.innerHTML = '<option value="">Select Location</option>';
-    fetch("http://localhost:3001/amazon/document/api/locations", {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(locations => {
-        locations.forEach(loc => {
-          const opt = document.createElement("option");
-          opt.value = loc._id;
-          opt.textContent = loc.location;
-          if (distributor.location?.location === loc.location) opt.selected = true;
-          locSelect.appendChild(opt);
-        });
-      });
-
-    const modal = new bootstrap.Modal(document.getElementById("updateDistributorModal"));
-    modal.show();
-  };
-
-  // Update Distributor
-  document.getElementById("updateDistributorForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    const id = document.getElementById("updateDistributorId").value;
-    const data = {
-      name: document.getElementById("updateDistName").value,
-      email: document.getElementById("updateDistEmail").value,
-      phoneNumber: document.getElementById("updateDistPhone").value,
-      role: document.getElementById("updateDistRole").value,
-      locationId: document.getElementById("updateDistLocation").value
-    };
-    try {
-      const res = await fetch(`http://localhost:3001/amazon/document/api/register/update-distributor/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
-      });
-      if (!res.ok) throw new Error("Failed to update distributor");
-      loadDistributors();
-      bootstrap.Modal.getInstance(document.getElementById("updateDistributorModal")).hide();
-      Swal.fire("Success", "Distributor updated successfully", "success");
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Failed to update distributor", "error");
-    }
-  });
-
-  // Open Delete Modal
-  window.openDeleteModal = function(id) {
-    document.getElementById("deleteDistributorId").value = id;
-    const modal = new bootstrap.Modal(document.getElementById("deleteDistributorModal"));
-    modal.show();
-  };
-
-  // Confirm Delete
-  document.getElementById("confirmDeleteDistributor").addEventListener("click", async () => {
-    const id = document.getElementById("deleteDistributorId").value;
-    try {
-      const res = await fetch(`http://localhost:3001/amazon/document/api/register/delete-distributor/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to delete distributor");
-      loadDistributors();
-      bootstrap.Modal.getInstance(document.getElementById("deleteDistributorModal")).hide();
-      Swal.fire("Deleted!", "Distributor has been deleted.", "success");
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Failed to delete distributor", "error");
-    }
-  });
-
-  // Initial load
-  loadDistributors();
-});
-</script>
-
-<!-- Pagination container -->
-<div id="pagination" class="mt-3"></div>
 
 
     

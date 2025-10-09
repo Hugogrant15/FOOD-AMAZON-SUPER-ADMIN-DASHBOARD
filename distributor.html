@@ -335,50 +335,52 @@
 
                 
                 <div class="d-flex justify-content-between mt-3">
-  <!-- Role Filter -->
-  <div class="mb-3">
-    <label for="roleFilter" class="form-label">Filter by Role:</label>
-    <select id="roleFilter" class="form-select">
-      <option value="">All</option>
-      <option value="super_admin">Super Admin</option>
-      <option value="distributor">Distributor</option>
-      <option value="customer">Customer</option>
-    </select>
-  </div>
+                <!-- Role Filter -->
+                <div class="mb-3">
+                    <label for="roleFilter" class="form-label">Filter by Role:</label>
+                    <select id="roleFilter" class="form-select">
+                    <option value="">All</option>
+                    <option value="super_admin">Super Admin</option>
+                    <option value="distributor">Distributor</option>
+                    <option value="customer">Customer</option>
+                    </select>
+                </div>
 
-  <!-- Search Input -->
-  <div class="mb-3">
-    <label for="searchInput" class="form-label">Search:</label>
-    <input
-      type="text"
-      id="searchInput"
-      class="form-control"
-      placeholder="Search users..."
-    />
-  </div>
-</div>
+                <!-- Search Input -->
+                <div class="mb-3">
+                    <label for="searchInput" class="form-label">Search:</label>
+                    <input
+                    type="text"
+                    id="searchInput"
+                    class="form-control"
+                    placeholder="Search users..."
+                    />
+                </div>
+                </div>
 
-<div class="table-responsive mt-4">
-  <table class="table table-striped" id="usersTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <th>Role</th>
-        <th>City</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <nav>
-    <ul class="pagination" id="pagination"></ul>
-  </nav>
-</div>
+                <div class="table-responsive mt-4">
+                <table class="table table-striped" id="usersTable">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>City</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <nav>
+                    <ul class="pagination" id="pagination"></ul>
+                </nav>
+                </div>
 
             </div>
         </div>
       </div>
+
+      
 
      
         <!-- nuw add dist function -->
@@ -503,7 +505,7 @@ document.getElementById("addDistributorForm").addEventListener("submit", async f
 document.getElementById("addDistributorModal").addEventListener("show.bs.modal", loadCountries);
         </script>
     
-
+        <!-- show all users function  -->
         <script>
 document.addEventListener("DOMContentLoaded", () => {
   const usersTableBody = document.querySelector("#usersTable tbody");
@@ -615,7 +617,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial load
   loadUsers();
 });
-</script>
+        </script>
 
 
 

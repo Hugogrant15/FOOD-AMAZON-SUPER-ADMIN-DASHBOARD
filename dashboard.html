@@ -252,41 +252,209 @@
                   </li>
             </ul>
           </div>
-
           <!-- Main Content -->
           <div class="col-md-10 p-4">
+
+            <!-- <div class="row g-3 mb-4" id="superAdminMetrics">
+  <div class="col-md-3">
+    <div class="metric-card">
+      <h5>Total Revenue</h5>
+      <h3 id="totalRevenue">₦0</h3>
+      <small id="revenueChange" class="text-success">+0%</small>
+      <canvas id="revenueChart" height="40"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="metric-card">
+      <h5>Total Orders</h5>
+      <h3 id="totalOrders">0</h3>
+      <small id="ordersChange" class="text-success">+0%</small>
+      <canvas id="ordersChart" height="40"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="metric-card">
+      <h5>Unique Visits</h5>
+      <h3 id="uniqueVisits">0</h3>
+      <small id="visitsChange" class="text-danger">-0%</small>
+      <canvas id="visitsChart" height="40"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="metric-card">
+      <h5>New Users</h5>
+      <h3 id="newUsers">0</h3>
+      <small id="newUsersChange" class="text-success">+0%</small>
+      <canvas id="newUsersChart" height="40"></canvas>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="metric-card">
+      <h5>Existing Users</h5>
+      <h3 id="existingUsers">0</h3>
+      <small id="existingUsersChange" class="text-success">+0%</small>
+      <canvas id="existingUsersChart" height="40"></canvas>
+    </div>
+  </div>
+            </div> -->
+
+            <!-- <script>
+const endpoints = {
+  orders: "http://localhost:3001/amazon/document/api/orders",
+  users: "http://localhost:3001/amazon/document/api/users",
+  visits: "http://localhost:3001/amazon/document/api/analytics/visits" // optional
+};
+
+function last7Days() {
+  const dates = [];
+  const d = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const day = new Date(d);
+    day.setDate(d.getDate() - i);
+    dates.push(day.toISOString().split("T")[0]);
+  }
+  return dates;
+}
+
+function percentChange(current, prev) {
+  if (prev === 0) return current > 0 ? 100 : 0;
+  return ((current - prev) / prev * 100).toFixed(1);
+}
+
+async function loadMetrics() {
+  try {
+    const [ordersRes, usersRes, visitsRes] = await Promise.all([
+      fetch(endpoints.orders).then(r => r.json()),
+      fetch(endpoints.users).then(r => r.json()),
+      fetch(endpoints.visits).then(r => r.ok ? r.json() : [])
+    ]);
+
+    const orders = Array.isArray(ordersRes) ? ordersRes : [];
+    const users = Array.isArray(usersRes) ? usersRes : [];
+    const visits = Array.isArray(visitsRes) ? visitsRes : [];
+
+    const dates = last7Days();
+
+    // --- Revenue & Orders trend ---
+    const revenueMap = Object.fromEntries(dates.map(d => [d, 0]));
+    const ordersMap = Object.fromEntries(dates.map(d => [d, 0]));
+    orders.forEach(o => {
+      const date = new Date(o.createdAt).toISOString().split("T")[0];
+      if (revenueMap[date] !== undefined) {
+        if (o.paymentStatus === "paid") revenueMap[date] += o.totalAmount || 0;
+        ordersMap[date] += 1;
+      }
+    });
+    const revenueTrend = dates.map(d => revenueMap[d]);
+    const ordersTrend = dates.map(d => ordersMap[d]);
+
+    const totalRevenue = revenueTrend.reduce((a,b)=>a+b,0);
+    const totalOrders = ordersTrend.reduce((a,b)=>a+b,0);
+
+    const revenueChange = percentChange(revenueTrend.at(-1), revenueTrend.at(-2));
+    const ordersChange = percentChange(ordersTrend.at(-1), ordersTrend.at(-2));
+
+    // --- Visits trend ---
+    const visitsMap = Object.fromEntries(dates.map(d => [d, 0]));
+    visits.forEach(v => { if (visitsMap[v.date]) visitsMap[v.date] = v.visits; });
+    const visitsTrend = visits.length ? dates.map(d => visitsMap[d]) : ordersTrend; // fallback
+    const uniqueVisits = visitsTrend.reduce((a,b)=>a+b,0);
+    const visitsChange = percentChange(visitsTrend.at(-1), visitsTrend.at(-2));
+
+    // --- Users trend ---
+    const newUsersMap = Object.fromEntries(dates.map(d => [d, 0]));
+    users.forEach(u => {
+      const date = new Date(u.createdAt).toISOString().split("T")[0];
+      if (newUsersMap[date] !== undefined) newUsersMap[date] += 1;
+    });
+    const newUsersTrend = dates.map(d => newUsersMap[d]);
+    const newUsers = newUsersTrend.reduce((a,b)=>a+b,0);
+    const newUsersChange = percentChange(newUsersTrend.at(-1), newUsersTrend.at(-2));
+    const existingUsers = users.length;
+
+    // --- Update DOM ---
+    document.getElementById("totalRevenue").innerText = "₦" + totalRevenue.toLocaleString();
+    document.getElementById("revenueChange").innerText = `${revenueChange}%`;
+
+    document.getElementById("totalOrders").innerText = totalOrders;
+    document.getElementById("ordersChange").innerText = `${ordersChange}%`;
+
+    document.getElementById("uniqueVisits").innerText = uniqueVisits;
+    document.getElementById("visitsChange").innerText = `${visitsChange}%`;
+
+    document.getElementById("newUsers").innerText = newUsers;
+    document.getElementById("newUsersChange").innerText = `${newUsersChange}%`;
+
+    document.getElementById("existingUsers").innerText = existingUsers;
+    document.getElementById("existingUsersChange").innerText = "0%";
+
+    // --- Charts ---
+    drawSparkline("revenueChart", dates, revenueTrend, "#10b981");
+    drawSparkline("ordersChart", dates, ordersTrend, "#3b82f6");
+    drawSparkline("visitsChart", dates, visitsTrend, "#f59e0b");
+    drawSparkline("newUsersChart", dates, newUsersTrend, "#22c55e");
+    drawSparkline("existingUsersChart", dates, newUsersTrend, "#6366f1");
+
+  } catch (err) {
+    console.error("Error loading metrics:", err);
+  }
+}
+
+function drawSparkline(id, labels, data, color) {
+  const ctx = document.getElementById(id).getContext("2d");
+  if (ctx.chart) ctx.chart.destroy();
+  ctx.chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{ data, borderColor: color, tension: 0.4, fill: false, pointRadius: 0, borderWidth: 2 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadMetrics();
+  setInterval(loadMetrics, 30000); // refresh every 30s
+});
+</script> -->
+
             <!-- Top Metrics -->
             <div class="row g-3 mb-4" >
               <div class="col-md-3">
                 <div class="metric-card">
-                  <h5>Total Distribution (Yearly)</h5>
-                  <h3>$84,573</h3><small class="text-success">+4.2%</small>
-                  <small class="text-success">+4.2% </small><i class="fa-light fa-arrow-up" style="color: red;"></i>
-                  <small>Compared to ($3400 last year)</small>
-                </div>
+                <h5>Total Sales (Yearly)</h5>
+                <h3 id="totalSales">₦0</h3>
+                <small class="text-success">+0% vs last year</small>
+              </div>
               </div>
               <div class="col-md-3">
                 <div class="metric-card">
-                  <h5>Total Distribution (Daily)</h5>
-                  <h3>$124,055</h3>
-                  <small class="text-success">+3.2% vs last year</small>
-                </div>
+                <h5>Total Sales (Daily)</h5>
+                <h3 id="totalSalesDaily">₦0</h3>
+                <small class="text-success">+0% vs yesterday</small>
+              </div>
               </div>
               <div class="col-md-3">
                 <div class="metric-card">
-                  <h5>Total Distribution (Weekly)</h5>
-                  <h3>$4,512</h3>
-                  <small class="text-danger">-2.2% vs last year</small>
-                </div>
+                <h5>Total Sales (Weekly)</h5>
+                <h3 id="totalSalesWeekly">₦0</h3>
+                <small class="text-weekly">+0% vs last week</small>
+              </div>
               </div>
               <div class="col-md-3">
                 <div class="metric-card">
-                  <h5>Total Distribution (Monthly)</h5>
-                  <h3>$17,856</h3>
-                  <small class="text-success">+1.8% vs last year</small>
+                  <h5>Total Sales (Monthly)</h5>
+                  <h3 id="totalSalesMonthly">₦0</h3>
+                  <small class="text-monthly">+0% vs last month</small>
                 </div>
               </div>
-            </div>
+              </div>
+            
 
             <!-- Charts -->
             <div class="row g-3 mb-4">
@@ -309,119 +477,246 @@
             <!-- Best Selling Products + Doughnut -->
             
             <div class="row g-3 mb-4">
-              <div class="col-md-6 " >
-                <div class="card p-3 " id="">
-                  <div class="d-flex align-items-center justify-content-between">
-                  <h6>Recent Transactions</h6>
+              <div class="col-md-6">
+                <div class="card p-3 h-100">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="fw-bold">Recent Transactions</h6>
                   </div>
-                  <table class="table" >
-                    <thead class="tablePad">
-                      <tr class="" style="color: #8D98AF; ">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr style="color: #8D98AF;">
                         <th>Date</th>
                         <th>Name</th>
                         <th>Amount</th>
                         <th>Status</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr class="mt-3">
-                        <td>Jagarnath S.</td>
-                        <td>24.05.2023</td>
-                        <td>$124.97</td>
-                        <td><span class="badge bg-success">paid</span></td>
-                      </tr>
-                      <tr >
-                        <td>Berry Bliss Bites</td>
-                        <td>3.453</td>
-                        <td>$470.00</td>
-                        <td><span class="badge bg-success">In Stock</span></td>
-                      </tr>
-                      <tr>
-                        <td>Organic Almond Delight</td>
-                        <td>3.453</td>
-                        <td>$470.00</td>
-                        <td><span class="badge bg-success">In Stock</span></td>
-                      </tr>
-                      <tr>
-                        <td>Organic Almond Delight</td>
-                        <td>3.453</td>
-                        <td>$470.00</td>
-                        <td><span class="badge bg-success">In Stock</span></td>
-                      </tr>
-                      <tr>
-                        <td>Berry Bliss Bites</td>
-                        <td>3.453</td>
-                        <td>$470.00</td>
-                        <td><span class="badge bg-success">In Stock</span></td>
-                      </tr>
-                      
+                    <tbody id="recentTransactions">
+                      <!-- Latest 5 orders will be inserted here dynamically -->
                     </tbody>
                   </table>
                 </div>
               </div>
             
-              
-
-              <div class="col-md-6" >
-                <div class="card p-2" id="">
-                  <div class="">
+              <div class="col-md-6">
+                <div class="card p-3">
                   <h6>Top Products by Units Sold</h6>
+                  <div class="table-responsive">
+                    <table class="table align-middle">
+                      <thead style="color:#8D98AF;">
+                        <tr>
+                          <th>Name</th>
+                          <th>Price</th>
+                          <th>Units Sold</th>
+                        </tr>
+                      </thead>
+                      <tbody id="topProductsBody">
+                        <!-- JS will inject rows here -->
+                      </tbody>
+                    </table>
                   </div>
-
-                  <table class="table ">
-                    <thead class="tablePad">
-                      <tr class="" style="color: #8D98AF; ">
-                        <th>Name</th>
-                        <th></th>
-                        <th>Price</th>
-                        <th>Units Sold</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="">
-                        <td><img src="./images/Image (7).png" alt=""> <span class=" ms-3">Berry Bliss Bites</span></td>
-                        <td></td>
-                        <td class="ms-3">$49.90</td>
-                        <td>204</td>
-                      </tr>
-                      <tr class="">
-                        <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                        <td></td>
-                        <td>$49.90</td>
-                        <td>204</td>
-                      </tr>
-                      <tr class="">
-                        <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                        <td></td>
-                        <td>$49.90</td>
-                        <td>204</td>
-                      </tr>
-                      <tr class="">
-                        <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                        <td></td>
-                        <td>$49.90</td>
-                        <td>204</td>
-                      </tr>
-                      <tr class="">
-                        <td><img src="./images/Image (7).png" alt=""> <span class="">Berry Bliss Bites</span></td>
-                        <td></td>
-                        <td>$49.90</td>
-                        <td>204</td>
-                      </tr>
-                      
-                      
-                    </tbody>
-                  </table>
                 </div>
               </div>
               
+            </div>
+
             </div>
 
           
 
           </div>
         </div>
-      </div>
+      
+
+
+
+      <!-- DISPLAY DAILY, WEEKLY, MONTHLY, YEARLY SALES WITH % COMPARISON -->
+      <script>
+        async function loadSuperAdminSales() {
+          try {
+            const response = await fetch("http://localhost:3001/amazon/document/api/orders");
+            if (!response.ok) throw new Error("Failed to fetch orders");
+            const orders = await response.json();
+
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const currentMonth = today.getMonth();
+
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+            // Week ranges
+            const thisWeekStart = new Date(today);
+            thisWeekStart.setDate(today.getDate() - today.getDay() + 1);
+            const lastWeekStart = new Date(thisWeekStart);
+            lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+            const lastWeekEnd = new Date(thisWeekStart);
+            lastWeekEnd.setDate(thisWeekStart.getDate() - 1);
+
+            // Helper: filter orders
+            const filterOrders = (conditionFn) => 
+              orders.filter(o => o.paymentStatus === "paid" && conditionFn(new Date(o.createdAt)));
+
+            // Yearly
+            const thisYearOrders = filterOrders(d => d.getFullYear() === currentYear);
+            const lastYearOrders = filterOrders(d => d.getFullYear() === currentYear - 1);
+            const yearlyTotal = thisYearOrders.reduce((s, o) => s + o.totalAmount, 0);
+            const lastYearTotal = lastYearOrders.reduce((s, o) => s + o.totalAmount, 0);
+            updateMetric("totalSales", yearlyTotal, lastYearTotal, "year");
+
+            // Daily
+            const todayStr = today.toISOString().split("T")[0];
+            const yesterdayStr = yesterday.toISOString().split("T")[0];
+            const todayOrders = filterOrders(d => d.toISOString().split("T")[0] === todayStr);
+            const yesterdayOrders = filterOrders(d => d.toISOString().split("T")[0] === yesterdayStr);
+            const dailyTotal = todayOrders.reduce((s, o) => s + o.totalAmount, 0);
+            const yesterdayTotal = yesterdayOrders.reduce((s, o) => s + o.totalAmount, 0);
+            updateMetric("totalSalesDaily", dailyTotal, yesterdayTotal, "yesterday");
+
+            // Weekly
+            const thisWeekOrders = filterOrders(d => d >= thisWeekStart && d <= today);
+            const lastWeekOrders = filterOrders(d => d >= lastWeekStart && d <= lastWeekEnd);
+            const weeklyTotal = thisWeekOrders.reduce((s, o) => s + o.totalAmount, 0);
+            const lastWeekTotal = lastWeekOrders.reduce((s, o) => s + o.totalAmount, 0);
+            updateMetric("totalSalesWeekly", weeklyTotal, lastWeekTotal, "last week");
+
+            // Monthly
+            const thisMonthOrders = filterOrders(d => d.getMonth() === currentMonth && d.getFullYear() === currentYear);
+            const lastMonthOrders = filterOrders(d => d.getMonth() === lastMonth && d.getFullYear() === lastMonthYear);
+            const monthlyTotal = thisMonthOrders.reduce((s, o) => s + o.totalAmount, 0);
+            const lastMonthTotal = lastMonthOrders.reduce((s, o) => s + o.totalAmount, 0);
+            updateMetric("totalSalesMonthly", monthlyTotal, lastMonthTotal, "last month");
+
+          } catch (error) {
+            console.error(":fire: Error loading super admin sales:", error);
+          }
+        }
+
+        // ✅ Update metric with animation + % comparison
+        function updateMetric(id, current, previous, label) {
+          const elem = document.getElementById(id);
+          if (elem) animateNumber(elem, current);
+
+          const percentElem = elem?.nextElementSibling;
+          if (percentElem) {
+            let percentChange = 0;
+            if (previous === 0) {
+              percentChange = current > 0 ? 100 : 0;
+            } else {
+              percentChange = ((current - previous) / previous) * 100;
+            }
+            const sign = percentChange >= 0 ? "+" : "";
+            percentElem.textContent = `${sign}${percentChange.toFixed(1)}% vs ${label}`;
+            percentElem.style.color = percentChange >= 0 ? "green" : "red";
+          }
+        }
+
+        // ✅ Animate number
+        function animateNumber(element, targetValue, duration = 1500) {
+          const startValue = 0;
+          const startTime = performance.now();
+          function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentNumber = Math.floor(progress * targetValue);
+            element.textContent = `₦${currentNumber.toLocaleString("en-NG")}`;
+            if (progress < 1) requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+        }
+
+        // Run
+        document.addEventListener("DOMContentLoaded", () => {
+          if (localStorage.getItem("role") === "super_admin") {
+            loadSuperAdminSales();
+          }
+        });
+      </script>
+
+
+
+
+
+      <!-- LOAD RECENT TRANSACTION ON DASHBOARD  -->
+     <script>
+    async function loadRecentTransactions() {
+      try {
+        const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+        const orders = await res.json();
+
+        const tbody = document.getElementById("recentTransactions");
+        tbody.innerHTML = "";
+
+        if (!orders.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center">No transactions found</td></tr>`;
+          return;
+        }
+
+        // Sort by newest and take latest 5
+        const latestOrders = orders
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+
+        latestOrders.forEach(order => {
+          // Format name as First L.
+          const first = order.customerSnapshot?.firstName || "";
+          const last = order.customerSnapshot?.lastName || "";
+          const displayName = last ? `${first} ${last[0]}.` : first || "Unknown";
+
+          const date = new Date(order.createdAt).toLocaleDateString("en-GB"); // DD/MM/YYYY
+          const amount = `₦${order.totalAmount.toLocaleString()}`;
+
+          // Decide status: use paymentStatus as the key indicator
+          let badgeClass = "";
+          if (order.paymentStatus?.toLowerCase() === "paid") {
+            badgeClass = "badge bg-success-subtle text-success";
+          } else if (order.paymentStatus?.toLowerCase() === "pending") {
+            badgeClass = "badge bg-secondary-subtle text-secondary";
+          } else {
+            badgeClass = "badge bg-danger-subtle text-danger";
+          }
+
+          const row = `
+            <tr>
+              <td>${date}</td>
+              <td>${displayName}</td>
+              <td>${amount}</td>
+              <td><span class="${badgeClass}">${order.paymentStatus}</span></td>
+            </tr>
+          `;
+
+          tbody.insertAdjacentHTML("beforeend", row);
+        });
+      } catch (err) {
+        console.error("Error loading recent transactions:", err);
+      }
+    }
+
+    // Load on page start
+    loadRecentTransactions();
+    </script> 
+
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
 
       <script>
         // Line Chart

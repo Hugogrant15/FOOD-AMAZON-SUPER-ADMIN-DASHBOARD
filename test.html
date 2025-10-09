@@ -178,6 +178,376 @@ loadAllUsers();
 </script>
 
 
+<!-- test microphon  -->
+<!-- =========================
+  UPDATE & DELETE MODALS
+  ========================= -->
+
+<!-- Update User Modal -->
+<div class="modal fade" id="updateUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="updateUserForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Update User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="updateUserId" />
+
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" id="updateName" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="updateEmail" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            <input type="text" id="updatePhone" class="form-control" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Role</label>
+            <select id="updateRole" class="form-select" required>
+              <option value="super_admin">Super Admin</option>
+              <option value="distributor">Distributor</option>
+              <option value="customer">Customer</option>
+            </select>
+          </div>
+
+          <!-- Cascading CSC for update -->
+          <div class="mb-3">
+            <label class="form-label">Country</label>
+            <select id="updateCountry" class="form-select">
+              <option value="">Select Country</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">State</label>
+            <select id="updateState" class="form-select">
+              <option value="">Select State</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">City</label>
+            <select id="updateCity" class="form-select">
+              <option value="">Select City</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="deleteUserForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="deleteUserId" />
+          <p id="deleteConfirmText">Are you sure you want to delete this user?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+  JS: modal wiring + triggers
+  ========================= -->
+
+<script>
+/*
+  Assumptions:
+  - You have a global loadUsers() that fetches /all-users and sets `usersData`.
+  - This snippet will reuse `usersData` and also call loadUsers() after update/delete.
+  - Token is stored at localStorage.getItem("key") (change if you store it differently).
+  - Update endpoint: PUT /amazon/document/api/register/update-distributor/:id
+  - Delete endpoint: DELETE /amazon/document/api/register/delete-distributor/:id
+*/
+
+/* --- state --- */
+window.usersData = window.usersData || []; // ensure global
+const AUTH_HEADER = () => ({ "Authorization": `Bearer ${localStorage.getItem("key")}` });
+
+/* --- Helper: fetch countries/states/cities (uses countriesnow.space like checkout) --- */
+async function populateCountries(selectEl) {
+  try {
+    const res = await fetch("https://countriesnow.space/api/v0.1/countries/positions");
+    const payload = await res.json();
+    selectEl.innerHTML = `<option value="">Select Country</option>`;
+    payload.data.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name;
+      opt.textContent = c.name;
+      selectEl.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading countries:", err);
+  }
+}
+async function populateStates(selectEl, country) {
+  selectEl.innerHTML = `<option value="">Select State</option>`;
+  if (!country) return;
+  if (country === "Nigeria") {
+    // Local dataset not included here; assume Nigeria handled elsewhere if needed.
+    // You can add the nigeriaStatesAndLGAs map from checkout if desired.
+    return;
+  }
+  try {
+    const res = await fetch("https://countriesnow.space/api/v0.1/countries/states", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ country })
+    });
+    const data = await res.json();
+    const states = data.data?.states || [];
+    states.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      opt.textContent = s.name;
+      selectEl.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading states:", err);
+  }
+}
+async function populateCities(selectEl, country, state) {
+  selectEl.innerHTML = `<option value="">Select City</option>`;
+  if (!country || !state) return;
+  if (country === "Nigeria") {
+    // If you want local Nigeria dataset, populate from nigeriaStatesAndLGAs here.
+    return;
+  }
+  try {
+    const res = await fetch("https://countriesnow.space/api/v0.1/countries/state/cities", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ country, state })
+    });
+    const data = await res.json();
+    (data.data || []).forEach(city => {
+      const opt = document.createElement('option');
+      opt.value = city;
+      opt.textContent = city;
+      selectEl.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error loading cities:", err);
+  }
+}
+
+/* --- Open Update Modal (global) --- */
+window.openUpdateModal = async function (userId) {
+  const user = (window.usersData || []).find(u => u._id === userId);
+  if (!user) return;
+
+  // Prevent editing super_admin
+  const isSuper = user.role === "super_admin";
+
+  // Fill basic fields
+  document.getElementById("updateUserId").value = user._id;
+  document.getElementById("updateName").value = user.name || "";
+  document.getElementById("updateEmail").value = user.email || "";
+  document.getElementById("updatePhone").value = user.phoneNumber || "";
+  document.getElementById("updateRole").value = user.role || "customer";
+
+  // Populate countries and set country/state/city
+  const countrySel = document.getElementById("updateCountry");
+  const stateSel = document.getElementById("updateState");
+  const citySel = document.getElementById("updateCity");
+
+  // Reset
+  countrySel.innerHTML = `<option value="">Loading...</option>`;
+  stateSel.innerHTML = `<option value="">Select State</option>`;
+  citySel.innerHTML = `<option value="">Select City</option>`;
+
+  await populateCountries(countrySel);
+
+  // set saved values if present
+  if (user.country) countrySel.value = user.country;
+  if (countrySel.value) {
+    await populateStates(stateSel, countrySel.value);
+    if (user.state) stateSel.value = user.state;
+    if (stateSel.value) {
+      await populateCities(citySel, countrySel.value, stateSel.value);
+      if (user.city) citySel.value = user.city;
+    }
+  }
+
+  // If user is super_admin, disable form inputs to restrict edits
+  if (isSuper) {
+    document.getElementById("updateRole").value = "super_admin";
+    document.getElementById("updateRole").disabled = true;
+    document.getElementById("updateName").disabled = true;
+    document.getElementById("updateEmail").disabled = true;
+    document.getElementById("updatePhone").disabled = true;
+    countrySel.disabled = true;
+    stateSel.disabled = true;
+    citySel.disabled = true;
+    // Optionally hide Save button:
+    document.querySelector("#updateUserForm button[type='submit']").disabled = true;
+  } else {
+    // ensure enabled
+    document.getElementById("updateRole").disabled = false;
+    document.getElementById("updateName").disabled = false;
+    document.getElementById("updateEmail").disabled = false;
+    document.getElementById("updatePhone").disabled = false;
+    countrySel.disabled = false;
+    stateSel.disabled = false;
+    citySel.disabled = false;
+    document.querySelector("#updateUserForm button[type='submit']").disabled = false;
+  }
+
+  new bootstrap.Modal(document.getElementById("updateUserModal")).show();
+};
+
+/* --- Cascading listeners for Update modal selects --- */
+document.getElementById("updateCountry").addEventListener("change", async function () {
+  const country = this.value;
+  const stateSel = document.getElementById("updateState");
+  const citySel = document.getElementById("updateCity");
+  stateSel.innerHTML = `<option value="">Loading...</option>`;
+  citySel.innerHTML = `<option value="">Select City</option>`;
+  await populateStates(stateSel, country);
+});
+document.getElementById("updateState").addEventListener("change", async function () {
+  const country = document.getElementById("updateCountry").value;
+  const state = this.value;
+  const citySel = document.getElementById("updateCity");
+  citySel.innerHTML = `<option value="">Loading...</option>`;
+  await populateCities(citySel, country, state);
+});
+
+/* --- Submit Update --- */
+document.getElementById("updateUserForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const id = document.getElementById("updateUserId").value;
+  const payload = {
+    name: document.getElementById("updateName").value,
+    email: document.getElementById("updateEmail").value,
+    phoneNumber: document.getElementById("updatePhone").value,
+    role: document.getElementById("updateRole").value,
+    country: document.getElementById("updateCountry").value,
+    state: document.getElementById("updateState").value,
+    city: document.getElementById("updateCity").value
+  };
+
+  try {
+    const res = await fetch(`http://localhost:3001/amazon/document/api/register/update-distributor/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...AUTH_HEADER()
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Update failed");
+    }
+
+    // success: hide modal and refresh table
+    bootstrap.Modal.getInstance(document.getElementById("updateUserModal")).hide();
+    if (typeof loadUsers === "function") await loadUsers();
+    else console.warn("loadUsers() not found — refresh table manually.");
+  } catch (err) {
+    console.error("Error updating user:", err);
+    alert("Failed to update user: " + (err.message || ""));
+  }
+});
+
+/* --- Open Delete Modal (global) --- */
+window.openDeleteModal = function (userId) {
+  const user = (window.usersData || []).find(u => u._id === userId);
+  if (!user) return;
+
+  // prevent deleting super_admin
+  if (user.role === "super_admin") {
+    alert("Super Admin accounts cannot be deleted.");
+    return;
+  }
+
+  document.getElementById("deleteUserId").value = user._id;
+  document.getElementById("deleteConfirmText").textContent =
+    `Are you sure you want to delete ${user.name} (${user.role}) — ${user.email}?`;
+
+  new bootstrap.Modal(document.getElementById("deleteUserModal")).show();
+};
+
+/* --- Submit Delete --- */
+document.getElementById("deleteUserForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const id = document.getElementById("deleteUserId").value;
+
+  try {
+    const res = await fetch(`http://localhost:3001/amazon/document/api/register/delete-distributor/${id}`, {
+      method: "DELETE",
+      headers: {
+        ...AUTH_HEADER()
+      }
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Delete failed");
+    }
+
+    bootstrap.Modal.getInstance(document.getElementById("deleteUserModal")).hide();
+    if (typeof loadUsers === "function") await loadUsers();
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    alert("Failed to delete user: " + (err.message || ""));
+  }
+});
+
+/* =========================
+  SAMPLE: how to render action buttons in your table rows
+  (Integrate into your renderTable function)
+  ========================= */
+function rowActionButtonsHtml(userId) {
+  return `
+    <button class="btn btn-sm btn-primary me-1" onclick="openUpdateModal('${userId}')">Update</button>
+    <button class="btn btn-sm btn-danger" onclick="openDeleteModal('${userId}')">Delete</button>
+  `;
+}
+
+/* Example usage inside your table rendering:
+   tr.innerHTML = `
+     <td>${u.name}</td>
+     <td>${u.email}</td>
+     <td>${u.phoneNumber}</td>
+     <td>${u.role}</td>
+     <td>${u.city || ''}</td>
+     <td>${rowActionButtonsHtml(u._id)}</td>
+   `;
+   Make sure the table has an Actions column in the <thead>.
+*/
+</script>
+
+
 
 
 

@@ -579,39 +579,7 @@
 
 
 
-<script>
-  // Line Chart
-  new Chart(document.getElementById('trendChart'), {
-    type: 'line',
-    data: {
-      labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-      datasets: [
-        {label:'Orders', data:[200,250,180,300,270,350], borderColor:'#28a745', fill:false},
-        {label:'Revenue', data:[300,400,350,500,450,600], borderColor:'#dc3545', fill:false}
-      ]
-    }
-  });
 
-  // Bar Chart
-  new Chart(document.getElementById('visitChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-      datasets: [{label:'Visits', data:[120,150,180,200,170,140,190], backgroundColor:'#0d6efd'}]
-    }
-  });
-
-  // Doughnut Chart
-  new Chart(document.getElementById('productChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Berry Bites','Organic Almond Delight','Coconut Crunch'],
-      datasets: [{data:[45,32,23], backgroundColor:['#0d6efd','#20c997','#ffc107']}]
-    }
-  });
-
-    
-</script>
 
 
 
