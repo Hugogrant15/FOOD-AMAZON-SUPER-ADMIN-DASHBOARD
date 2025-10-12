@@ -33,9 +33,7 @@ function adminLogin(event) {
         fetch(url, signMethod)
         .then(response => response.json())
         .then(result => {
-            console.log(result)
-           
-           console.log(result)
+            
             if (result.success || result.token ) {
               const tokenParts = result.token.split(".");
               const payload = JSON.parse(atob(tokenParts[1])); // contains _id, role
@@ -50,6 +48,7 @@ function adminLogin(event) {
             localStorage.setItem("key", result.token);
             localStorage.setItem("customerloginid", result._id);
             localStorage.setItem("role", payload.role);
+            localStorage.setItem("name", result.name || "super_admin");
 
             const currentId = localStorage.getItem('customerloginid');
             const previousId = localStorage.getItem('customerid');
@@ -431,16 +430,30 @@ fetchProducts();
     
 
 function toggleNotification(event) {
-    event.preventDefault();
-    const notificationPopUp = document.getElementById('notificationPopUp');
-    // notificationPopUp.style.display = "block";
+  event.preventDefault();
+  event.stopPropagation(); // stop bubbling
 
-    if (notificationPopUp.style.display === 'none' || notificationPopUp.style.display === '') {
-        notificationPopUp.style.display = 'block';
-    } else {
-        notificationPopUp.style.display = 'none';
-    }
+  const isMobile = window.innerWidth < 768;
+
+  const popup = document.getElementById(isMobile ? 'notificationPopUp1' : 'notificationPopUp');
+  const otherPopup = document.getElementById(isMobile ? 'notificationPopUp' : 'notificationPopUp1');
+
+  // Hide the other popup (if open)
+  if (otherPopup) otherPopup.style.display = 'none';
+
+  // Toggle visibility
+  popup.style.display =
+    popup.style.display === 'block' ? 'none' : 'block';
 }
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#notificationPopUp") &&
+      !e.target.closest("#notificationPopUp1") &&
+      !e.target.closest(".btnSharp")) {
+    document.getElementById("notificationPopUp").style.display = "none";
+    document.getElementById("notificationPopUp1").style.display = "none";
+  }
+});
+
 
 const searchInput = document.getElementById("searchInput");
 const searchIcon = document.querySelector(".search-icon");
@@ -541,6 +554,7 @@ async function loadCategories() {
 
     const categories = await response.json(); 
     const select = document.getElementById("categorySelect");
+    if (!select) return;
 
     // Clear old options (except first one)
     select.innerHTML = `<option value="">-- Select a Category --</option>`;
@@ -733,6 +747,188 @@ document.addEventListener("DOMContentLoaded", () => {
   // Call function when DOM ready
   loadTopProducts();
 });
+
+
+
+
+// SHOW CURRENT ACTIVE PAGE IN SIDEBAR
+document.addEventListener("DOMContentLoaded", () => {
+  const currentPage = window.location.pathname.split("/").pop();
+  const links = document.querySelectorAll(".sidebar .nav-link");
+
+  links.forEach(link => {
+    if (link.getAttribute("href") === currentPage) {
+      link.classList.add("active");
+    }
+  });
+});
+
+
+
+// SHOW NOTIFICATIONS ON DASHBOARD 
+let lastSeenAdminOrderTime = localStorage.getItem("lastSeenAdminOrderTime") 
+  ? new Date(localStorage.getItem("lastSeenAdminOrderTime")) 
+  : new Date(0);
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadAllOrdersFeed();
+
+  // ✅ Mark as seen when bell clicked
+  document.body.addEventListener("click", (e) => {
+    if (e.target.closest(".btnSharp")) {
+      const badges = [
+        document.getElementById("notificationBadge"),
+        document.getElementById("notificationBadge1"),
+      ];
+      badges.forEach((badge) => {
+        if (badge) badge.style.display = "none";
+      });
+      localStorage.setItem("lastSeenAdminOrderTime", new Date().toISOString());
+    }
+  });
+
+  // 🔁 Auto-refresh every 30s
+  setInterval(loadAllOrdersFeed, 30000);
+});
+
+async function loadAllOrdersFeed() {
+  try {
+    const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+    const orders = await res.json();
+
+    // ✅ Sort newest → oldest
+    const sortedOrders = orders.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    const feeds = [
+      document.getElementById("activityFeed"),
+      document.getElementById("activityFeed1"),
+    ];
+
+    feeds.forEach((feed) => {
+      if (!feed) return;
+      feed.innerHTML = "";
+
+      if (sortedOrders.length === 0) {
+        feed.innerHTML = `<li class="text-muted text-center">No recent orders</li>`;
+        return;
+      }
+
+      // ✅ Show 5 latest orders
+      sortedOrders.slice(0, 5).forEach((order) => {
+        const firstName = order.customerSnapshot?.firstName || "Unknown";
+        const lastName = order.customerSnapshot?.lastName
+          ? order.customerSnapshot.lastName.charAt(0) + "."
+          : "";
+        const city = order.customerSnapshot?.city || "N/A";
+        const total = order.totalAmount
+          ? order.totalAmount.toLocaleString()
+          : "0";
+        const payment = order.paymentStatus || "pending";
+        const createdAt = new Date(order.createdAt);
+        const timeAgo = formatTimeAgo(createdAt);
+
+        const badgeClass =
+          payment.toLowerCase() === "paid"
+            ? "bg-success-subtle text-success"
+            : payment.toLowerCase() === "failed"
+            ? "bg-danger-subtle text-danger"
+            : "bg-warning-subtle text-warning";
+
+        const avatar = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`;
+
+        feed.insertAdjacentHTML(
+          "beforeend",
+          `
+          <li class="d-flex align-items-center mb-3 border-bottom pb-2">
+            <img src="${avatar}" class="rounded-circle me-3" width="40" height="40" alt="${firstName}">
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between">
+                <strong>${firstName} ${lastName}</strong>
+                <small class="text-muted">${timeAgo}</small>
+              </div>
+              <div class="text-muted small">
+                Ordered from <b>${city}</b> • ₦${total}
+              </div>
+            </div>
+            <span class="badge rounded-pill ${badgeClass}">${payment}</span>
+          </li>
+          `
+        );
+      });
+
+      // ✅ Footer
+      feed.insertAdjacentHTML(
+        "beforeend",
+        `
+        <li class="text-center mt-2">
+          <button class="btn btn-success w-100 fw-semibold"
+            onclick="window.location.href='notifications.html'">
+            View all notifications
+          </button>
+        </li>
+        `
+      );
+    });
+
+    // ✅ Badge logic for unseen orders
+    const newOrders = sortedOrders.filter(
+      (o) => new Date(o.createdAt) > lastSeenAdminOrderTime
+    );
+    updateNotificationBadge(newOrders.length);
+  } catch (err) {
+    console.error("Error loading all orders feed:", err);
+  }
+}
+
+// 🕒 Helper
+function formatTimeAgo(date) {
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  const intervals = [
+    { label: "year", seconds: 31536000 },
+    { label: "month", seconds: 2592000 },
+    { label: "day", seconds: 86400 },
+    { label: "hour", seconds: 3600 },
+    { label: "min", seconds: 60 },
+  ];
+
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count >= 1)
+      return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
+  }
+  return "just now";
+}
+
+// 🔔 Update badge
+function updateNotificationBadge(count) {
+  const badges = [
+    document.getElementById("notificationBadge"),
+    document.getElementById("notificationBadge1"),
+  ];
+
+  badges.forEach((badge) => {
+    if (!badge) return;
+    if (count > 0) {
+      badge.style.display = "inline-block";
+      badge.textContent = count > 9 ? "9+" : count;
+    } else {
+      badge.style.display = "none";
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Notifications - Super Admin</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./style.css">
+
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+    }
+    .card {
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .filter-bar {
+      background: #fff;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .order-item:hover {
+      background-color: #f1f1f1;
+      transition: 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+    <!-- Desktop Navbar (visible on md and up) -->
+      <nav class="navbar navbar-expand-md bg-white d-none d-md-flex fixed-top">
+        <div class="container-fluid">
+          <img src="./images/Foodies logo without Banner 1.png" style="width: 50px; height: 50px" alt="">
+          <span class="Navlogo1 d-md-none">360 Organic Foodie</span>
+
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <div class="input-group Navborder">
+                  <button class="btn btn-outline-secondary border-0" type="button">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <input type="text" class="form-control border-0" placeholder="Search here...">
+                </div>
+              </li>
+            </ul>
+
+            <form class="d-flex">
+              <div class="d-flex align-items-center">
+                <button class="text-reset me-3 btnSharp"><i class="fa-solid fa-cart-shopping"></i></button>
+                <button class="text-reset me-4 btnSharp position-relative" onclick="toggleNotification(event)">
+                  <i class="fas fa-bell"></i>
+                  <span id="notificationBadge"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.7rem; display:none;">
+                  </span>
+                </button>
+
+
+                <img id="userAvatar" class="me-3 rounded-circle" src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png" alt="User Avatar" width="40" height="40">
+                <span id="userName" class="CustomP-14-400 me-3 text-dark fw-semibold"></span>
+              </div>
+            </form>
+            <!-- notification pop-up  -->
+              <div class="col-md-4" id="notificationPopUp">
+                  <div class="card p-3" style=" overflow-y: auto;">
+                    <h6 class="fw-bold mb-3">Recent Activities in Your City</h6>
+                    <ul class="list-unstyled" id="activityFeed"></ul>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile Navbar (visible only on sm) -->
+      <nav class="navbar bg-white px-3 d-flex justify-content-between align-items-center d-flex d-sm-flex d-md-none">
+        <!-- Left side -->
+        <div class="d-flex align-items-center">
+          <!-- Hamburger -->
+          <button class="btn p-0 me-3" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+            <i class="fa-solid fa-bars fs-4"></i>
+          </button>
+
+          <!-- Search -->
+           <div class="search-container">
+            <button class="btn p-0" id="mobileSearchBtn" aria-label="Open search">
+              <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
+            </button>
+
+            <input
+              type="text"
+              id="mobileSearchInput"
+              class="mobile-search-input"
+              placeholder="Search dashboard..."
+              aria-label="Search dashboard"
+            />
+          </div>
+
+          <!-- <div class="search-container position-relative">
+            <button class="btn p-0" id="mobileSearchBtn">
+              <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
+            </button>
+            <input type="text" id="mobileSearchInput" class="form-control form-control-sm position-absolute"
+              placeholder="Search..."
+              style="width: 0; opacity: 0; transition: all 0.3s ease; left: 40px; top: 0; z-index: 1000;">
+          </div> -->
+        </div>
+
+        <!-- Right side -->
+        <div class="d-flex align-items-center">
+          <!-- Bell -->
+          <button class="text-reset me-1 btnSharp position-relative" onclick="toggleNotification(event)">
+                  <i class="fas fa-bell"></i>
+                  <span id="notificationBadge1"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.7rem; display:none;">
+                  </span>
+                </button>
+
+          <!-- Profile -->
+          <img src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png"
+              class="rounded-circle"
+              alt="Profile" width="40" height="40">
+        </div>
+              <div class="col-md-4" id="notificationPopUp1">
+                  <div class="card p-3" style=" overflow-y: auto;">
+                    <h6 class="fw-bold mb-3">Recent Activities in Your City</h6>
+                    <ul class="list-unstyled" id="activityFeed1"></ul>
+                  </div>
+              </div>
+      </nav>
+
+      <!-- Sidebar (offcanvas for mobile) -->
+      <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarMenu">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title">Menu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+          <ul class="listItem">
+            <li><a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i>Dashboard</a></li>
+            <li><a href="./orders.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-cart-shopping me-3"></i>Orders</a></li>
+            <li><a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a></li>
+            <li><a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a></li>
+            <li><a href="./customers.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
+            <li><a href="./distributor.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>distributors</a></li>
+            <li><a href="./" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a></li>
+            <hr>
+            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a></li>
+            <li><a href="#" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-gear me-3"></i>Settings</a></li>
+            <li><a  onclick="logOut()" style="cursor:pointer; text-decoration: none; color: #8D98AF"><i class="fa-solid fa-arrow-right-from-bracket me-3"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+
+  <div class="container-fluid ">
+  
+  <div class="row">
+    <div class="col-md-2 sidebar d-md-block d-none">
+          <ul class="listItem">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <i class="fa-solid fa-house me-lg-3 me-md-1"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="orders.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="product.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li>
+              <a href="categories.html" class="nav-link">
+                <i class="fa-solid fa-layer-group me-lg-3 me-md-1"></i>
+                <span>Category</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-user me-lg-3 me-md-1"></i>
+                <span>Customer</span>
+              </a>
+            </li>
+            <li>
+              <a href="distributor.html" class="nav-link">
+                <i class="fa-solid fa-truck-fast me-lg-3 me-md-1"></i>
+                <span>Distributors</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-file-invoice me-lg-3 me-md-1"></i>
+                <span>Reports</span>
+              </a>
+            </li>
+            <li>
+              <a href="./notifications.html" class="nav-link">
+                <i class="fa-solid fa-bell me-lg-3 me-md-1"></i>
+                <span>Notifications</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-receipt fa-beat me-lg-3 me-md-1"></i>
+                <span>Coupons</span>
+              </a>
+            </li>
+            <hr>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-envelope me-lg-3 me-md-1"></i>
+                <span>Inbox</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-gear me-lg-3 me-md-1"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+            <!-- <li class="mt-5">
+              <a href="#" class="nav-link  Dashbutton" onclick="logOut(event)">
+                <i class="fa-solid fa-arrow-right-from-bracket me-lg-3 me-md-1"></i>
+                <span>Logout</span>
+              </a>
+            </li> -->
+            <button class="Dashbutton mt-5 " style="cursor: pointer; " onclick="logOut()">
+            <a  style="text-decoration: none; color:#8D98AF ;  "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
+            </button>
+          </ul>
+    </div>
+
+  <div class="col-md-10 mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="fw-semibold mb-0">Notifications</h4>
+
+    <!-- ✅ City filter dropdown (only shows for super admin) -->
+    <div id="cityFilterWrapper" style="display: none;">
+      <select id="cityFilter" class="form-select form-select-sm">
+        <option value="">All Cities</option>
+      </select>
+    </div>
+  </div>
+  <!-- ✅ Notification list -->
+  <div id="notificationsContainer" class="border rounded bg-white shadow-sm"></div>
+
+  <!-- ✅ Pagination info -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small id="paginationInfo" class="text-muted"></small>
+    <ul id="pagination" class="pagination pagination-sm mb-0"></ul>
+  </div>
+  </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("notificationsContainer");
+  const pagination = document.getElementById("pagination");
+  const paginationInfo = document.getElementById("paginationInfo");
+  const cityFilterWrapper = document.getElementById("cityFilterWrapper");
+  const cityFilter = document.getElementById("cityFilter");
+
+  let allOrders = [];
+  let filteredOrders = [];
+  let currentPage = 1;
+  const pageSize = 10;
+
+  loadNotifications();
+
+  async function loadNotifications() {
+    try {
+      const role = localStorage.getItem("role");
+      const distributorCity = localStorage.getItem("city");
+      const lastSeenOrderTime = localStorage.getItem("lastSeenOrderTime")
+        ? new Date(localStorage.getItem("lastSeenOrderTime"))
+        : new Date(0);
+
+      const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      // ✅ Filter by city if distributor, else show all
+      allOrders =
+        role === "distributor"
+          ? data.filter(
+              (o) =>
+                o.customerSnapshot?.city?.toLowerCase() ===
+                distributorCity.toLowerCase()
+            )
+          : data;
+
+      // Sort newest first
+      allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      if (!allOrders.length) {
+        container.innerHTML = `<p class="text-center text-muted my-3">No notifications found.</p>`;
+        return;
+      }
+
+      // ✅ If super admin, show city dropdown filter
+      if (role === "super_admin") {
+        cityFilterWrapper.style.display = "block";
+        populateCityDropdown(allOrders);
+      }
+
+      filteredOrders = [...allOrders];
+      renderPage(lastSeenOrderTime);
+    } catch (err) {
+      console.error("❌ Error loading notifications:", err);
+      container.innerHTML = `<p class='text-danger'>Error loading notifications.</p>`;
+    }
+  }
+
+  function populateCityDropdown(data) {
+    const cities = [
+      ...new Set(data.map((o) => o.customerSnapshot?.city).filter(Boolean)),
+    ].sort();
+
+    cityFilter.innerHTML = `<option value="">All Cities</option>`;
+    cities.forEach((city) => {
+      cityFilter.innerHTML += `<option value="${city}">${city}</option>`;
+    });
+
+    cityFilter.addEventListener("change", () => {
+      const selectedCity = cityFilter.value.toLowerCase();
+      filteredOrders = selectedCity
+        ? allOrders.filter(
+            (o) => o.customerSnapshot?.city?.toLowerCase() === selectedCity
+          )
+        : [...allOrders];
+      currentPage = 1;
+      renderPage(new Date(localStorage.getItem("lastSeenOrderTime")));
+    });
+  }
+
+  function renderPage(lastSeenOrderTime) {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    const pageData = filteredOrders.slice(start, end);
+
+    if (!pageData.length) {
+      container.innerHTML = `<p class='text-center text-muted my-3'>No notifications found.</p>`;
+      pagination.innerHTML = "";
+      paginationInfo.textContent = "";
+      return;
+    }
+
+    container.innerHTML = pageData
+      .map((order) => {
+        const firstName = order.customerSnapshot?.firstName || "Unknown";
+        const lastName = order.customerSnapshot?.lastName
+          ? order.customerSnapshot.lastName.charAt(0) + "."
+          : "";
+        const city = order.customerSnapshot?.city || "Unknown city";
+        const total = order.totalAmount
+          ? order.totalAmount.toLocaleString()
+          : "0";
+        const payment = order.paymentStatus || "pending";
+        const createdAt = new Date(order.createdAt);
+        const timeAgo = formatTimeAgo(createdAt);
+        const isUnread = createdAt > lastSeenOrderTime;
+
+        const avatar = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`;
+
+        // ✅ Product list (names only)
+        const productNames =
+          order.items && order.items.length
+            ? order.items.map((item) => item.name).join(", ")
+            : "No products found";
+
+        return `
+          <div class="notif-item ${isUnread ? "unread" : ""} p-3 border-bottom d-flex align-items-start">
+            <img src="${avatar}" class="rounded-circle me-3" width="45" height="45" alt="${firstName}">
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>${firstName} ${lastName}</strong> 
+                  <span class="text-muted small">from ${city}</span>
+                </div>
+                <small class="text-muted">${timeAgo}</small>
+              </div>
+              <div class="mt-1 text-muted">
+                ordered <strong>${productNames}</strong>
+              </div>
+              <div class="mt-1 small text-secondary">
+                ₦${total} • <span class="text-capitalize">${payment}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+
+    paginationInfo.textContent = `Showing ${start + 1}–${Math.min(
+      end,
+      filteredOrders.length
+    )} of ${filteredOrders.length}`;
+
+    renderPagination();
+  }
+
+  function renderPagination() {
+    const totalPages = Math.ceil(filteredOrders.length / pageSize);
+    pagination.innerHTML = "";
+
+    const createPageItem = (page, label = page) => `
+      <li class="page-item ${page === currentPage ? "active" : ""}">
+        <a class="page-link" href="#" data-page="${page}">${label}</a>
+      </li>
+    `;
+
+    pagination.innerHTML += createPageItem(currentPage - 1, "&lt;");
+    for (let i = 1; i <= totalPages; i++) {
+      pagination.innerHTML += createPageItem(i);
+    }
+    pagination.innerHTML += createPageItem(currentPage + 1, "&gt;");
+
+    if (currentPage === 1)
+      pagination.firstElementChild.classList.add("disabled");
+    if (currentPage === totalPages)
+      pagination.lastElementChild.classList.add("disabled");
+
+    pagination.querySelectorAll("a").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const page = parseInt(btn.dataset.page);
+        if (page > 0 && page <= totalPages && page !== currentPage) {
+          currentPage = page;
+          renderPage(new Date(localStorage.getItem("lastSeenOrderTime")));
+        }
+      })
+    );
+  }
+
+  function formatTimeAgo(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    const intervals = [
+      { label: "year", seconds: 31536000 },
+      { label: "month", seconds: 2592000 },
+      { label: "day", seconds: 86400 },
+      { label: "hour", seconds: 3600 },
+      { label: "min", seconds: 60 },
+    ];
+    for (const i of intervals) {
+      const count = Math.floor(seconds / i.seconds);
+      if (count >= 1) return `${count} ${i.label}${count > 1 ? "s" : ""} ago`;
+    }
+    return "just now";
+  }
+});
+</script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="./js/index.js"></script>
+</body>
+</html>
