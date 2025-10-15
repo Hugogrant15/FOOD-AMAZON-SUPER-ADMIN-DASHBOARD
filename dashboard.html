@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="./style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
   <style>
     
   </style>
@@ -51,7 +53,7 @@
             <!-- notification pop-up  -->
               <div class="col-md-4" id="notificationPopUp">
                   <div class="card p-3" style=" overflow-y: auto;">
-                    <h6 class="fw-bold mb-3">Recent Activities in Your City</h6>
+                    <h6 class="fw-bold mb-3">See all orders here</h6>
                     <ul class="list-unstyled" id="activityFeed"></ul>
                   </div>
               </div>
@@ -132,6 +134,7 @@
             <li><a href="./customers.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
             <li><a href="./distributor.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>distributors</a></li>
             <li><a href="./" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-bell me-3"></i></span><span>Notifications</span></a></li>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a></li>
             <hr>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a></li>
@@ -218,7 +221,7 @@
               </a>
             </li>
             <li>
-              <a href="" class="nav-link">
+              <a href="./customers.html" class="nav-link">
                 <i class="fa-solid fa-user me-lg-3 me-md-1"></i>
                 <span>Customer</span>
               </a>
@@ -482,18 +485,44 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- Charts -->
             <div class="row g-3 mb-4">
               <div class="col-md-8">
-                <div class="card p-3">
-                  <img src="./images/Orders chart.png" alt="">
-                  <h6>Distribution Trends</h6> 
-                  <!-- <canvas id="trendChart" height="100"></canvas> -->
+               <div class="">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+                      <h5 class="fw-semibold mb-2 mb-sm-0">Orders Over Time </h5>
+
+                      <div class="d-flex align-items-center gap-2">
+                        <select id="monthSelect" class="form-select form-select-sm" style="width: 180px;">
+                          <option value="">Current Month</option>
+                        </select>
+
+                        <div class="form-check form-switch ms-2">
+                          <input class="form-check-input" type="checkbox" id="compareToggle">
+                          <label class="form-check-label small" for="compareToggle">Compare prev. month</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <canvas id="ordersOverTimeChart" height="130"></canvas>
+
+                    <div class="mt-3 text-end text-muted small" id="monthlySummary"></div>
+                  </div>
                 </div>
               </div>
+              </div>
               <div class="col-md-4">
-                <div class="card p-3">
-                  <img src="./images/last 7 days.png" alt="">
-                  <!-- <h6>Daily Visit Insights</h6>
-                  <canvas id="visitChart" height="100"></canvas> -->
-                </div>
+                <div class="card shadow-sm p-4">
+                  <h6 class="fw-bold mb-4">Last 7 Days Sales</h6>
+
+                  <div class="d-flex flex-column align-items-start">
+                    <h4 id="itemsSold" class="fw-bold mb-0">0</h4>
+                    <p class="text-muted small mb-2">Items Sold</p>
+                    <h4 id="revenue" class="fw-bold mb-0">₦0</h4>
+                    <p class="text-muted small mb-3">Revenue</p>
+                  </div>
+
+                  <canvas id="salesBarChart" height="250"></canvas>
+              </div>
               </div>
             </div>
 
@@ -550,7 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
           
 
           </div>
-        </div>
+      </div>
       
 
 
@@ -729,39 +758,17 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
 
    
-      <script>
-        // Line Chart
-        new Chart(document.getElementById('trendChart'), {
-          type: 'line',
-          data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-            datasets: [
-              {label:'Orders', data:[200,250,180,300,270,350], borderColor:'#28a745', fill:false},
-              {label:'Revenue', data:[300,400,350,500,450,600], borderColor:'#dc3545', fill:false}
-            ]
-          }
-        });
+  
 
-        // Bar Chart
-        new Chart(document.getElementById('visitChart'), {
-          type: 'bar',
-          data: {
-            labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-            datasets: [{label:'Visits', data:[120,150,180,200,170,140,190], backgroundColor:'#0d6efd'}]
-          }
-        });
+    
 
-        // Doughnut Chart
-        new Chart(document.getElementById('productChart'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Berry Bites','Organic Almond Delight','Coconut Crunch'],
-            datasets: [{data:[45,32,23], backgroundColor:['#0d6efd','#20c997','#ffc107']}]
-          }
-        });
 
-          
-      </script>
+
+
+
+
+
+
 
 
 

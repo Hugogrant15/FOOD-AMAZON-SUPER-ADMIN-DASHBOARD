@@ -434,7 +434,6 @@ function toggleNotification(event) {
   event.stopPropagation(); // stop bubbling
 
   const isMobile = window.innerWidth < 768;
-
   const popup = document.getElementById(isMobile ? 'notificationPopUp1' : 'notificationPopUp');
   const otherPopup = document.getElementById(isMobile ? 'notificationPopUp' : 'notificationPopUp1');
 
@@ -442,9 +441,24 @@ function toggleNotification(event) {
   if (otherPopup) otherPopup.style.display = 'none';
 
   // Toggle visibility
-  popup.style.display =
-    popup.style.display === 'block' ? 'none' : 'block';
+  const isVisible = popup.style.display === 'block';
+  popup.style.display = isVisible ? 'none' : 'block';
+
+  // ✅ If it's just opened → mark notifications as seen
+  if (!isVisible) {
+    const badges = [
+      document.getElementById("notificationBadge"),
+      document.getElementById("notificationBadge1"),
+    ];
+
+    badges.forEach((badge) => {
+      if (badge) badge.style.display = "none";
+    });
+
+    localStorage.setItem("lastSeenAdminOrderTime", new Date().toISOString());
+  }
 }
+
 document.addEventListener("click", (e) => {
   if (!e.target.closest("#notificationPopUp") &&
       !e.target.closest("#notificationPopUp1") &&
@@ -453,6 +467,7 @@ document.addEventListener("click", (e) => {
     document.getElementById("notificationPopUp1").style.display = "none";
   }
 });
+
 
 
 const searchInput = document.getElementById("searchInput");
@@ -919,6 +934,339 @@ function updateNotificationBadge(count) {
     }
   });
 }
+
+
+// PASSWORD EYE ICON TOGGLE 
+document.addEventListener("DOMContentLoaded", () => {
+  const passwordInput = document.getElementById("adminPassword");
+  const eyeIcon = document.getElementById("eyeicon");
+  const toggleButton = document.querySelector(".signupAbsolute");
+
+  if (!passwordInput || !eyeIcon || !toggleButton) return;
+
+  toggleButton.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // 🔥 Reset full class each time (prevents mismatch)
+    eyeIcon.className = isPassword
+      ? "fa-solid fa-eye"
+      : "fa-solid fa-eye-slash";
+  });
+});
+
+// LAST 7 DAYS CHART ON DASHBOARD 
+document.addEventListener("DOMContentLoaded", async () => {
+  const ctx = document.getElementById("salesBarChart").getContext("2d");
+  const itemsSoldEl = document.getElementById("itemsSold");
+  const revenueEl = document.getElementById("revenue");
+
+  try {
+    const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+    if (!res.ok) throw new Error("Failed to fetch orders");
+    const orders = await res.json();
+
+    const today = new Date();
+    const last7Days = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(today.getDate() - (6 - i));
+      return d;
+    });
+
+    const labels = last7Days.map(d => d.toLocaleDateString("en-US", { day: "numeric" }));
+    const dailyItems = Array(7).fill(0);
+    const dailyRevenue = Array(7).fill(0);
+
+    orders.forEach(order => {
+      const orderDate = new Date(order.createdAt);
+      last7Days.forEach((day, i) => {
+        if (orderDate.toDateString() === day.toDateString()) {
+          let items = 0;
+          order.items.forEach(item => items += item.quantity || 0);
+          dailyItems[i] += items;
+          dailyRevenue[i] += order.totalAmount || 0;
+        }
+      });
+    });
+
+    const totalItems = dailyItems.reduce((a, b) => a + b, 0);
+    const totalRevenue = dailyRevenue.reduce((a, b) => a + b, 0);
+    itemsSoldEl.textContent = totalItems.toLocaleString();
+    revenueEl.textContent = `₦${totalRevenue.toLocaleString()}`;
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Items Sold",
+            data: dailyItems,
+            backgroundColor: "#00C26F",
+            yAxisID: "y",
+          },
+          {
+            label: "Revenue",
+            data: dailyRevenue,
+            backgroundColor: "#007BFF",
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          y: {
+            beginAtZero: true,
+            position: "left",
+            title: { display: true, text: "Items Sold" },
+          },
+          y1: {
+            beginAtZero: true,
+            position: "right",
+            title: { display: true, text: "Revenue (₦)" },
+            grid: { drawOnChartArea: false },
+          },
+        },
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const val = ctx.parsed.y;
+                return ctx.dataset.label === "Revenue"
+                  ? `₦${val.toLocaleString()}`
+                  : `${val.toLocaleString()} items`;
+              },
+            },
+          },
+          datalabels: {
+            anchor: "end",
+            align: "end",
+            formatter: (value, ctx) => {
+              return ctx.dataset.label === "Revenue"
+                ? `₦${value.toLocaleString()}`
+                : value.toLocaleString();
+            },
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  } catch (err) {
+    console.error("Error loading 7-day bar chart:", err);
+  }
+});
+
+//  ORDERS OVER TIME ON DASHBOARD 
+ document.addEventListener("DOMContentLoaded", async () => {
+    const ctx = document.getElementById("ordersOverTimeChart").getContext("2d");
+    const monthSelect = document.getElementById("monthSelect");
+    const compareToggle = document.getElementById("compareToggle");
+    const summary = document.getElementById("monthlySummary");
+    let allOrders = [];
+    let chart;
+
+    // ✅ Fetch all orders (real data)
+    async function fetchOrders() {
+      try {
+        const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+        if (!res.ok) throw new Error("Failed to fetch orders");
+        const data = await res.json();
+        allOrders = data;
+        populateMonthDropdown();
+        renderChart();
+      } catch (err) {
+        console.error("❌ Error fetching orders:", err);
+      }
+    }
+
+    // ✅ Build month dropdown dynamically
+    function populateMonthDropdown() {
+      const months = [...new Set(
+        allOrders.map(o => {
+          const d = new Date(o.createdAt);
+          return d.toLocaleString("default", { month: "long", year: "numeric" });
+        })
+      )];
+      months.forEach(month => {
+        const opt = document.createElement("option");
+        opt.value = month;
+        opt.textContent = month;
+        monthSelect.appendChild(opt);
+      });
+    }
+
+    // ✅ Compute daily paid/pending stats
+    function getOrdersData(monthLabel = "") {
+      const now = new Date();
+      let filtered = allOrders;
+
+      if (monthLabel) {
+        filtered = allOrders.filter(o => {
+          const d = new Date(o.createdAt);
+          return d.toLocaleString("default", { month: "long", year: "numeric" }) === monthLabel;
+        });
+      } else {
+        filtered = allOrders.filter(o => {
+          const d = new Date(o.createdAt);
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        });
+      }
+
+      const daily = {};
+      filtered.forEach(order => {
+        const d = new Date(order.createdAt);
+        const day = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+        if (!daily[day]) daily[day] = { paidCount: 0, pendingCount: 0, paidRevenue: 0, pendingRevenue: 0 };
+
+        if (order.paymentStatus?.toLowerCase() === "paid") {
+          daily[day].paidCount += 1;
+          daily[day].paidRevenue += order.totalAmount || 0;
+        } else {
+          daily[day].pendingCount += 1;
+          daily[day].pendingRevenue += order.totalAmount || 0;
+        }
+      });
+
+      return {
+        days: Object.keys(daily),
+        paidCounts: Object.values(daily).map(d => d.paidCount),
+        pendingCounts: Object.values(daily).map(d => d.pendingCount),
+        paidRevenue: Object.values(daily).map(d => d.paidRevenue),
+        pendingRevenue: Object.values(daily).map(d => d.pendingRevenue),
+        totals: {
+          paidOrders: Object.values(daily).reduce((a,b)=>a+b.paidCount,0),
+          pendingOrders: Object.values(daily).reduce((a,b)=>a+b.pendingCount,0),
+          paidRevenue: Object.values(daily).reduce((a,b)=>a+b.paidRevenue,0),
+          pendingRevenue: Object.values(daily).reduce((a,b)=>a+b.pendingRevenue,0),
+        }
+      };
+    }
+
+    // ✅ Render chart (with paid vs pending)
+    function renderChart(selectedMonth = "", compare = false) {
+      const current = getOrdersData(selectedMonth);
+      const prevMonthLabel = compare ? getPrevMonth(selectedMonth) : null;
+      const previous = compare ? getOrdersData(prevMonthLabel) : null;
+
+      if (chart) chart.destroy();
+
+      const datasets = [
+        {
+          label: "Paid Orders",
+          data: current.paidCounts,
+          borderColor: "#198754",
+          backgroundColor: "rgba(25, 135, 84, 0.15)",
+          fill: true,
+          tension: 0.3,
+          yAxisID: "yOrders",
+        },
+        {
+          label: "Pending Orders",
+          data: current.pendingCounts,
+          borderColor: "#ffc107",
+          backgroundColor: "rgba(255, 193, 7, 0.15)",
+          fill: true,
+          tension: 0.3,
+          yAxisID: "yOrders",
+        },
+        {
+          label: "Paid Revenue (₦)",
+          data: current.paidRevenue,
+          borderColor: "#0d6efd",
+          backgroundColor: "rgba(13, 110, 253, 0.15)",
+          fill: true,
+          tension: 0.3,
+          yAxisID: "yRevenue",
+        },
+        {
+          label: "Pending Value (₦)",
+          data: current.pendingRevenue,
+          borderColor: "#fd7e14",
+          backgroundColor: "rgba(253, 126, 20, 0.15)",
+          fill: true,
+          tension: 0.3,
+          yAxisID: "yRevenue",
+        }
+      ];
+
+      if (compare && previous) {
+        datasets.push({
+          label: `Prev Month Paid Orders (${prevMonthLabel})`,
+          data: previous.paidCounts,
+          borderColor: "#6c757d",
+          borderDash: [5, 5],
+          tension: 0.3,
+          yAxisID: "yOrders"
+        });
+      }
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: { labels: current.days, datasets },
+        options: {
+          responsive: true,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: { position: "top" },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  if (ctx.dataset.label.includes("₦"))
+                    return ` ${ctx.dataset.label}: ₦${ctx.parsed.y.toLocaleString()}`;
+                  return ` ${ctx.dataset.label}: ${ctx.parsed.y} orders`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            yOrders: {
+              position: "left",
+              title: { display: true, text: "Orders", color: "#000" },
+              beginAtZero: true,
+            },
+            yRevenue: {
+              position: "right",
+              title: { display: true, text: "Revenue (₦)", color: "#000" },
+              beginAtZero: true,
+              grid: { drawOnChartArea: false },
+            }
+          }
+        }
+      });
+
+      // ✅ Summary totals below chart
+      summary.innerHTML = `
+        <span class="text-success fw-semibold">Paid Orders:</span> ${current.totals.paidOrders.toLocaleString()} 
+        (₦${current.totals.paidRevenue.toLocaleString()})
+        &nbsp; | &nbsp;
+        <span class="text-warning fw-semibold">Pending Orders:</span> ${current.totals.pendingOrders.toLocaleString()} 
+        (₦${current.totals.pendingRevenue.toLocaleString()})
+      `;
+    }
+
+    // ✅ Get previous month label
+    function getPrevMonth(label) {
+      const d = label ? new Date(label) : new Date();
+      d.setMonth(d.getMonth() - 1);
+      return d.toLocaleString("default", { month: "long", year: "numeric" });
+    }
+
+    // Events
+    monthSelect.addEventListener("change", (e) => {
+      renderChart(e.target.value, compareToggle.checked);
+    });
+    compareToggle.addEventListener("change", () => {
+      renderChart(monthSelect.value, compareToggle.checked);
+    });
+
+    fetchOrders();
+  });
+
+
 
 
 

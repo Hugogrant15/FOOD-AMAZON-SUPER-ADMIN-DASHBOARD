@@ -190,17 +190,19 @@
        <!-- Sidebar (offcanvas for mobile) -->
       <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarMenu">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title"></h5>
+          <h5 class="offcanvas-title">Menu</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body p-0">
+        <div class="offcanvas-body p-4">
           <ul class="listItem">
             <li><a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i>Dashboard</a></li>
             <li><a href="./orders.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-cart-shopping me-3"></i>Orders</a></li>
             <li><a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a></li>
             <li><a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a></li>
-            <li><a href="" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
-            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="./customers.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
+            <li><a href="./distributor.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>distributors</a></li>
+            <li><a href="./" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-bell me-3"></i></span><span>Notifications</span></a></li>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a></li>
             <hr>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a></li>
@@ -213,47 +215,87 @@
 
     <div class="container-fluid ">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar d-none d-md-block d-lg-block">
-            <ul class="listItem ">
-                    <li">
-                    <a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-lg-3 me-md-5"></i></span><span>Dashboard</span></a>
-                    </li>
-                    
-                    <li>
-                    <a href="./orders.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Order</span></a>
-                    </li>
-                    <li>
-                    <li>
-                    <a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a>
-                    </li>
-                    <li>
-                    <li>
-                    <a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a>
-                    </li>
-                    <li>
-                    <a href="./customers.html" style="text-decoration: none; color:#8D98AF;"><i class="fa-solid fa-user me-3"></i></span><span>Customers</span></a>
-                    </li>
-                    <li>
-                        <a href="./inventory.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a>
-                    </li>
-                    <li>
-                        <a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a>
-                    </li>
-                    <hr>
-                    <li class="">
-                        <a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a>
-                    </li>
-                    <li class="">
-                        <a href="" style="text-decoration: none; color: #8D98AF;" ><i class="fa-solid fa-gear me-3"></i></span><span>settings</span></a>
-                    </li>
-                    
-
-                    <button class="Dashbutton mt-5 " style="cursor: pointer;" onclick="logOut()">
-                    <a  style="text-decoration: none; color:#8D98AF ; "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
-                    </li>
-            </ul>
-            </div>
+              <!-- Sidebar -->
+         <div class="col-md-2 sidebar d-md-block d-none">
+          <ul class="listItem">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <i class="fa-solid fa-house me-lg-3 me-md-1"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="orders.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="product.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li>
+              <a href="categories.html" class="nav-link">
+                <i class="fa-solid fa-layer-group me-lg-3 me-md-1"></i>
+                <span>Category</span>
+              </a>
+            </li>
+            <li>
+              <a href="./customers.html" class="nav-link">
+                <i class="fa-solid fa-user me-lg-3 me-md-1"></i>
+                <span>Customer</span>
+              </a>
+            </li>
+            <li>
+              <a href="distributor.html" class="nav-link">
+                <i class="fa-solid fa-truck-fast me-lg-3 me-md-1"></i>
+                <span>Distributors</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-file-invoice me-lg-3 me-md-1"></i>
+                <span>Reports</span>
+              </a>
+            </li>
+            <li>
+              <a href="./notifications.html" class="nav-link">
+                <i class="fa-solid fa-bell me-lg-3 me-md-1"></i>
+                <span>Notifications</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-receipt fa-beat me-lg-3 me-md-1"></i>
+                <span>Coupons</span>
+              </a>
+            </li>
+            <hr>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-envelope me-lg-3 me-md-1"></i>
+                <span>Inbox</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-gear me-lg-3 me-md-1"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+            <!-- <li class="mt-5">
+              <a href="#" class="nav-link  Dashbutton" onclick="logOut(event)">
+                <i class="fa-solid fa-arrow-right-from-bracket me-lg-3 me-md-1"></i>
+                <span>Logout</span>
+              </a>
+            </li> -->
+            <button class="Dashbutton mt-5 " style="cursor: pointer; " onclick="logOut()">
+            <a  style="text-decoration: none; color:#8D98AF ;  "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
+            </button>
+          </ul>
+        </div>
 
             <!-- Main Content -->
             <div class="col-md-10 p-4">

@@ -15,10 +15,10 @@
 </head>
 <body>
     <!-- Desktop Navbar (visible on md and up) -->
-      <nav class="navbar navbar-expand-lg bg-white d-none d-md-flex fixed-top">
+      <nav class="navbar navbar-expand-md bg-white d-none d-md-flex fixed-top">
         <div class="container-fluid">
           <img src="./images/Foodies logo without Banner 1.png" style="width: 50px; height: 50px" alt="">
-          <span class="Navlogo1">360 Organic Foodie</span>
+          <span class="Navlogo1 d-md-none">360 Organic Foodie</span>
 
           <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
@@ -35,123 +35,32 @@
             <form class="d-flex">
               <div class="d-flex align-items-center">
                 <button class="text-reset me-3 btnSharp"><i class="fa-solid fa-cart-shopping"></i></button>
-                <button class="text-reset me-4 btnSharp" onclick="toggleNotification(event)">
+                <button class="text-reset me-4 btnSharp position-relative" onclick="toggleNotification(event)">
                   <i class="fas fa-bell"></i>
+                  <span id="notificationBadge"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.7rem; display:none;">
+                  </span>
                 </button>
-                <img class="me-3 rounded-circle" src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png" alt="" width="40" height="40">
-                <span class="CustomP-14-400 me-3 text-dark fw-semibold">Michael Owen</span>
+
+
+                <img id="userAvatar" class="me-3 rounded-circle" src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png" alt="User Avatar" width="40" height="40">
+                <span id="userName" class="CustomP-14-400 me-3 text-dark fw-semibold"></span>
               </div>
             </form>
             <!-- notification pop-up  -->
-                  <div class="col-md-4" id="notificationPopUp">
-                      <div class="card p-3">
-                        <div class="d-flex align-items-center justify-content-between mb-2 ">
-                            <h6>New Customers</h6>
-                            <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i>
-                        </div>
-                        <hr>
-                        <!-- first customer -->
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List.png" alt="">
-                                <div class="ms-3">
-                                    <small>Domenica @domenica</small><br>
-                                    <small>Comment on Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>1h</small>
-                        </div>
-                        <!-- second customer -->
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List (1).png" alt="">
-                                <div class="ms-3">
-                                    <small>Mahfuzul @mahfuzul</small><br>
-                                    Repled to your comment on reforest..</small>
-                                </div>
-                                
-                            </div>
-                            <small>1d</small>
-                            <!-- <i class="fa-solid fa-ellipsis" style="color: #cbd3e1;"></i> -->
-                        </div>
-
-                        <!-- third customer  -->
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List (2).png" alt="">
-                                <div class="ms-3">
-                                    <small>Laurel @laurel</small><br>
-                                    <small>Purchased a Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>2d</small>
-                        </div>
-                        <!-- fourth customer -->
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/happy-smiling-handsome-man-against-blue-background.png" alt="">
-                                <div class="ms-3">
-                                    <small>Rosina @rosina</small><br>
-                                    <small>Just made a purchase of 5 Coconut<br> Crunches Bites.</small>
-                                </div>
-                            </div>
-                            <small>4h</small>
-                        </div>
-                        <!-- fifth customer -->
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List.png" alt="">
-                                <div class="ms-3">
-                                    <small>Domenica @domenica</small><br>
-                                    <small>Comment on Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>1h</small>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List.png" alt="">
-                                <div class="ms-3">
-                                    <small>Domenica @domenica</small><br>
-                                    <small>Comment on Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>1h</small>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List.png" alt="">
-                                <div class="ms-3">
-                                    <small>Domenica @domenica</small><br>
-                                    <small>Comment on Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>1h</small>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mt-3">
-                            <div class="d-flex align-items-center">
-                                <img src="./images/New Customers List.png" alt="">
-                                <div class="ms-3">
-                                    <small>Domenica @domenica</small><br>
-                                    <small>Comment on Smiles Product</small>
-                                </div>
-                                
-                            </div>
-                            <small>1h</small>
-                        </div>
-                      </div>
-                    </div>
+              <div class="col-md-4" id="notificationPopUp">
+                  <div class="card p-3" style=" overflow-y: auto;">
+                    <h6 class="fw-bold mb-3">Recent Activities in Your City</h6>
+                    <ul class="list-unstyled" id="activityFeed"></ul>
+                  </div>
+              </div>
           </div>
         </div>
       </nav>
 
       <!-- Mobile Navbar (visible only on sm) -->
-      <nav class="navbar bg-white px-3 d-flex justify-content-between align-items-center d-flex d-md-none">
+      <nav class="navbar bg-white px-3 d-flex justify-content-between align-items-center d-flex d-sm-flex d-md-none">
         <!-- Left side -->
         <div class="d-flex align-items-center">
           <!-- Hamburger -->
@@ -160,40 +69,70 @@
           </button>
 
           <!-- Search -->
-          <button class="btn p-0">
-            <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
-          </button>
+           <div class="search-container">
+            <button class="btn p-0" id="mobileSearchBtn" aria-label="Open search">
+              <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
+            </button>
+
+            <input
+              type="text"
+              id="mobileSearchInput"
+              class="mobile-search-input"
+              placeholder="Search dashboard..."
+              aria-label="Search dashboard"
+            />
+          </div>
+
+          <!-- <div class="search-container position-relative">
+            <button class="btn p-0" id="mobileSearchBtn">
+              <i class="fa-solid fa-magnifying-glass fs-5 text-muted"></i>
+            </button>
+            <input type="text" id="mobileSearchInput" class="form-control form-control-sm position-absolute"
+              placeholder="Search..."
+              style="width: 0; opacity: 0; transition: all 0.3s ease; left: 40px; top: 0; z-index: 1000;">
+          </div> -->
         </div>
 
         <!-- Right side -->
         <div class="d-flex align-items-center">
           <!-- Bell -->
-          <button class="btn p-0 me-3 position-relative">
-            <i class="fa-regular fa-bell fs-4 text-muted"></i>
-            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle"></span>
-          </button>
+          <button class="text-reset me-1 btnSharp position-relative" onclick="toggleNotification(event)">
+                  <i class="fas fa-bell"></i>
+                  <span id="notificationBadge1"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.7rem; display:none;">
+                  </span>
+                </button>
 
           <!-- Profile -->
           <img src="./images/cheerful-curly-man-with-bristle-points-left-wears-casual-clothes-spectacles 1.png"
               class="rounded-circle"
               alt="Profile" width="40" height="40">
         </div>
+              <div class="col-md-4" id="notificationPopUp1">
+                  <div class="card p-3" style=" overflow-y: auto;">
+                    <h6 class="fw-bold mb-3">Recent Activities in Your City</h6>
+                    <ul class="list-unstyled" id="activityFeed1"></ul>
+                  </div>
+              </div>
       </nav>
 
-       <!-- Sidebar (offcanvas for mobile) -->
+      <!-- Sidebar (offcanvas for mobile) -->
       <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarMenu">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title">Menu</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body p-0">
+        <div class="offcanvas-body p-4">
           <ul class="listItem">
             <li><a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i>Dashboard</a></li>
             <li><a href="./orders.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-cart-shopping me-3"></i>Orders</a></li>
             <li><a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a></li>
             <li><a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a></li>
-            <li><a href="" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
-            <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="./customers.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>Customers</a></li>
+            <li><a href="./distributor.html" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-user me-3"></i>distributors</a></li>
+            <li><a href="./" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a></li>
+            <li><a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-bell me-3"></i></span><span>Notifications</span></a></li>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a></li>
             <hr>
             <li><a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a></li>
@@ -206,47 +145,87 @@
 
       <div class="container-fluid ">
         <div class="row">
-          <!-- Sidebar -->
-          <div class="col-md-2 sidebar d-lg-block d-none">
-          <ul class="listItem ">
-                  <li">
-                  <a href="./dashboard.html" class="active" style="text-decoration: none; color: #8D98AF; "><i class="fa-solid fa-house me-3"></i></span><span>Dashboard</span></a>
-                  </li>
-                  
-                  <li>
-                    <a href="./orders.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Order</span></a>
-                    </li>
-                  <li>
-                  <li>
-                    <a href="./product.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-cart-shopping me-3"></i></span><span>Product</span></a>
-                    </li>
-                  <li>
-                  <li>
-                    <a href="./categories.html" class="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-layer-group me-3"></i></span><span>Category</span></a>
-                    </li>
-                  <li>
-                  <a href="./customers.html" style="text-decoration: none; color:#8D98AF;"><i class="fa-solid fa-user me-3"></i></span><span>Customers</span></a>
-                  </li>
-                  <li>
-                      <a href="./inventory.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-file-invoice me-3"></i></span><span>Reports</span></a>
-                  </li>
-                  <li>
-                      <a href="./notifications.html" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-receipt fa-beat me-3"></i></span><span>Coupon</span></a>
-                  </li>
-                  <hr>
-                  <li class="">
-                      <a href="" style="text-decoration: none; color: #8D98AF;"><i class="fa-solid fa-envelope me-3"></i></span><span>Inbox</span></a>
-                  </li>
-                  <li class="">
-                      <a href="" style="text-decoration: none; color: #8D98AF;" ><i class="fa-solid fa-gear me-3"></i></span><span>settings</span></a>
-                  </li>
-                  
-
-                  <button class="Dashbutton mt-5 " style="cursor: pointer;" onclick="logOut()">
-                  <a  style="text-decoration: none; color:#8D98AF ; "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
-                  </li>
-            </ul>
-          </div>
+           <!-- Sidebar -->
+         <div class="col-md-2 sidebar d-md-block d-none">
+          <ul class="listItem">
+            <li>
+              <a href="dashboard.html" class="nav-link">
+                <i class="fa-solid fa-house me-lg-3 me-md-1"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="orders.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Orders</span>
+              </a>
+            </li>
+            <li>
+              <a href="product.html" class="nav-link">
+                <i class="fa-solid fa-cart-shopping me-lg-3 me-md-1"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li>
+              <a href="categories.html" class="nav-link">
+                <i class="fa-solid fa-layer-group me-lg-3 me-md-1"></i>
+                <span>Category</span>
+              </a>
+            </li>
+            <li>
+              <a href="./customers.html" class="nav-link">
+                <i class="fa-solid fa-user me-lg-3 me-md-1"></i>
+                <span>Customer</span>
+              </a>
+            </li>
+            <li>
+              <a href="distributor.html" class="nav-link">
+                <i class="fa-solid fa-truck-fast me-lg-3 me-md-1"></i>
+                <span>Distributors</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-file-invoice me-lg-3 me-md-1"></i>
+                <span>Reports</span>
+              </a>
+            </li>
+            <li>
+              <a href="./notifications.html" class="nav-link">
+                <i class="fa-solid fa-bell me-lg-3 me-md-1"></i>
+                <span>Notifications</span>
+              </a>
+            </li>
+            <li>
+              <a href="" class="nav-link">
+                <i class="fa-solid fa-receipt fa-beat me-lg-3 me-md-1"></i>
+                <span>Coupons</span>
+              </a>
+            </li>
+            <hr>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-envelope me-lg-3 me-md-1"></i>
+                <span>Inbox</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link">
+                <i class="fa-solid fa-gear me-lg-3 me-md-1"></i>
+                <span>Settings</span>
+              </a>
+            </li>
+            <!-- <li class="mt-5">
+              <a href="#" class="nav-link  Dashbutton" onclick="logOut(event)">
+                <i class="fa-solid fa-arrow-right-from-bracket me-lg-3 me-md-1"></i>
+                <span>Logout</span>
+              </a>
+            </li> -->
+            <button class="Dashbutton mt-5 " style="cursor: pointer; " onclick="logOut()">
+            <a  style="text-decoration: none; color:#8D98AF ;  "><i class="fa-solid fa-arrow-right-from-bracket me-3"></i></span><span class="logspan">Logout</span></a>
+            </button>
+          </ul>
+        </div>
 
           <!-- Main Content -->
           <div class="col-md-10 p-4">

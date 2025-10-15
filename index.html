@@ -27,12 +27,20 @@
                             </div>
                            
                              <div class="mb-3 signupRelative">
-                                <label for="exampleInputPassword1"  class="form-label signLabel">Password</label>
-                                <input type="password" class="form-control dashboardInput password" id="adminPassword" placeholder="Enter your password" >
-                                <button class="signupAbsolute "  style="background: transparent; border: none;"><i class="fa-solid fa-eye-slash" id="eyeicon" ></i> </button>
-                                
-                                
-                            </div> 
+                            <label for="exampleInputPassword1" class="form-label signLabel">Password</label>
+                            <input
+                                type="password"
+                                class="form-control dashboardInput password"
+                                id="adminPassword"
+                                placeholder="Enter your password"
+                            >
+                            <button type="button" class="signupAbsolute" style="background: transparent; border: none;">
+                                <i class="fa-solid fa-eye-slash" id="eyeicon"></i>
+                            </button>
+                            </div>
+
+
+
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input " id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1">Remember for 30 days </span></label>
@@ -53,21 +61,24 @@
             </div>
         </div> 
 
-         <script>
-            const eyeButton = document.querySelector('.signupAbsolute');
-            eyeButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (password.type === "password" ) {
-                    password.type = "text";
-                    eyeicon.classList.remove('fa-eye-slash');
-                    eyeicon.classList.add('fa-eye');
-                } else {
-                    password.type = "password";
-                    eyeicon.classList.remove('fa-eye');
-                    eyeicon.classList.add('fa-eye-slash');
-                }
-            });
-        </script> 
+         <!-- <script>
+           document.addEventListener("DOMContentLoaded", () => {
+  const passwordInput = document.getElementById("adminPassword");
+  const eyeIcon = document.getElementById("eyeicon");
+
+  if (!passwordInput || !eyeIcon) return;
+
+  eyeIcon.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // Toggle icon class
+    eyeIcon.classList.toggle("fa-eye");
+    eyeIcon.classList.toggle("fa-eye-slash");
+  });
+});
+
+        </script>  -->
 
 
         
