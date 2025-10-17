@@ -553,6 +553,65 @@ form label {
     height: 440px; 
 }  */
 
+/* customers html styling starts here  */
+  .card-custom {
+      border: 0;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+    }
+    .customer-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .table thead th { border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .search-input { min-width: 230px; }
+    .controls { gap: .75rem; }
+    .results-summary { font-size: .9rem; color: #6b7280; }
+    @media (max-width: 576px) {
+      .controls { flex-direction: column; align-items: stretch; }
+      .search-input { width: 100% !important; }
+    }
+
+/* dashboard toast styling here  */
+#dashboardToast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #F0FFF4;
+  color: #333;
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all 0.5s ease;
+  z-index: 9999;
+}
+/* When visible */
+#dashboardToast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Inner content styling */
+.toast-content strong {
+  font-size: 15px;
+  color: #007B55;
+}
+.toast-content span {
+  font-size: 13px;
+  color: #333;
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 600px) {
    #imgWidth {
@@ -593,3 +652,16 @@ form label {
 
 
 
+@media (max-width: 576px) {
+  .input-group {
+    width: 100% !important;
+  }
+  #pagination {
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+  }
+  #paginationSummary {
+    text-align: center;
+  }
+}

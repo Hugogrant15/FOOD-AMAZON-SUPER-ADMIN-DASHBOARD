@@ -586,79 +586,136 @@ async function loadCategories() {
 }
 document.addEventListener("DOMContentLoaded", loadCategories);
 
-// async function loadCategories() {
-//   try {
-//     const response = await fetch("http://localhost:3001/amazon/document/api/categories"); 
-//     if (!response.ok) throw new Error("Failed to fetch categories");
-
-//     const categories = await response.json(); 
-//     const select = document.getElementById("categorySelect");
-
-//     if (!select) return; // 🔹 Prevent error if element not found
-
-//     // Clear old options (except first one)
-//     select.innerHTML = `<option value="">-- Select a Category --</option>`;
-
-//     categories.forEach(category => {
-//       const option = document.createElement("option");
-//       option.value = category._id;  
-//       option.textContent = category.name; 
-//       select.appendChild(option);
-//     });
-//   } catch (error) {
-//     console.error("Error loading categories:", error);
-//   }
-// }
-// document.addEventListener("DOMContentLoaded", loadCategories);
 
 // Fuction get all orders API(to Table)
 
 document.addEventListener("DOMContentLoaded", async function () {
+  let allOrders = [];
+  let currentPage = 1;
+  const pageSize = 10;
+
   async function loadOrders() {
-    try {
-      const res = await fetch("http://localhost:3001/amazon/document/api/orders");
-      const orders = await res.json();
-      const tbody = document.getElementById("ordersTableBody");
-      if (!tbody) return; // guard if table not present
+  try {
+    const res = await fetch("http://localhost:3001/amazon/document/api/orders");
+    allOrders = await res.json();
 
-      tbody.innerHTML = "";
-      if (!orders.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found</td></tr>`;
-        return;
-      }
+    // Sort orders by createdAt descending (most recent first)
+    allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-      orders.forEach(order => {
-        const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
-        const row = `
-          <tr style="cursor:pointer" onclick="showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
-            <td>${order.transactionId || "N/A"}</td>
-            <td>${new Date(order.createdAt).toLocaleString()}</td>
-            <td>${fullName || "Unknown"}</td>
-            <td>
-              <span class="badge ${order.paymentStatus === "paid" ? "bg-success" : "bg-danger"}">
-                ${order.paymentStatus}
-              </span>
-            </td>
-            <td>
-              <span class="badge ${order.deliveryStatus === "deliverd" ? "bg-success" : "bg-warning"}">
-                ${order.deliveryStatus}
-              </span>
-            </td>
-            <td>₦${order.totalAmount.toLocaleString()}</td>
-          </tr>
-        `;
-        tbody.insertAdjacentHTML("beforeend", row);
-      });
-    } catch (err) {
-      console.error("Error loading orders:", err);
+    renderTable();
+  } catch (err) {
+    console.error("Error loading orders:", err);
+  }
+}
+
+
+  function renderTable() {
+    const tbody = document.getElementById("ordersTableBody");
+    if (!tbody) return;
+
+    const searchValue = document.getElementById("orderSearch").value.toLowerCase();
+    let filteredOrders = allOrders.filter(order => {
+      const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.toLowerCase();
+      const transactionId = (order.transactionId || "").toLowerCase();
+      const city = (order.customerSnapshot?.city || "").toLowerCase();
+      return (
+        fullName.includes(searchValue) ||
+        transactionId.includes(searchValue) ||
+        city.includes(searchValue)
+      );
+    });
+
+    const totalPages = Math.ceil(filteredOrders.length / pageSize);
+    if (currentPage > totalPages) currentPage = totalPages || 1;
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const paginated = filteredOrders.slice(startIndex, startIndex + pageSize);
+
+    tbody.innerHTML = "";
+    if (!paginated.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center">No orders found</td></tr>`;
+      document.getElementById("pagination").innerHTML = "";
+      document.getElementById("paginationSummary").innerHTML = "";
+      return;
     }
+
+    paginated.forEach(order => {
+      const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
+      const row = `
+        <tr style="cursor:pointer" onclick="showOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
+          <td>${order.transactionId || "N/A"}</td>
+          <td>${new Date(order.createdAt).toLocaleString()}</td>
+          <td>${fullName || "Unknown"}</td>
+          <td>
+            <span class="badge ${order.paymentStatus === "paid" ? "bg-success" : "bg-danger"}">
+              ${order.paymentStatus}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${order.deliveryStatus === "delivered" ? "bg-success" : "bg-warning"}">
+              ${order.deliveryStatus}
+            </span>
+          </td>
+          <td>₦${order.totalAmount.toLocaleString()}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML("beforeend", row);
+    });
+
+    renderPagination(totalPages);
+    renderSummary(filteredOrders.length, startIndex, paginated.length);
   }
 
-  // ✅ Run after DOM is ready
+  function renderPagination(totalPages) {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const createPageItem = (label, page, disabled = false, active = false) => `
+      <li class="page-item ${disabled ? "disabled" : ""} ${active ? "active" : ""}">
+        <a class="page-link" href="#" data-page="${page}">${label}</a>
+      </li>
+    `;
+
+    pagination.insertAdjacentHTML("beforeend", createPageItem("«", currentPage - 1, currentPage === 1));
+
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pagination.insertAdjacentHTML("beforeend", createPageItem(i, i, false, i === currentPage));
+    }
+
+    pagination.insertAdjacentHTML("beforeend", createPageItem("»", currentPage + 1, currentPage === totalPages));
+
+    pagination.querySelectorAll(".page-link").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const page = parseInt(btn.dataset.page);
+        if (!isNaN(page) && page >= 1 && page <= totalPages) {
+          currentPage = page;
+          renderTable();
+        }
+      });
+    });
+  }
+
+  function renderSummary(totalItems, startIndex, currentItems) {
+    const summary = document.getElementById("paginationSummary");
+    const start = totalItems === 0 ? 0 : startIndex + 1;
+    const end = startIndex + currentItems;
+    summary.innerHTML = `Showing <b>${start}</b>–<b>${end}</b> of <b>${totalItems}</b> orders`;
+  }
+
+  document.getElementById("orderSearch").addEventListener("input", () => {
+    currentPage = 1;
+    renderTable();
+  });
+
   loadOrders();
 });
-
-
 
 function showOrderDetails(order) {
   const fullName = `${order.customerSnapshot?.firstName || ""} ${order.customerSnapshot?.lastName || ""}`.trim();
@@ -701,6 +758,7 @@ function showOrderDetails(order) {
   document.getElementById("orderDetailsContent").innerHTML = content;
   new bootstrap.Modal(document.getElementById("orderDetailsModal")).show();
 }
+
 
 // LOAD TOP SELLING PRODUCTS BY UNIT SOLD API
 document.addEventListener("DOMContentLoaded", () => {
@@ -764,8 +822,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
 // SHOW CURRENT ACTIVE PAGE IN SIDEBAR
 document.addEventListener("DOMContentLoaded", () => {
   const currentPage = window.location.pathname.split("/").pop();
@@ -777,7 +833,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
 
 
 // SHOW NOTIFICATIONS ON DASHBOARD 
@@ -1270,8 +1325,615 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
+// LOAD CUSTOMERS TABLE 
+ document.addEventListener("DOMContentLoaded", () => {
+  const customersTableBody = document.querySelector("#customersTableBody");
+  const paginationContainer = document.getElementById("pagination");
+  const cityFilter = document.getElementById("cityFilter");
+  const searchInput = document.getElementById("searchInput");
+
+  const token = localStorage.getItem("key");
+  let users = [];
+  let orders = [];
+  let currentPage = 1;
+  const rowsPerPage = 8;
+
+  // Fetch customers + orders
+  async function loadCustomers() {
+  try {
+    const [usersRes, ordersRes] = await Promise.all([
+      fetch("http://localhost:3001/amazon/document/api/register/all-users", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      fetch("http://localhost:3001/amazon/document/api/orders"),
+    ]);
+
+    if (!usersRes.ok || !ordersRes.ok) throw new Error("Failed to fetch data");
+
+    const usersData = await usersRes.json();
+    const ordersData = await ordersRes.json();
+
+    // Filter only customers
+    users = usersData.filter(u => u.role === "customer");
+    orders = ordersData;
+
+    // 🔹 NEW LOGIC: Backfill missing city from their latest order
+    users.forEach(u => {
+      if (!u.city) {
+        const userOrders = orders
+          .filter(o => o.customerId === u._id && o.customerSnapshot?.city)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // latest first
+        if (userOrders.length > 0) {
+          u.city = userOrders[0].customerSnapshot.city;
+        }
+      }
+    });
+
+    populateCityFilter();
+    renderTable();
+    renderPagination();
+  } catch (err) {
+    console.error("Error loading customers:", err);
+  }
+}
+
+  // Populate City Filter Dropdown
+  function populateCityFilter() {
+    const uniqueCities = [...new Set(users.map(u => u.city).filter(Boolean))];
+    cityFilter.innerHTML = `<option value="">All Cities</option>` +
+      uniqueCities.map(c => `<option value="${c}">${c}</option>`).join("");
+  }
+
+  // Render Customer Table
+  function renderTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedCity = cityFilter.value;
+
+    const filtered = users.filter(u => {
+      const matchesSearch =
+        u.name.toLowerCase().includes(searchTerm) ||
+        u.email.toLowerCase().includes(searchTerm) ||
+        (u.phoneNumber && u.phoneNumber.includes(searchTerm));
+      const matchesCity = !selectedCity || u.city === selectedCity;
+      return matchesSearch && matchesCity;
+    });
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginated = filtered.slice(start, start + rowsPerPage);
+
+    customersTableBody.innerHTML = "";
+    paginated.forEach(cust => {
+      const custOrders = orders.filter(o => o.customerId === cust._id);
+      const totalOrders = custOrders.length;
+      const totalSpent = custOrders.reduce((sum, o) => {
+        if (o.totalAmount) return sum + o.totalAmount;
+        if (o.items && Array.isArray(o.items)) {
+          const subtotal = o.items.reduce((s, i) => {
+            const price = i.price || 0;
+            const qty = i.quantity || 1;
+            const sub = i.subTotal || price * qty;
+            return s + sub;
+          }, 0);
+          return sum + subtotal;
+        }
+        return sum;
+      }, 0);
+
+      const initials = getInitials(cust.name);
+      const avatarHTML = cust.profilePicture
+        ? `<img src="${cust.profilePicture}" class="rounded-circle me-2" width="40" height="40" alt="profile">`
+        : `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;">${initials}</div>`;
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="align-middle d-flex align-items-center">${avatarHTML}<strong>${cust.name}</strong></td>
+        <td class="align-middle">${cust.city || "-"}</td>
+        <td class="align-middle">${totalOrders}</td>
+        <td class="align-middle text-success fw-semibold">${formatNaira(totalSpent)}</td>
+      `;
+      customersTableBody.appendChild(row);
+    });
+  }
+
+  // Render Pagination Buttons
+  function renderPagination() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedCity = cityFilter.value;
+
+    const filtered = users.filter(u => {
+      const matchesSearch =
+        u.name.toLowerCase().includes(searchTerm) ||
+        u.email.toLowerCase().includes(searchTerm) ||
+        (u.phoneNumber && u.phoneNumber.includes(searchTerm));
+      const matchesCity = !selectedCity || u.city === selectedCity;
+      return matchesSearch && matchesCity;
+    });
+
+    const pageCount = Math.ceil(filtered.length / rowsPerPage);
+    paginationContainer.innerHTML = "";
+
+    for (let i = 1; i <= pageCount; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.classList.add("btn", "btn-sm", "me-1");
+      btn.classList.add(i === currentPage ? "btn-primary" : "btn-outline-primary");
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderTable();
+        renderPagination();
+      });
+      paginationContainer.appendChild(btn);
+    }
+  }
+
+  // Utility Helpers
+  function getInitials(name = "") {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  function formatNaira(amount) {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      minimumFractionDigits: 0,
+    }).format(amount || 0);
+  }
+
+  // Event Listeners
+  searchInput.addEventListener("input", () => {
+    currentPage = 1;
+    renderTable();
+    renderPagination();
+  });
+
+  cityFilter.addEventListener("change", () => {
+    currentPage = 1;
+    renderTable();
+    renderPagination();
+  });
+
+  loadCustomers();
+  });
+
+  // LOAD CUSTOMERS  DETAILS MODAL
+  document.addEventListener("DOMContentLoaded", () => {
+  const customersTableBody = document.querySelector("#customersTableBody");
+  const paginationContainer = document.getElementById("pagination");
+  const cityFilter = document.getElementById("cityFilter");
+  const searchInput = document.getElementById("searchInput");
+  const modalEl = document.getElementById("customerModal");
+  const modalContainer = document.getElementById("customerDetailsContainer");
+
+  if (!customersTableBody) {
+    console.error("customersTableBody element not found. Ensure <tbody id='customersTableBody'> exists.");
+    return;
+  }
+  if (!modalEl) {
+    console.error("customerModal not found. Paste modal markup into the page.");
+  }
+
+  const token = localStorage.getItem("key");
+  let users = [];
+  let orders = [];
+  let currentPage = 1;
+  const rowsPerPage = 8;
+
+  // Load data
+  async function loadCustomers() {
+    try {
+      const [usersRes, ordersRes] = await Promise.all([
+        fetch("http://localhost:3001/amazon/document/api/register/all-users", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch("http://localhost:3001/amazon/document/api/orders"),
+      ]);
+
+      if (!usersRes.ok || !ordersRes.ok) throw new Error("Failed to fetch data");
+
+      const usersData = await usersRes.json();
+      const ordersData = await ordersRes.json();
+
+      users = usersData.filter(u => u.role === "customer");
+      orders = ordersData;
+
+      // Backfill missing city from latest order snapshot if available
+      users.forEach(u => {
+        if (!u.city) {
+          const userOrders = orders
+            .filter(o => (o.customerId === u._id || o.customerId === String(u._id)) && o.customerSnapshot?.city)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          if (userOrders.length) u.city = userOrders[0].customerSnapshot.city;
+        }
+      });
+
+      populateCityFilter();
+      renderTable();
+      renderPagination();
+      console.log("✅ Customers + orders loaded");
+    } catch (err) {
+      console.error("Error loading customers:", err);
+    }
+  }
+
+  function populateCityFilter() {
+    if (!cityFilter) return;
+    const uniqueCities = [...new Set(users.map(u => u.city).filter(Boolean))];
+    cityFilter.innerHTML = `<option value="">All Cities</option>` +
+      uniqueCities.map(c => `<option value="${c}">${c}</option>`).join("");
+  }
+
+  function renderTable() {
+    const searchTerm = (searchInput?.value || "").toLowerCase();
+    const selectedCity = cityFilter?.value || "";
+
+    const filtered = users.filter(u => {
+      const matchesSearch =
+        (u.name || "").toLowerCase().includes(searchTerm) ||
+        (u.email || "").toLowerCase().includes(searchTerm) ||
+        ((u.phoneNumber || "").toLowerCase().includes(searchTerm));
+      const matchesCity = !selectedCity || u.city === selectedCity;
+      return matchesSearch && matchesCity;
+    });
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const paginated = filtered.slice(start, start + rowsPerPage);
+
+    customersTableBody.innerHTML = "";
+
+    paginated.forEach(cust => {
+      const custOrders = orders.filter(o => o.customerId === cust._id || o.customerId === String(cust._id));
+      const totalOrders = custOrders.length;
+      const totalSpent = custOrders.reduce((sum, o) => {
+        if (typeof o.totalAmount === "number") return sum + o.totalAmount;
+        if (o.items && Array.isArray(o.items)) {
+          return sum + o.items.reduce((s, it) => s + ((it.subTotal != null) ? it.subTotal : ((it.price || 0) * (it.quantity || 1))), 0);
+        }
+        return sum;
+      }, 0);
+
+      const initials = getInitials(cust.name || cust.name || (cust.firstName && cust.lastName ? `${cust.firstName} ${cust.lastName}` : "User"));
+      const avatarHTML = cust.profilePicture
+        ? `<img src="${cust.profilePicture}" class="rounded-circle me-2" width="40" height="40" alt="profile">`
+        : `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:40px;height:40px;">${initials}</div>`;
+
+      const tr = document.createElement("tr");
+      tr.className = "customer-row";
+      tr.setAttribute("data-id", cust._id);
+      tr.innerHTML = `
+        <td class="align-middle d-flex align-items-center">${avatarHTML}<strong>${cust.name || cust.firstName || "Unknown"}</strong></td>
+        <td class="align-middle">${cust.city || "-"}</td>
+        <td class="align-middle">${totalOrders}</td>
+        <td class="align-middle text-success fw-semibold">${formatNaira(totalSpent)}</td>
+      `;
+      customersTableBody.appendChild(tr);
+    });
+  }
+
+  function renderPagination() {
+    if (!paginationContainer) return;
+    const searchTerm = (searchInput?.value || "").toLowerCase();
+    const selectedCity = cityFilter?.value || "";
+
+    const filtered = users.filter(u => {
+      const matchesSearch =
+        (u.name || "").toLowerCase().includes(searchTerm) ||
+        (u.email || "").toLowerCase().includes(searchTerm) ||
+        ((u.phoneNumber || "").toLowerCase().includes(searchTerm));
+      const matchesCity = !selectedCity || u.city === selectedCity;
+      return matchesSearch && matchesCity;
+    });
+
+    const pageCount = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+    paginationContainer.innerHTML = "";
+
+    for (let i = 1; i <= pageCount; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.className = `btn btn-sm me-1 ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderTable();
+        renderPagination();
+      });
+      paginationContainer.appendChild(btn);
+    }
+  }
+
+  // Delegated click handler on tbody — works after re-renders
+  customersTableBody.addEventListener("click", (e) => {
+    const row = e.target.closest("tr[data-id]");
+    if (!row) return;
+    const id = row.getAttribute("data-id");
+    const customer = users.find(u => u._id === id || String(u._id) === id);
+    const customerOrders = orders.filter(o => o.customerId === id || String(o.customerId) === id);
+    if (!customer) {
+      console.warn("Clicked customer not found in users array:", id);
+      return;
+    }
+    openCustomerModal(customer, customerOrders);
+  });
+
+  // Modal renderer
+  function openCustomerModal(customer, customerOrders) {
+    if (!modalEl) {
+      alert("Modal element not found on page.");
+      return;
+    }
+
+    const ordersHTML = (customerOrders || []).map(o => {
+      const idShort = String(o._id).slice(-6).toUpperCase();
+      const created = o.createdAt ? new Date(o.createdAt).toLocaleString() : "-";
+      const statusBadge = (o.paymentStatus === "paid")
+        ? `<span class="badge bg-success-subtle text-success">paid</span>`
+        : `<span class="badge bg-warning-subtle text-warning">${o.paymentStatus || "pending"}</span>`;
+      const amount = formatNaira(o.totalAmount || calculateOrderFromItems(o.items || []));
+      return `<tr>
+          <td>#${idShort}</td>
+          <td>${created}</td>
+          <td>${statusBadge}</td>
+          <td>${amount}</td>
+        </tr>`;
+    }).join("");
+
+    modalContainer.innerHTML = `
+      <div class="d-flex align-items-center mb-3">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width:60px;height:60px;font-size:1.25rem;">
+          ${getInitials(customer.name || (customer.firstName ? `${customer.firstName} ${customer.lastName || ''}` : "U"))}
+        </div>
+        <div>
+          <h5 class="mb-0">${customer.name || customer.firstName || "Unknown"}</h5>
+          <small class="text-muted">${customer.city || "-"}</small><br>
+          <small class="text-muted">${customer.email || "-"}</small>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+              <h6 class="fw-semibold mb-2">Customer Orders</h6>
+              <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                  <thead>
+                    <tr><th>Order</th><th>Date</th><th>Status</th><th>Price</th></tr>
+                  </thead>
+                  <tbody>
+                    ${ordersHTML || '<tr><td colspan="4" class="text-center text-muted">No orders yet</td></tr>'}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+              <h6 class="fw-semibold">Overview</h6>
+              <p class="mb-1"><strong>Address:</strong><br>${(customer.address || customer.customerSnapshot?.address) || "-"}</p>
+              <p class="mb-1"><strong>Phone:</strong> ${customer.phoneNumber || customer.customerSnapshot?.phone || "-"}</p>
+              <p class="mb-1"><strong>Orders:</strong> ${customerOrders.length}</p>
+              <p class="mb-0"><strong>Total spent:</strong> ${formatNaira(customerOrders.reduce((s,o)=> s + (o.totalAmount || calculateOrderFromItems(o.items||[])),0))}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+
+  function calculateOrderFromItems(items) {
+    if (!Array.isArray(items)) return 0;
+    return items.reduce((s, i) => s + ((i.subTotal != null) ? i.subTotal : ((i.price || 0) * (i.quantity || 1))), 0);
+  }
+
+  // Helpers
+  function getInitials(name = "") {
+    name = (name || "").trim();
+    if (!name) return "?";
+    const parts = name.split(/\s+/);
+    return (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+  }
+  function formatNaira(amount) {
+    return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(amount || 0);
+  }
+
+  // Listeners for search & filter
+  if (searchInput) searchInput.addEventListener("input", () => { currentPage = 1; renderTable(); renderPagination(); });
+  if (cityFilter) cityFilter.addEventListener("change", () => { currentPage = 1; renderTable(); renderPagination(); });
+
+  // Init
+  loadCustomers();
+});
 
 
+
+
+
+// ========== Mobile Search Toggle & Logic ==========
+document.addEventListener("DOMContentLoaded", () => {
+  const searchBtn = document.getElementById("mobileSearchBtn");
+  const searchInput = document.getElementById("mobileSearchInput");
+
+  // Toggle search input visibility
+  searchBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (searchInput.style.width === "0px" || searchInput.style.width === "") {
+      searchInput.style.width = "180px";
+      searchInput.style.opacity = "1";
+      searchInput.focus();
+    } else {
+      searchInput.style.width = "0";
+      searchInput.style.opacity = "0";
+      searchInput.value = "";
+      filterDashboardItems(""); // reset search
+    }
+  });
+
+  // Search typing logic
+  searchInput.addEventListener("input", (e) => {
+    const value = e.target.value.toLowerCase().trim();
+    filterDashboardItems(value);
+  });
+});
+
+// ========== Dashboard Filter Function ==========
+function filterDashboardItems(searchValue) {
+  
+  const rows = document.querySelectorAll("#ordersTableBody tr, #usersTableBody tr");
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(searchValue) ? "" : "none";
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.querySelector(".search-container");
+  const btn = document.getElementById("mobileSearchBtn");
+  const input = document.getElementById("mobileSearchInput");
+
+  if (!container || !btn || !input) return;
+
+  // Expand / collapse input
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const isExpanded = container.classList.contains("expanded");
+    if (!isExpanded) {
+      container.classList.add("expanded");
+      input.focus();
+    } else {
+      if (input.value.trim() !== "") {
+        input.value = "";
+        filterDashboardItems("");
+        input.focus();
+      } else {
+        container.classList.remove("expanded");
+      }
+    }
+  });
+
+  // Live search while typing
+  input.addEventListener("input", (e) => {
+    const value = e.target.value.toLowerCase().trim();
+    filterDashboardItems(value);
+  });
+
+  // Collapse when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!container.contains(e.target) && input.value.trim() === "") {
+      container.classList.remove("expanded");
+    }
+  });
+
+  // Collapse on blur if empty
+  input.addEventListener("blur", () => {
+    setTimeout(() => {
+      if (input.value.trim() === "") {
+        container.classList.remove("expanded");
+      }
+    }, 120);
+  });
+});
+
+// 🧹 Normalize text for matching
+function normalizeText(text) {
+  return text.toLowerCase().replace(/₦|,|\s+/g, "").trim();
+}
+
+// 🕵️ Main dashboard filter logic
+function filterDashboardItems(searchValue) {
+  const cleanSearch = normalizeText(searchValue);
+  const tables = document.querySelectorAll("table");
+  const metricCards = document.querySelectorAll(".metric-card");
+  const customerItems = document.querySelectorAll("#customerList > div");
+
+  // Remove old “no results” if any
+  let existingMsg = document.getElementById("noResultsMsg");
+  if (existingMsg) existingMsg.remove();
+
+  let resultsFound = false;
+
+  // Reset everything when input empty
+  if (cleanSearch === "") {
+    tables.forEach((t) => t.querySelectorAll("tr").forEach((tr) => (tr.style.display = "")));
+    metricCards.forEach((c) => (c.style.display = ""));
+    customerItems.forEach((d) => (d.style.display = ""));
+    return;
+  }
+
+  // ✅ Filter metric cards
+  metricCards.forEach((card) => {
+    const text = normalizeText(card.textContent);
+    const visible = text.includes(cleanSearch);
+    card.style.display = visible ? "" : "none";
+    if (visible) resultsFound = true;
+  });
+
+  // ✅ Filter customer list
+  customerItems.forEach((div) => {
+    const text = normalizeText(div.textContent);
+    const visible = text.includes(cleanSearch);
+    div.style.display = visible ? "" : "none";
+    if (visible) resultsFound = true;
+  });
+
+  // ✅ Filter all tables
+  tables.forEach((table) => {
+    const headers = Array.from(table.querySelectorAll("thead th"))
+      .map((th) => normalizeText(th.textContent))
+      .join(" ");
+    const rows = table.querySelectorAll("tbody tr");
+
+    let tableHasMatch = false;
+    rows.forEach((tr) => {
+      const rowText = normalizeText(tr.textContent);
+      const visible = rowText.includes(cleanSearch) || headers.includes(cleanSearch);
+      tr.style.display = visible ? "" : "none";
+      if (visible) {
+        tableHasMatch = true;
+        resultsFound = true;
+      }
+    });
+
+    // If no rows matched but header matches, show table anyway
+    if (!tableHasMatch && headers.includes(cleanSearch)) {
+      rows.forEach((tr) => (tr.style.display = ""));
+      resultsFound = true;
+    }
+  });
+
+  // 🚫 Show “No results found” overlay
+  if (!resultsFound) {
+    const msg = document.createElement("div");
+    msg.id = "noResultsMsg";
+    msg.textContent = "No results found";
+    Object.assign(msg.style, {
+      position: "fixed",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      background: "rgba(255,255,255,0.95)",
+      padding: "15px 25px",
+      borderRadius: "12px",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+      fontWeight: "500",
+      color: "#444",
+      zIndex: "2000",
+    });
+    document.body.appendChild(msg);
+
+    // Auto-remove message after 2 seconds
+    setTimeout(() => {
+      if (msg && msg.parentNode) msg.remove();
+    }, 2000);
+  }
+}
 
 
 

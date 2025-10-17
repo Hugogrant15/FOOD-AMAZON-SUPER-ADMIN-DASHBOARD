@@ -758,7 +758,34 @@ document.addEventListener("DOMContentLoaded", () => {
     </script>
 
    
-  
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const userName = localStorage.getItem("name") || "super_admin";
+  // Time-based greeting
+  const hour = new Date().getHours();
+  let greeting =
+    hour < 12 ? "Good morning" :
+    hour < 18 ? "Good afternoon" :
+    "Good evening";
+  // Create toast element
+  const toast = document.createElement("div");
+  toast.id = "dashboardToast";
+  toast.innerHTML = `
+    <div class="toast-content">
+      <strong>${greeting}, ${userName}! 👋</strong><br>
+      <span>Welcome back to your dashboard.</span>
+    </div>
+  `;
+  document.body.appendChild(toast);
+  // Show animation
+  setTimeout(() => toast.classList.add("show"), 100);
+  // Hide after 5 seconds
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 500);
+  }, 5000);
+});
+    </script>
 
     
 
