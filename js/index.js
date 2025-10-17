@@ -1966,13 +1966,20 @@ function logOut() {
       localStorage.removeItem("catId");
       localStorage.removeItem("prodId");
       localStorage.removeItem("products");
+
+      // 🛑 Prevent back button returning to dashboard
+      history.pushState(null, null, location.href);
+      window.addEventListener('popstate', () => {
+        history.pushState(null, null, location.href);
+      });
+
       Swal.fire({
         icon: 'success',
         title: 'Logged out',
         text: 'You have been successfully logged out.',
         confirmButtonColor: '#28A745'
       }).then(() => {
-        location.href = "index.html"; // redirect to login page
+        window.location.replace("index.html");
       });
     }
   });
